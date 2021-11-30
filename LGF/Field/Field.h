@@ -9,7 +9,7 @@ public:
 		allocate_field(lattice, NrExtDOF);
 	}
 	void allocate_field(Lattice& lattice, int NrExtDOF) {
-		size_localField =  NrExtDOF* lattice.subProcVolume;
+		size_localField =  NrExtDOF* lattice.m_thisProc_Volume;
 		container = new T[size_localField];
 	}
 	

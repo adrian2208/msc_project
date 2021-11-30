@@ -2,5 +2,5 @@
 
 Vertex::Vertex(const Lattice& lattice){
 	m_lattice_ptr = (Lattice*) &lattice;
-	index = (*m_lattice_ptr).start[ME][0];
+	index = 0;//(*m_lattice_ptr).start[ME][0];
 }

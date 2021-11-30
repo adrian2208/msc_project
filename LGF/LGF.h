@@ -11,4 +11,5 @@
 #include "Field/SU3_field.h"
 #include "Lattice/Lattice.h"
 #include "Vertex.h"
+#include "mpiWrapper.h"
 #include "mpi.h"

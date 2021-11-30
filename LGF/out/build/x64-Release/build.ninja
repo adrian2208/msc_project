@@ -12,7 +12,7 @@
 
 # =============================================================================
 # Project: LGF
-# Configurations: Debug
+# Configurations: RelWithDebInfo
 # =============================================================================
 
 #############################################
@@ -24,7 +24,7 @@ ninja_required_version = 1.5
 #############################################
 # Set configuration variable for custom commands.
 
-CONFIGURATION = Debug
+CONFIGURATION = RelWithDebInfo
 # =============================================================================
 # Include auxiliary files.
 
@@ -43,56 +43,56 @@ include CMakeFiles\rules.ninja
 
 build cmake_object_order_depends_target_LGF: phony || CMakeFiles\LGF.dir
 
-build CMakeFiles\LGF.dir\LGF.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\LGF.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\LGF.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\LGF.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
-build CMakeFiles\LGF.dir\Action\Action.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Action\Action.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\Action\Action.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\Action\Action.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir\Action
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
-build CMakeFiles\LGF.dir\Action\Gauge\Wilson.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Action\Gauge\Wilson.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\Action\Gauge\Wilson.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\Action\Gauge\Wilson.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir\Action\Gauge
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
-build CMakeFiles\LGF.dir\Field\SU3_field.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Field\SU3_field.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\Field\SU3_field.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\Field\SU3_field.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir\Field
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
-build CMakeFiles\LGF.dir\Lattice\Lattice.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Lattice\Lattice.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\Lattice\Lattice.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\Lattice\Lattice.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir\Lattice
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
-build CMakeFiles\LGF.dir\Vertex.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Vertex.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\Vertex.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\Vertex.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
-build CMakeFiles\LGF.dir\mpiWrapper.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\mpiWrapper.cpp || cmake_object_order_depends_target_LGF
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build CMakeFiles\LGF.dir\mpiWrapper.cpp.obj: CXX_COMPILER__LGF_RelWithDebInfo ..\..\..\mpiWrapper.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
   OBJECT_DIR = CMakeFiles\LGF.dir
   OBJECT_FILE_DIR = CMakeFiles\LGF.dir
@@ -107,8 +107,8 @@ build CMakeFiles\LGF.dir\mpiWrapper.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\mp
 #############################################
 # Link the executable LGF.exe
 
-build LGF.exe: CXX_EXECUTABLE_LINKER__LGF_Debug CMakeFiles\LGF.dir\LGF.cpp.obj CMakeFiles\LGF.dir\Action\Action.cpp.obj CMakeFiles\LGF.dir\Action\Gauge\Wilson.cpp.obj CMakeFiles\LGF.dir\Field\SU3_field.cpp.obj CMakeFiles\LGF.dir\Lattice\Lattice.cpp.obj CMakeFiles\LGF.dir\Vertex.cpp.obj CMakeFiles\LGF.dir\mpiWrapper.cpp.obj | C$:\Program$ Files$ (x86)\Microsoft$ SDKs\MPI\Lib\x64\msmpi.lib
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+build LGF.exe: CXX_EXECUTABLE_LINKER__LGF_RelWithDebInfo CMakeFiles\LGF.dir\LGF.cpp.obj CMakeFiles\LGF.dir\Action\Action.cpp.obj CMakeFiles\LGF.dir\Action\Gauge\Wilson.cpp.obj CMakeFiles\LGF.dir\Field\SU3_field.cpp.obj CMakeFiles\LGF.dir\Lattice\Lattice.cpp.obj CMakeFiles\LGF.dir\Vertex.cpp.obj CMakeFiles\LGF.dir\mpiWrapper.cpp.obj | C$:\Program$ Files$ (x86)\Microsoft$ SDKs\MPI\Lib\x64\msmpi.lib
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = "C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64\msmpi.lib"  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
   OBJECT_DIR = CMakeFiles\LGF.dir
@@ -124,7 +124,7 @@ build LGF.exe: CXX_EXECUTABLE_LINKER__LGF_Debug CMakeFiles\LGF.dir\LGF.cpp.obj C
 # Utility command for edit_cache
 
 build CMakeFiles\edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "C:\Users\adria\Documents\msc_project\LGF\out\build\x64-Debug (default)" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
+  COMMAND = cmd.exe /C "cd /D C:\Users\adria\Documents\msc_project\LGF\out\build\x64-Release && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -135,7 +135,7 @@ build edit_cache: phony CMakeFiles\edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles\rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "C:\Users\adria\Documents\msc_project\LGF\out\build\x64-Debug (default)" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --regenerate-during-build -SC:\Users\adria\Documents\msc_project\LGF -B"C:\Users\adria\Documents\msc_project\LGF\out\build\x64-Debug (default)""
+  COMMAND = cmd.exe /C "cd /D C:\Users\adria\Documents\msc_project\LGF\out\build\x64-Release && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --regenerate-during-build -SC:\Users\adria\Documents\msc_project\LGF -BC:\Users\adria\Documents\msc_project\LGF\out\build\x64-Release"
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -153,7 +153,7 @@ build LGF: phony LGF.exe
 # =============================================================================
 
 #############################################
-# Folder: C:/Users/adria/Documents/msc_project/LGF/out/build/x64-Debug (default)
+# Folder: C:/Users/adria/Documents/msc_project/LGF/out/build/x64-Release
 
 build all: phony LGF.exe
 

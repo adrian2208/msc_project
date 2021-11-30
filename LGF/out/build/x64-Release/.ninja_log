@@ -1,0 +1,23 @@
+# ninja log v5
+1	58	659979808	CMakeFiles/LGF.dir/Action/Gauge/Wilson.cpp.obj	9d9f897c539b183b
+4	58	659979808	CMakeFiles/LGF.dir/Action/Action.cpp.obj	86ab08efa92b2156
+8	336	659979808	CMakeFiles/LGF.dir/Vertex.cpp.obj	3f8b093140a77eb9
+6	344	659979808	CMakeFiles/LGF.dir/LGF.cpp.obj	39c0aaefbd565a62
+15	349	659979808	CMakeFiles/LGF.dir/Field/SU3_field.cpp.obj	969f19b183d88319
+13	353	659979808	CMakeFiles/LGF.dir/Lattice/Lattice.cpp.obj	46468721054f632b
+10	373	659979808	CMakeFiles/LGF.dir/mpiWrapper.cpp.obj	d130a4fb3f7af450
+373	591	659979809	LGF.exe	79062eb7462d679f
+1	414	659980003	CMakeFiles/LGF.dir/mpiWrapper.cpp.obj	d130a4fb3f7af450
+414	527	659980003	LGF.exe	79062eb7462d679f
+1	551	659981420	CMakeFiles/LGF.dir/mpiWrapper.cpp.obj	d130a4fb3f7af450
+551	657	659981420	LGF.exe	79062eb7462d679f
+0	304	659982477	CMakeFiles/LGF.dir/mpiWrapper.cpp.obj	d130a4fb3f7af450
+304	404	659982477	LGF.exe	79062eb7462d679f
+0	666	659995115	CMakeFiles/LGF.dir/LGF.cpp.obj	39c0aaefbd565a62
+666	779	659995115	LGF.exe	79062eb7462d679f
+4	575	659995889	CMakeFiles/LGF.dir/Vertex.cpp.obj	3f8b093140a77eb9
+1	576	659995889	CMakeFiles/LGF.dir/LGF.cpp.obj	39c0aaefbd565a62
+6	579	659995889	CMakeFiles/LGF.dir/Field/SU3_field.cpp.obj	969f19b183d88319
+8	583	659995889	CMakeFiles/LGF.dir/Lattice/Lattice.cpp.obj	46468721054f632b
+1	295	659996003	CMakeFiles/LGF.dir/Lattice/Lattice.cpp.obj	46468721054f632b
+295	400	659996003	LGF.exe	79062eb7462d679f

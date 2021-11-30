@@ -1,0 +1,9 @@
+# ninja log v5
+11	350	659979760	CMakeFiles/LGF.dir/Field/SU3_field.cpp.obj	2bac44f5cc01e748
+1	483	659912674	CMakeFiles/LGF.dir/Action/Action.cpp.obj	28efd859b293cdc3
+290	386	659979775	LGF.exe	79062eb7462d679f
+6	355	659979760	CMakeFiles/LGF.dir/mpiWrapper.cpp.obj	9f3edf9c6dd85449
+8	347	659979760	CMakeFiles/LGF.dir/Vertex.cpp.obj	87250245f30b857
+4	484	659912674	CMakeFiles/LGF.dir/Action/Gauge/Wilson.cpp.obj	5626a797fd4095d2
+1	290	659979775	CMakeFiles/LGF.dir/LGF.cpp.obj	9e9576657ade3ed9
+4	347	659979760	CMakeFiles/LGF.dir/Lattice/Lattice.cpp.obj	d800628d00917c61

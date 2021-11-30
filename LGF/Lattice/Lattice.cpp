@@ -16,16 +16,27 @@ Lattice::Lattice(int Ndims, int shape[]) {
 }
 
 void Lattice::partition_lattice(int NrPartitions){
-	int* thisProc_TotalIndex = new int[m_totalVolume];
+	long int* thisProc_TotalIndex = new long int[m_totalVolume];
 	int totalIdx;
 	m_thisProc_Volume = 0;
 
 	for (int i = 0; i < m_Ndims; i++) {
 		for (int j = 0; j < m_shape[i]; j++) {
+			m_coordinate[i] = j;
 			totalIdx = totalIndex(m_coordinate);
-			if( ==Coordinate_ProcID(m_coordinate))
+			
+			if (mpiWrapper::id() == Coordinate_ProcID(m_coordinate)) {
+				thisProc_TotalIndex[m_thisProc_Volume] = totalIdx;
+				m_thisProc_Volume++;
+			}
 		}
-		
+		m_coordinate[i] = 0;
+	}
+	m_fwd = new int* [m_thisProc_Volume];
+	m_back = new int* [m_thisProc_Volume];
+	for (int i = 0; i < m_thisProc_Volume; i++) {
+		m_fwd[i] = new int[m_Ndims];
+		m_back[i] = new int[m_Ndims];
 	}
 
 }
@@ -49,6 +60,9 @@ int Lattice::totalIndex(int *coordinate){
 		idx = m_shape[i + 1] * (idx + coordinate[i]);
 	}
 	return idx+coordinate[m_Ndims-1];
+}
+
+void Lattice::NearestNeighbour(){
 }
 
 

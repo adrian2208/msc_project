@@ -1,19 +1,23 @@
 #pragma once
 #include "mpi.h"
+#include <iostream>
 
+#ifndef MPIWRAPPER_INCLUDED
+#define MPIWRAPPER_INCLUDED
 class mpiWrapper {
 private:
+	static MPI_Comm Comm;
 	int argc;
 	char** argv;
-	int proc_id;
-	int Nprocs;
+	static int proc_id;
+	static int Nprocs;
+
 public:
-	void begin_parallelSession(int argc, char** argv) {
-		MPI_Comm Comm= MPI_COMM_WORLD;
-		MPI_Init(&argc, &argv);
-		MPI_Comm_rank(Comm, &(proc_id));
-		MPI_Comm_size(Comm, &(Nprocs));
-	}
-	
+
+	static void begin_parallelSession(int argc, char** argv);
+	static void end_parallelSession();
+	static int id();
+	static int nProcs();
 };
-mpiWrapper com;
+
+#endif
