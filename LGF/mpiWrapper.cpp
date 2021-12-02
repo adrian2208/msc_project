@@ -26,3 +26,7 @@ int mpiWrapper::id() {
 int mpiWrapper::nProcs() {
 	return Nprocs;
 }
+
+MPI_Comm mpiWrapper::comm(){
+	return Comm;
+}

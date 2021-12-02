@@ -18,6 +18,7 @@ public:
 	static void end_parallelSession();
 	static int id();
 	static int nProcs();
+	static MPI_Comm comm();
 };
 
 #endif
