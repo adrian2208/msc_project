@@ -8,11 +8,12 @@
 int main(int argc, char **argv){
 
 	mpiWrapper::begin_parallelSession(argc, argv);
-	int shape[] = { 4,4};
+	int shape[] = { 4,6};
 	Lattice lattice(2, shape);
 	for (int i = 0; i < mpiWrapper::nProcs(); i++) {
 		if (i == mpiWrapper::id()) {
 			std::cout << "Process ID: " << i << "\n" << "lattice volume: "<< lattice.m_thisProc_Volume << "\n";
+			lattice.print_indices();
 			MPI_Barrier(mpiWrapper::comm());
 		}
 	}

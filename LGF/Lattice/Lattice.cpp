@@ -18,20 +18,29 @@ Lattice::Lattice(int Ndims, int shape[]) {
 
 }
 
+//iterates through an N- dimensional array of arbitrary shape
 inline void traverse_lattice(int* coordinate, int nDims, int* shape) {
-	//iterates through an N- dimensional array of arbitrary shape
 	for (int i = nDims - 1; i >= 0; i--) {							
 		if (coordinate[i] < shape[i]-1) { 
-			coordinate[i]++;				
+			coordinate[i]++;	
+			break;
 		}									
 		else {								
 			coordinate[i] = 0;			
 		}									
 	}
 }
+//assigns even (0), or odd (1) parity to a coordinate
+inline int parity(int* coordinate,int nDims) {
+	int parity = 0;
+	for (int i = 0; i < nDims; i++) {
+		parity += coordinate[i];
+	}
+	return (parity % 2);
+}
 
 void Lattice::partition_lattice(){
-	int* thisProc_TotalIndex = new int[m_totalVolume];
+	m_thisProc_TotalIndex = new int[m_totalVolume];
 	int totalIdx;
 	int id;
 	
@@ -41,20 +50,28 @@ void Lattice::partition_lattice(){
 		totalIdx = totalIndex(m_coordinate);					//	|
 		id = Coordinate_ProcID(m_coordinate);					//  |
 		if (mpiWrapper::id() == id) {							//  |
-			thisProc_TotalIndex[m_thisProc_Volume] = totalIdx;	//  |-- identifies the process working on this
+			m_thisProc_TotalIndex[m_thisProc_Volume] = totalIdx;//  |-- identifies the process working on this
 			m_thisProc_Volume++;								//  |	coordinate, incrementing the proc volume.
 		}														//__|
 		//returns new m_coordinate by reference eventually traversing the lattice															
 		traverse_lattice(m_coordinate, m_Ndims, m_shape); 												
 		i++;
 	}
+
 	//Initializing arrays for storing nearest neighbour information
 	m_fwd = new int* [m_thisProc_Volume];
 	m_back = new int* [m_thisProc_Volume];
-	for (int i = 0; i < m_thisProc_Volume; i++) {
+	for (i = 0; i < m_thisProc_Volume; i++) {
 		m_fwd[i] = new int[m_Ndims];
 		m_back[i] = new int[m_Ndims];
 	}
+	
+	for (int proc_id = 0; proc_id < mpiWrapper::nProcs(); proc_id++) {
+		for (int par = 0; par <= 1; par++) {
+
+		}
+	}
+
 
 }
 
@@ -97,4 +114,42 @@ void Lattice::NearestNeighbour(int* coordinate, int direction, int* fwd_coor, in
 	}
 }
 
+void Lattice::print_indices(){
+	for (int i = 0; i < m_thisProc_Volume; i++) {
+			std::cout << m_thisProc_TotalIndex[i] << ",";
+	}
+	std::cout << "\n";
+	MPI_Barrier(mpiWrapper::comm());
+}
 
+void Lattice::print() {
+	int** myArray = new int* [m_shape[0]];
+	for (int i = 0; i < m_shape[0]; i++) {
+		myArray[i] = new int[m_shape[1]];
+	}
+
+	int* coor = new int[2];
+	coor[0] = 0;
+	coor[1] = 0;
+
+	int i = 0;
+	while (i < m_totalVolume) {
+		int totalIdx = totalIndex(coor);
+		int x = coor[0];
+		int y = coor[1]; 
+		myArray[x][y]=totalIdx;
+		std::cout << x << "," << y <<"," << totalIdx << "\n";
+		traverse_lattice(coor, m_Ndims, m_shape);
+		
+		i++;
+	}
+
+	for (i = 0; i < m_shape[0]; ++i){
+		for (int j = 0; j < m_shape[1]; ++j){
+			std::cout << myArray[i][j] << ' ';
+		}
+		std::cout << std::endl;
+	}
+
+	MPI_Barrier(mpiWrapper::comm());
+}
