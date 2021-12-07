@@ -8,7 +8,7 @@
 int main(int argc, char **argv){
 
 	mpiWrapper::begin_parallelSession(argc, argv);
-	int shape[] = { 4,6};
+	int shape[] = { 4,4};
 	Lattice lattice(2, shape);
 	for (int i = 0; i < mpiWrapper::nProcs(); i++) {
 		if (i == mpiWrapper::id()) {
