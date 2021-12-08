@@ -8,6 +8,7 @@ public:
 	Lattice(int Ndims, int shape[]);
 
 	void partition_lattice();
+	void DistributeBuffers();
 	//Assigns a single index based on the coordinates according to scheme outlined in function definition
 	int totalIndex(int *coordinate);
 	//returns the total coordinate by reference from the total index
@@ -44,7 +45,8 @@ public:
 
 	int** m_InternalIdx_start;
 	int** m_InternalIdx_stop;
-
+	int** m_BufferSize;
+	int** m_Buffer_receive;
 
 
 protected:

@@ -164,6 +164,48 @@ void Lattice::partition_lattice(){
 		}
 	}
 
+	DistributeBuffers();
+	
+
+}
+void Lattice::DistributeBuffers() {
+	m_BufferSize = new int* [mpiWrapper::nProcs()];
+	m_Buffer_receive = new int* [mpiWrapper::nProcs()];
+	for (int i = 0; i < mpiWrapper::nProcs(); i++) {
+		m_BufferSize[i] = new int[2];
+	}
+	MPI_Request request;
+	MPI_Status status;
+	int buffer[2];
+	int* TotalIdx_procDomain;
+	int SendingTo_id;//The ID of the process which will be recieving information
+	int RecFrom_id;//The ID of the process from which information will be recieved
+	int size;
+	for (int i = 1; i < mpiWrapper::nProcs(); i++) {
+		//recieving and sending from two different processes. Never equal to id.
+		SendingTo_id = (mpiWrapper::id() + i) % mpiWrapper::nProcs();
+		RecFrom_id = (mpiWrapper::id() + mpiWrapper::nProcs() - i) % mpiWrapper::nProcs();
+		buffer[0] = m_InternalIdx_stop[SendingTo_id][0] - m_InternalIdx_start[SendingTo_id][0];
+		buffer[1] = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][1];
+		//Communicate - wait for resolution
+		MPI_Isend(&buffer, 2, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
+		MPI_Recv(m_BufferSize[RecFrom_id], 2, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+		MPI_Wait(&request, &status);
+		size = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][0];
+		TotalIdx_procDomain = new int[size];
+		for (int j = 0; j < size; j++) {
+			TotalIdx_procDomain[j] = m_InternalToTotal_idx[m_InternalIdx_start[SendingTo_id][0] + j];
+		}
+		MPI_Isend(TotalIdx_procDomain, size, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
+		size = m_BufferSize[RecFrom_id][0] + m_BufferSize[RecFrom_id][1];
+		m_Buffer_receive[RecFrom_id] = new int[size];
+		MPI_Recv(m_Buffer_receive[RecFrom_id], size, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+		for (int j = 0; j < size; j++) {
+			m_Buffer_receive[RecFrom_id][j] = m_TotalToInternal_idx[m_Buffer_receive[RecFrom_id][j]];
+		}
+		MPI_Wait(&request, &status);
+		delete[] TotalIdx_procDomain;
+	}
 }
 
 int Lattice::Coordinate_ProcID(int* coordinate){
