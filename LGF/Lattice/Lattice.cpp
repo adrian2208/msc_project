@@ -97,7 +97,7 @@ void Lattice::partition_lattice(){
 	m_Internal_IdxToParity = new int[m_thisProc_Volume];
 	int InternalIdx;
 	//The internal index for the sites stored by this process:
-	//1: prioritizes sites under its region of responsibility above those of shared memory sites.
+	//1: prioritizes the smallest process number
 	//2: prioritizes even parity over odd parity.
 	for (int proc_id = 0; proc_id < mpiWrapper::nProcs(); proc_id++) {
 		//avoid the one case that would make m_InternalIdx_stop[proc_id - 1][1] an illegal memory read
@@ -168,45 +168,58 @@ void Lattice::partition_lattice(){
 	
 
 }
+
 void Lattice::DistributeBuffers() {
-	m_BufferSize = new int* [mpiWrapper::nProcs()];
+	m_BufferSize = new int [mpiWrapper::nProcs()];
 	m_Buffer_receive = new int* [mpiWrapper::nProcs()];
-	for (int i = 0; i < mpiWrapper::nProcs(); i++) {
-		m_BufferSize[i] = new int[2];
-	}
+
 	MPI_Request request;
 	MPI_Status status;
-	int buffer[2];
+	int SizeofProcDomain;
 	int* TotalIdx_procDomain;
 	int SendingTo_id;//The ID of the process which will be recieving information
 	int RecFrom_id;//The ID of the process from which information will be recieved
-	int size;
+	
 	for (int i = 1; i < mpiWrapper::nProcs(); i++) {
 		//recieving and sending from two different processes. Never equal to id.
 		SendingTo_id = (mpiWrapper::id() + i) % mpiWrapper::nProcs();
 		RecFrom_id = (mpiWrapper::id() + mpiWrapper::nProcs() - i) % mpiWrapper::nProcs();
-		buffer[0] = m_InternalIdx_stop[SendingTo_id][0] - m_InternalIdx_start[SendingTo_id][0];
-		buffer[1] = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][1];
+		//The size of the package <<SendingTo_id>> should expect to receive based on the amount of sites
+		//shared between <<ID>> and <<SendingTo_id>> 
+		SizeofProcDomain = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][0];
+
 		//Communicate - wait for resolution
-		MPI_Isend(&buffer, 2, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
-		MPI_Recv(m_BufferSize[RecFrom_id], 2, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+		MPI_Isend(&SizeofProcDomain, 1, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
+		MPI_Recv(&m_BufferSize[RecFrom_id], 1, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
 		MPI_Wait(&request, &status);
-		size = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][0];
-		TotalIdx_procDomain = new int[size];
-		for (int j = 0; j < size; j++) {
+
+		//for each shared site belonging to process <<SendingTo_id>>, convert the internal parameterization (index)
+		//to the total one, which is shared by all processes
+		TotalIdx_procDomain = new int[SizeofProcDomain];
+		for (int j = 0; j < SizeofProcDomain; j++) {
 			TotalIdx_procDomain[j] = m_InternalToTotal_idx[m_InternalIdx_start[SendingTo_id][0] + j];
+			//std::cout << TotalIdx_procDomain[j] << " ";
+			//std::cout << TotalIdx_procDomain[j] << " ";
 		}
-		MPI_Isend(TotalIdx_procDomain, size, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
-		size = m_BufferSize[RecFrom_id][0] + m_BufferSize[RecFrom_id][1];
-		m_Buffer_receive[RecFrom_id] = new int[size];
-		MPI_Recv(m_Buffer_receive[RecFrom_id], size, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
-		for (int j = 0; j < size; j++) {
+		//std::cout << "\n";
+
+		//send the list of shared sites belonging to the process in their total index to the process in question
+		MPI_Isend(TotalIdx_procDomain, SizeofProcDomain, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
+		//prepare the array which will contain the list of ID's sites of responsibility contained in the domain of <<RecFrom_id>>
+		m_Buffer_receive[RecFrom_id] = new int[m_BufferSize[RecFrom_id]];
+		MPI_Recv(m_Buffer_receive[RecFrom_id], m_BufferSize[RecFrom_id], MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+		//The sites are currently given by their total index and have to be assigned their internal parameterization
+		for (int j = 0; j < m_BufferSize[RecFrom_id]; j++) {
+			
 			m_Buffer_receive[RecFrom_id][j] = m_TotalToInternal_idx[m_Buffer_receive[RecFrom_id][j]];
+			//std::cout << m_Buffer_receive[RecFrom_id][j] << " ";
 		}
+		//std::cout << "From: " << RecFrom_id << "\n";
 		MPI_Wait(&request, &status);
 		delete[] TotalIdx_procDomain;
 	}
 }
+
 
 int Lattice::Coordinate_ProcID(int* coordinate){
 	int NrProcs = mpiWrapper::nProcs();
