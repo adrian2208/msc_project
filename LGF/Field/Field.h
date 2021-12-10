@@ -5,6 +5,7 @@ template<class T>
 class Field {
 public:
 	Field(Lattice& lattice, int NrExtDOF) {
+		m_lattice = &lattice;
 		m_NrExtDOF = NrExtDOF;
 		allocate_field(lattice, NrExtDOF);
 	}
@@ -20,9 +21,12 @@ public:
 
 protected:
 	T* container;
-	int m_NrExtDOF;// e.g. 4: mu=0,1,2,3
-	int size_T;//the number of real variables required to store T
-	int size_localField;
-
+	int m_NrExtDOF;//the number of external DOF e.g. 4: mu=0,1,2,3
+	//the number of internal DOF e.g. 1 for an integer field, 2 for a complex field or 
+	//2*9=18 for an SU(3) field in the redundant representation (otherwise 3^2-1=8, but this is not as efficient)
+	int m_NrIntDOF;
+	int m_sizeOfT;//The number of bytes needed to store the type T
+private:
+	Lattice* m_lattice;
 
 };

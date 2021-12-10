@@ -8,6 +8,8 @@ public:
 	Lattice(int Ndims, int shape[]);
 
 	void partition_lattice();
+	//Tells each process which sites (in its own internal index) are shared with which neighbouring processes
+	//and stores it in the array  m_Buffer_receive by proc_id and a index from zero to Nr. of sites shared with that process
 	void DistributeBuffers();
 	//Assigns a single index based on the coordinates according to scheme outlined in function definition
 	int totalIndex(int *coordinate);
@@ -45,8 +47,8 @@ public:
 
 	int** m_InternalIdx_start;
 	int** m_InternalIdx_stop;
-	int** m_BufferSize;
-	int** m_Buffer_receive;
+	int* m_BufferSize;//The size of the buffer that should be allocated for each process, including itself and processes that don't share sites ID i.e. size=0
+	int** m_Buffer_receive;//indexed by [proc id][idx] with idx=0 corresponding to the first entry of m_InternalIdx_start[SendingTo_id][0] except with this process' internal index
 
 
 protected:
