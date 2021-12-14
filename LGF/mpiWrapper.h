@@ -19,6 +19,10 @@ public:
 	static int id();
 	static int nProcs();
 	static MPI_Comm comm();
+
+	static void mpi_openFile(MPI_File& file, const char* filename);
+	static void mpi_closeFile(MPI_File& file);
+
 };
 
 #endif

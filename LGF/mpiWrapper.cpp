@@ -30,3 +30,10 @@ int mpiWrapper::nProcs() {
 MPI_Comm mpiWrapper::comm(){
 	return Comm;
 }
+
+void mpiWrapper::mpi_openFile(MPI_File &file, const char* filename) {
+	MPI_File_open(Comm, filename, MPI_MODE_RDWR | MPI_MODE_CREATE, MPI_INFO_NULL, &file);
+}
+void mpiWrapper::mpi_closeFile(MPI_File& file) {
+	MPI_File_close(&file);
+}

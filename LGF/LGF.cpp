@@ -23,9 +23,14 @@ void print_vec(int* array, int nitems) {
 int main(int argc, char **argv){
 
 	mpiWrapper::begin_parallelSession(argc, argv);
-	int shape[] = { 4,4};
+	int shape[] = { 6,1};
 	Lattice lattice(2, shape);
 	Field<int> field(lattice, 1);
+	for (int i = 0; i < 6; i++) {
+		field(i, 0) = i;
+	}
+
+	field.saveToFile();
 	mpiWrapper::end_parallelSession();
 	
 

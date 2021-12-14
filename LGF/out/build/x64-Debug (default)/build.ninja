@@ -99,6 +99,22 @@ build CMakeFiles\LGF.dir\mpiWrapper.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\mp
   TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
   TARGET_PDB = LGF.pdb
 
+build CMakeFiles\LGF.dir\Math\SU3_mat.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Math\SU3_mat.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
+  OBJECT_DIR = CMakeFiles\LGF.dir
+  OBJECT_FILE_DIR = CMakeFiles\LGF.dir\Math
+  TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
+  TARGET_PDB = LGF.pdb
+
+build CMakeFiles\LGF.dir\Math\C_double.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\Math\C_double.cpp || cmake_object_order_depends_target_LGF
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -I"C:\Program Files (x86)\Microsoft SDKs\MPI\Include"
+  OBJECT_DIR = CMakeFiles\LGF.dir
+  OBJECT_FILE_DIR = CMakeFiles\LGF.dir\Math
+  TARGET_COMPILE_PDB = CMakeFiles\LGF.dir\
+  TARGET_PDB = LGF.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target LGF
@@ -107,7 +123,7 @@ build CMakeFiles\LGF.dir\mpiWrapper.cpp.obj: CXX_COMPILER__LGF_Debug ..\..\..\mp
 #############################################
 # Link the executable LGF.exe
 
-build LGF.exe: CXX_EXECUTABLE_LINKER__LGF_Debug CMakeFiles\LGF.dir\LGF.cpp.obj CMakeFiles\LGF.dir\Action\Action.cpp.obj CMakeFiles\LGF.dir\Action\Gauge\Wilson.cpp.obj CMakeFiles\LGF.dir\Field\SU3_field.cpp.obj CMakeFiles\LGF.dir\Lattice\Lattice.cpp.obj CMakeFiles\LGF.dir\Vertex.cpp.obj CMakeFiles\LGF.dir\mpiWrapper.cpp.obj | C$:\Program$ Files$ (x86)\Microsoft$ SDKs\MPI\Lib\x64\msmpi.lib
+build LGF.exe: CXX_EXECUTABLE_LINKER__LGF_Debug CMakeFiles\LGF.dir\LGF.cpp.obj CMakeFiles\LGF.dir\Action\Action.cpp.obj CMakeFiles\LGF.dir\Action\Gauge\Wilson.cpp.obj CMakeFiles\LGF.dir\Field\SU3_field.cpp.obj CMakeFiles\LGF.dir\Lattice\Lattice.cpp.obj CMakeFiles\LGF.dir\Vertex.cpp.obj CMakeFiles\LGF.dir\mpiWrapper.cpp.obj CMakeFiles\LGF.dir\Math\SU3_mat.cpp.obj CMakeFiles\LGF.dir\Math\C_double.cpp.obj | C$:\Program$ Files$ (x86)\Microsoft$ SDKs\MPI\Lib\x64\msmpi.lib
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = "C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64\msmpi.lib"  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
