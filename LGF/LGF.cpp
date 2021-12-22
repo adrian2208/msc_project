@@ -2,6 +2,7 @@
 //C:\Users\adria\Documents\msc_project\LGF\out\build\x64-Release>mpiexec.exe -n 6 LGF.exe
 
 #include "LGF.h"
+#include <filesystem>
 void print_array(int** array, int nRows, int nCols);
 void print_array(int** array, int nRows, int nCols) {
 	for (int i = 0; i < nRows; ++i) {
@@ -21,16 +22,13 @@ void print_vec(int* array, int nitems) {
 
 
 int main(int argc, char **argv){
-
+	
 	mpiWrapper::begin_parallelSession(argc, argv);
 	int shape[] = { 6,1};
 	Lattice lattice(2, shape);
 	Field<int> field(lattice, 1);
-	for (int i = 0; i < 6; i++) {
-		field(i, 0) = i;
-	}
+	field.loadFromFile();
 
-	field.saveToFile();
 	mpiWrapper::end_parallelSession();
 	
 

@@ -3,6 +3,7 @@
 Lattice::Lattice(int Ndims, int shape[]) {
 	
 	//Storing local variables
+	type = "torus";
 	m_Ndims = Ndims;
 	m_shape = new int[Ndims];
 	m_coordinate = new int[Ndims];
@@ -320,4 +321,16 @@ void Lattice::print() {
 	}
 
 	MPI_Barrier(mpiWrapper::comm());
+}
+
+int* Lattice::getShape() const{
+	return m_shape;
+}
+
+int Lattice::getNdims() const{
+	return m_Ndims;
+}
+
+std::string Lattice::getType() const{
+	return type;
 }

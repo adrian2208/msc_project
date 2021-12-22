@@ -1,6 +1,6 @@
 #pragma once 
 #include "../mpiWrapper.h"
-
+#include <string>
 
 
 class Lattice {
@@ -29,9 +29,12 @@ public:
 	void print_indices();
 
 	void print();
+
+	int* getShape() const;
+	int getNdims() const;
+	std::string getType() const;
 	
-	int* m_shape;//The size of the lattice for each dimension
-	int m_Ndims;//The number of lattice dimensions
+
 	int m_totalVolume;//The total number of lattice points for the entire lattice
 	int m_thisProc_Volume;//The number of lattice points stored by this process, including shared points
 	int m_responsible_Volume;//The number of lattice points stored by this process, excluding shared points
@@ -52,8 +55,13 @@ public:
 
 
 protected:
+	int* m_shape;//The size of the lattice for each dimension
+	int m_Ndims;//The number of lattice dimensions
+
 	int* m_coordinate;//stores the current working coordinate 
 	int* m_coorFwd;//stores a coordinate forwardly neighbouring the current working coordinate 
 	int* m_coorBack;//stores a coordinate backwardly neighbouring the current working coordinate 
+
+	std::string type;
 
 };
