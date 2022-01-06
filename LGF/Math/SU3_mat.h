@@ -13,8 +13,9 @@ public:
 	C_double det() const;
 	void setToIdentity();
 
-private:
 	C_double* mat;
+private:
+	
 	void allocate_matrix();
 
 	
@@ -22,4 +23,6 @@ private:
 };
 
 su3_mat operator*(const su3_mat& a, const su3_mat& b);
+su3_mat operator*(const su3_mat& a, const int b);
+su3_mat operator*(const int b, const su3_mat& a);
 std::ostream& operator << (std::ostream& stream, const su3_mat& a);

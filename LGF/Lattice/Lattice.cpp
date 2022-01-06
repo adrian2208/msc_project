@@ -331,6 +331,10 @@ int Lattice::getNdims() const{
 	return m_Ndims;
 }
 
+int Lattice::getthisProc_Volume() const{
+	return m_thisProc_Volume;
+}
+
 std::string Lattice::getType() const{
 	return type;
 }

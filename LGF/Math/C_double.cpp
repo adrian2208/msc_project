@@ -37,6 +37,12 @@ C_double operator-(const C_double& a, const C_double& b) {
 C_double operator*(const C_double& a, const C_double& b) {
 	return C_double(a.R() * b.R() - a.I() * b.I(), a.R() * b.I() + a.I() * b.R());
 }
+C_double operator*(const C_double& a, const int b){
+	return C_double(a.R()*b,a.I()*b);
+}
+C_double operator*(const int b, const C_double& a){
+	return a*b;
+}
 std::ostream& operator << (std::ostream& stream, const C_double& a) {
 	stream << "(" << a.R();
 	if (a.I() == 0) {

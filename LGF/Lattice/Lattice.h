@@ -32,6 +32,7 @@ public:
 
 	int* getShape() const;
 	int getNdims() const;
+	int getthisProc_Volume() const;
 	std::string getType() const;
 	
 

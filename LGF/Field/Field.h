@@ -34,14 +34,14 @@ public:
 		std::filesystem::path outPath("../../../../data/ensembles");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
-		std::filesystem::create_directory(outPath);
+		std::filesystem::create_directories(outPath);
 		//write the lattice shape to the filename
 		int i;
 		for (i = 0; i < m_lattice->getNdims()-1; i++) {
 			outPath += std::to_string(m_lattice->getShape()[i])+"X";
 		}
 		//write the lattice type and the .bin extension to the filename
-		outPath += std::to_string(m_lattice->getShape()[i]) + "_" + m_lattice->getType() + "_" + std::to_string(mpiWrapper::nProcs()) + "_";
+		outPath += std::to_string(m_lattice->getShape()[i]) + "_" + m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_" + std::to_string(mpiWrapper::nProcs()) + "_";
 		outPath += identifier;
 		outPath += ".bin";
 		//convert the filesystem path to a format suitable for the MPI_File_open argument
@@ -67,6 +67,7 @@ public:
 		//process n and process n-1
 		displacement = mpiWrapper::id();
 		displacement *= m_FieldArray_NrBytes;
+
 		//The file is written
 		result = MPI_File_write_at(file, displacement, FieldArray, NrDatatype, dataType, &status);
 		if (result != MPI_SUCCESS) {
@@ -89,14 +90,14 @@ public:
 		std::filesystem::path outPath("../../../../data/ensembles");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
-		std::filesystem::create_directory(outPath);
+		//std::filesystem::create_directories(outPath);
 		//write the lattice shape to the filename
 		int i;
 		for (i = 0; i < m_lattice->getNdims() - 1; i++) {
 			outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 		}
 		//write the lattice type and the .bin extension to the filename
-		outPath += std::to_string(m_lattice->getShape()[i]) + "_" + m_lattice->getType() + "_" + std::to_string(mpiWrapper::nProcs()) + "_";
+		outPath += std::to_string(m_lattice->getShape()[i]) + "_" + m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_" + std::to_string(mpiWrapper::nProcs()) + "_";
 		outPath += identifier;
 		outPath += ".bin";
 
@@ -135,7 +136,8 @@ public:
 protected:
 	T* FieldArray;
 	int m_NrExtDOF;//the number of external DOF e.g. 4: mu=0,1,2,3
-private:
 	Lattice* m_lattice;
 	int m_FieldArray_NrBytes;
+private:
+
 };

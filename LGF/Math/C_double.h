@@ -23,4 +23,6 @@ private:
 C_double operator+(const C_double& a, const C_double& b);
 C_double operator-(const C_double& a, const C_double& b);
 C_double operator*(const C_double& a, const C_double& b);
+C_double operator*(const C_double& a, const int b);
+C_double operator*(const int b, const C_double& a);
 std::ostream& operator << (std::ostream& stream, const C_double& a);

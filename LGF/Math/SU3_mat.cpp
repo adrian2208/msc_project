@@ -57,6 +57,24 @@ su3_mat operator*(const su3_mat& a, const su3_mat& b){
 	return out;
 }
 
+su3_mat operator*(const su3_mat& a, const int b){
+	su3_mat out;
+	out[0] = a[0] * b;
+	out[1] = a[1] * b;
+	out[2] = a[2] * b;
+	out[3] = a[3] * b;
+	out[4] = a[4] * b;
+	out[5] = a[5] * b;
+	out[6] = a[6] * b;
+	out[7] = a[7] * b;
+	out[8] = a[8] * b;
+	return out;
+}
+
+su3_mat operator*(const int b, const su3_mat& a){
+	return a*b;
+}
+
 std::ostream& operator << (std::ostream& stream, const su3_mat& a) {
 	stream << a[0] << " " << a[1] << " " << a[2] << "\n" << a[3] << " " << a[4] << " " << a[5] << "\n" << a[6] << " " << a[7] << " " << a[8];
 	return stream;
