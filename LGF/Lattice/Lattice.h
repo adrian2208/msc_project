@@ -24,12 +24,6 @@ public:
 	// defaulting to 1 vertex overlap
 	virtual bool is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack);
 
-
-
-	void print_indices();
-
-	void print();
-
 	int* getShape() const;
 	int getNdims() const;
 	int getthisProc_Volume() const;
@@ -46,11 +40,14 @@ public:
 	int* m_Internal_IdxToParity;//gives the parity of the lattice point with that internal index
 	
 	int** m_cntr;//The center coordinate by [Internal index][space-time direction]
+	
+	//returns the internal index of the 
 	int** m_fwd;//the forward neighbour by [Internal index][space-time direction]
 	int** m_back;//the backward neighbour by [Internal index][space-time direction]
+	// moving forward or backwards in the space-time direction given
 
-	int** m_InternalIdx_start;
-	int** m_InternalIdx_stop;
+	int** m_InternalIdx_start;//[procID][parity(=0/1)]->the starting internal index for boundary sites governed by procID with that parity
+	int** m_InternalIdx_stop;//[procID][parity(=0/1)]->the last internal index for boundary sites governed by procID with that parity
 	int* m_BufferSize;//The size of the buffer that should be allocated for each process, including itself and processes that don't share sites ID i.e. size=0
 	int** m_Buffer_receive;//indexed by [proc id][idx] with idx=0 corresponding to the first entry of m_InternalIdx_start[SendingTo_id][0] except with this process' internal index
 

@@ -14,3 +14,5 @@
 #include "mpiWrapper.h"
 #include "mpi.h"
 #include "Math/Random.h"
+
+void testSaveLoad(int argc, char** argv);

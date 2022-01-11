@@ -154,14 +154,8 @@ void Lattice::partition_lattice(){
 		for (int j = 0; j < m_Ndims; j++) {
 			m_cntr[i][j] = m_coordinate[j];
 			NearestNeighbour(m_coordinate, j, m_coorFwd, m_coorBack);
-			//if (m_Internal_IdxToProcId[i] == mpiWrapper::id()) {
-				m_fwd[i][j] = m_TotalToInternal_idx[totalIndex(m_coorFwd)];
-				m_back[i][j] = m_TotalToInternal_idx[totalIndex(m_coorBack)];
-			//}
-			//else{
-			//	if (m_TotalToInternal_idx[totalIndex(m_coorFwd)] != INT_MAX) {
-					
-			//	}
+			m_fwd[i][j] = m_TotalToInternal_idx[totalIndex(m_coorFwd)];
+			m_back[i][j] = m_TotalToInternal_idx[totalIndex(m_coorBack)];
 		}
 	}
 
@@ -283,45 +277,6 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 	return false;
 }
 
-void Lattice::print_indices(){
-	for (int i = 0; i < m_thisProc_Volume; i++) {
-			std::cout << m_thisProc_TotalIndex[i] << ",";
-	}
-	std::cout << "\n";
-	MPI_Barrier(mpiWrapper::comm());
-}
-
-void Lattice::print() {
-	int** myArray = new int* [m_shape[0]];
-	for (int i = 0; i < m_shape[0]; i++) {
-		myArray[i] = new int[m_shape[1]];
-	}
-
-	int* coor = new int[2];
-	coor[0] = 0;
-	coor[1] = 0;
-
-	int i = 0;
-	while (i < m_totalVolume) {
-		int totalIdx = totalIndex(coor);
-		int x = coor[0];
-		int y = coor[1]; 
-		myArray[x][y]=totalIdx;
-		std::cout << x << "," << y <<"," << totalIdx << "\n";
-		traverse_lattice(coor, m_Ndims, m_shape);
-		
-		i++;
-	}
-
-	for (i = 0; i < m_shape[0]; ++i){
-		for (int j = 0; j < m_shape[1]; ++j){
-			std::cout << myArray[i][j] << ' ';
-		}
-		std::cout << std::endl;
-	}
-
-	MPI_Barrier(mpiWrapper::comm());
-}
 
 int* Lattice::getShape() const{
 	return m_shape;

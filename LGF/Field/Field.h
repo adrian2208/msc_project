@@ -15,14 +15,30 @@ public:
 		m_FieldArray_NrBytes = sizeof(T)* NrExtDOF * lattice.m_thisProc_Volume;
 	}
 	
-	// overloads () operator on Field instance to return T situated on Vertex x and ext. DOF mu by reference
-	inline T& operator() (Vertex x, int mu) {
-		return FieldArray[x.index * m_NrExtDOF + mu];
-	}
 	inline T& operator() (int i, int mu) {
 		return FieldArray[i * m_NrExtDOF + mu];
 	}
-	
+	/// <summary>
+	/// Returns the field value of ext. dof mu of the site located in the forward spaceTime_direction
+	/// </summary>
+	/// <param name="internal_index">Index of current site in the internal parameterization of the lattice</param>
+	/// <param name="spaceTime_direction"> neighbour point in space-time direction</param>
+	/// <param name="mu"> external dof you wish to access on the neighbour site</param>
+	/// <returns>Field value T of neighbour at dof mu by reference</returns>
+	T& fwd_fieldVal(int internal_index, int spaceTime_direction,int mu) {
+		return FieldArray[m_lattice->m_fwd[internal_index][spaceTime_direction] * m_NrExtDOF + mu];
+	}
+	/// <summary>
+	/// Returns the field value of ext. dof mu of the site located in the backwards spaceTime_direction
+	/// </summary>
+	/// <param name="internal_index">Index of current site in the internal parameterization of the lattice</param>
+	/// <param name="spaceTime_direction"> neighbour point in negative space-time direction</param>
+	/// <param name="mu"> external dof you wish to access on the neighbour site</param>
+	/// <returns>Field value T of neighbour at dof mu by reference</returns>
+	T& back_fieldVal(int internal_index, int spaceTime_direction, int mu) {
+		return FieldArray[m_lattice->m_back[internal_index][spaceTime_direction] * m_NrExtDOF + mu];
+	}
+
 	//Writes a binary file containing the FieldArray of each process
 	//ordered by their rank. Contained in data- directory
 	void saveToFile(const std::filesystem::path& fieldType = "/generic/", const std::filesystem::path& identifier = "") {
@@ -132,7 +148,12 @@ public:
 		MPI_File_close(&file);
 
 	};
-
+	Lattice &getLatticePtr() const{
+		return *m_lattice;
+	}
+	int getNrExtDOF() const {
+		return m_NrExtDOF;
+	}
 protected:
 	T* FieldArray;
 	int m_NrExtDOF;//the number of external DOF e.g. 4: mu=0,1,2,3

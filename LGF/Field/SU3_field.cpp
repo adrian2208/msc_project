@@ -51,7 +51,7 @@ void SU3_field::saveSU3ToFile(const std::filesystem::path& identifier){
 	//The file is written
 	for (int site = 0; site < m_lattice->getthisProc_Volume(); site++) {
 		for (int extDOF = 0; extDOF < m_NrExtDOF; extDOF++) {
-			result = MPI_File_write_at(file, displacement, FieldArray[site*m_NrExtDOF+extDOF].mat, 144, dataType, &status);
+			result = MPI_File_write_at(file, displacement, FieldArray[site*m_NrExtDOF+extDOF].getMemPointer(), 144, dataType, &status);
 			displacement += 144;
 		}
 	}
@@ -108,7 +108,7 @@ void SU3_field::loadSU3FromFile(const std::filesystem::path& identifier){
 	//The file is written
 	for (int site = 0; site < m_lattice->getthisProc_Volume(); site++) {
 		for (int extDOF = 0; extDOF < m_NrExtDOF; extDOF++) {
-			result = MPI_File_read_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].mat, 144, dataType, &status);
+			result = MPI_File_read_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].getMemPointer(), 144, dataType, &status);
 			displacement += 144;
 		}
 	}
@@ -116,4 +116,53 @@ void SU3_field::loadSU3FromFile(const std::filesystem::path& identifier){
 		std::cout << "Error: " << result << "-> MPI_File_write_at\n";
 	}
 	MPI_File_close(&file);
+}
+
+void SU3_field::CommunicateFieldValues(){
+}
+
+double SU3_field::total_PlaquetteSum(){
+	double localSum = 0.0;
+	double totalSum = 0.0;
+	for (int i = 0; i < m_lattice->m_responsible_Volume; i++) {
+		for (int mu = 0; mu < m_NrExtDOF-1; mu++) {
+			for (int nu = mu + 1; nu < m_NrExtDOF; nu++) {
+				localSum += plaquette(i, mu, nu).ReTr();
+			}
+		}
+	}
+	
+	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
+	return totalSum;
+}
+/// <summary>
+/// Calculates the 
+/// </summary>
+/// <param name="internal_index"></param>
+/// <param name="mu"></param>
+/// <returns></returns>
+su3_mat SU3_field::staple(int internal_index, int mu){
+	su3_mat out;
+	out[0] = C_double(0.0, 0.0);
+	out[1] = C_double(0.0, 0.0);
+	out[2] = C_double(0.0, 0.0);
+	out[3] = C_double(0.0, 0.0);
+	out[4] = C_double(0.0, 0.0);
+	out[5] = C_double(0.0, 0.0);
+	out[6] = C_double(0.0, 0.0);
+	out[7] = C_double(0.0, 0.0);
+	out[8] = C_double(0.0, 0.0);
+	int displacedIdx;
+	for (int nu = 0; nu < m_NrExtDOF; nu++) {
+		if (mu != nu) {
+			displacedIdx = m_lattice->m_back[internal_index][nu];
+			out = out + this->fwd_fieldVal(internal_index, mu, nu) * (this->fwd_fieldVal(internal_index, nu, mu)).dagger() * ((*this)(internal_index, mu)).dagger()
+				+ this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * ((*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx, nu);
+		}
+	}
+	return out;
+}
+
+inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){
+	return (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu) * this->fwd_fieldVal(internal_index, nu, mu).dagger() * (*this)(internal_index, nu).dagger();
 }
