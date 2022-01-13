@@ -18,7 +18,7 @@ public:
 	}
 
 	void rnd_su3_alg(su3_mat& mat, double epsilon) {
-
+		
 		//check whether its ok to use the same distribution many times...
 		std::uniform_real_distribution<double> distribution(-0.5, 0.5);
 		double norm, r0, r1, r2, r3, x0, x1, x2, x3;

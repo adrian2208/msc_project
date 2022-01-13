@@ -2,6 +2,8 @@
 #include "C_double.h"
 #include <iostream>
 #include <vector>
+
+
 class su3_mat {
 public:
 	su3_mat();
@@ -22,6 +24,7 @@ public:
 	//su3_mat& at();!!!!!!!!!!!!!!!!!!!!!!DELETE MEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	void setToIdentity();
+	void setToZeros();
 	C_double* getMemPointer();
 	
 private:
@@ -51,6 +54,8 @@ su3_mat operator*(const C_double b,const su3_mat& a);
 /// and Mike Peardon
 /// </summary>
 /// <param name="Q"></param>
-void HermTrLessExp(su3_mat& iP);
+su3_mat HermTrLessExp(su3_mat& iP);
+
+bool IsHermTrLess(su3_mat& mat, bool silence= false);
 
 std::ostream& operator << (std::ostream& stream, const su3_mat& a);

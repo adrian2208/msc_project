@@ -143,6 +143,7 @@ double SU3_field::total_PlaquetteSum(){
 /// <returns></returns>
 su3_mat SU3_field::staple(int internal_index, int mu){
 	su3_mat out;
+	//NOT NESCESSARY -- SEE DEFAULT CONSTRUCTOR!
 	out[0] = C_double(0.0, 0.0);
 	out[1] = C_double(0.0, 0.0);
 	out[2] = C_double(0.0, 0.0);
@@ -152,6 +153,7 @@ su3_mat SU3_field::staple(int internal_index, int mu){
 	out[6] = C_double(0.0, 0.0);
 	out[7] = C_double(0.0, 0.0);
 	out[8] = C_double(0.0, 0.0);
+	//-----DELETE ME ----------------
 	int displacedIdx;
 	for (int nu = 0; nu < m_NrExtDOF; nu++) {
 		if (mu != nu) {
@@ -165,4 +167,10 @@ su3_mat SU3_field::staple(int internal_index, int mu){
 
 inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){
 	return (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu) * this->fwd_fieldVal(internal_index, nu, mu).dagger() * (*this)(internal_index, nu).dagger();
+}
+
+void SU3_field::operator=(const SU3_field& field){
+	for (int i = 0; i < 9*field.m_NrExtDOF*field.m_lattice->getthisProc_Volume(); i++) {
+		FieldArray[i] = field.FieldArray[i];
+	}
 }

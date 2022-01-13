@@ -73,6 +73,18 @@ C_double operator*(const C_double& a, const double b){
 C_double operator*(const double b, const C_double& a){
 	return a*b;
 }
+bool operator<(const C_double& a, const C_double& b){
+	if (a.R() < b.R() && a.I() < b.I()) {
+		return true;
+	}
+	return false;
+}
+bool operator>(const C_double& a, const C_double& b){
+	if (a.R() > b.R() && a.I() > b.I()) {
+		return true;
+	}
+	return false;
+}
 std::ostream& operator << (std::ostream& stream, const C_double& a) {
 	stream << "(" << a.R();
 	if (a.I() == 0) {

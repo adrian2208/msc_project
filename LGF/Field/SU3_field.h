@@ -14,4 +14,6 @@ public:
 	su3_mat staple(int internal_index, int mu);
 	inline su3_mat plaquette(int internal_index, int mu, int nu);
 
+	void operator= (const SU3_field& field);
+
 };

@@ -105,6 +105,9 @@ void su3_mat::setToIdentity(){
 	mat[0].Im = mat[4].Im = mat[8].Im = 0.0;
 	mat[1] = mat[2] = mat[3] = mat[5] = mat[6] = mat[7] = C_double(0.0, 0.0);
 }
+void su3_mat::setToZeros() {
+	mat[0] = mat[1] = mat[2] = mat[3] = mat[4] = mat[5] = mat[6] = mat[7] = mat[8] = C_double(0.0, 0.0);
+}
 
 C_double* su3_mat::getMemPointer(){
 	return mat;
@@ -205,7 +208,15 @@ su3_mat operator*(const C_double b, const su3_mat& a){
 	return a*b;
 }
 
-void HermTrLessExp(su3_mat& iP){
+su3_mat HermTrLessExp(su3_mat& iP){
+
+#ifdef _DEBUG
+	bool Is_iP_appropriate = IsHermTrLess(iP, true);
+	if (!Is_iP_appropriate) {
+		std::cout << "Attempted exponentiation of unfit matrix" << "\n";
+	}
+#endif // _DEBUG
+
 	su3_mat Q = iP.timesMinusI();
 	su3_mat Q_squared = Q * Q;
 	double c0 = (Q * Q_squared).ReTr() / 3.0;//eq(14)
@@ -215,7 +226,7 @@ void HermTrLessExp(su3_mat& iP){
 	double c0_max = 2.0 * pow((c1 / 3.0), 1.5);//eq(17)
 	double absOverMax = c0_abs / c0_max;
 	if (absOverMax > 1.0 || absOverMax< 0.0) {
-		std::cout << "ERROR: attempted acos(x) with invalid entry\n";
+		std::cout << "ERROR: attempted acos(x) with invalid entry: x = "<<absOverMax << "\n";
 	}
 	double theta_div3 = acos(absOverMax) / 3.0;//eq(25)
 	double u = sqrt(1.0 / 3.0)*c1_sqrt * cos(theta_div3);//eq(23)
@@ -262,10 +273,33 @@ void HermTrLessExp(su3_mat& iP){
 		f2 = C_double((-1.0 + c1 * (1.0 - c1 * (1.0 - c1 / 56.0) / 30.0) / 12.0 + c0_squared / 20160.0)/2.0, (c0 * (1.0 - c1 * (1.0 - c1 / 48.0) / 21.0) / 60.0)/2.0);
 	}
 
-	iP = f1 * Q + f2 * Q_squared;
-	iP[0] += f0;
-	iP[4] += f0;
-	iP[8] += f0;
+	Q = f1 * Q + f2 * Q_squared;
+	Q[0] += f0;
+	Q[4] += f0;
+	Q[8] += f0;
+	return Q;
+}
+
+bool IsHermTrLess(su3_mat& mat,bool silence){
+	C_double tolerance(0.001,0.001);
+	C_double trace = mat.Tr();
+	su3_mat matSum(mat - mat.dagger());
+	bool out = true;
+	if (trace > tolerance) {
+		if (!silence) {
+			std::cout << "Not hermitian due to trace: " << mat.Tr() << "\n";
+		}
+		out = false;
+	}
+	for (int i = 0; i < 9; i++) {
+		if (matSum[i] > tolerance) {
+			if (!silence) {
+				std::cout << "Not hermitian due to entry" << i << "of mat-mat^dagger being" << matSum[i] << "\n";
+			}
+			out = false;
+		}
+	}
+	return out;
 }
 
 std::ostream& operator << (std::ostream& stream, const su3_mat& a) {

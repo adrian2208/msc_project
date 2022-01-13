@@ -14,5 +14,8 @@
 #include "mpiWrapper.h"
 #include "mpi.h"
 #include "Math/Random.h"
+#include "HMC/HMC.h"
+#include "Math/SU3_gen.h"
 
 void testSaveLoad(int argc, char** argv);
+void testHMC(int argc, char** argv);

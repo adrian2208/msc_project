@@ -1,6 +1,7 @@
 #pragma once
 #include "../Action.h"
 #include "../../Field/SU3_field.h"
+#include "../../Math/SU3_mat.h"
 class Wilson : public Action {
 public:
 	Wilson(double beta);
