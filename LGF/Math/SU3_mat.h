@@ -21,7 +21,7 @@ public:
 	C_double det() const;
 	C_double Tr() const;
 	double ReTr() const;
-	//su3_mat& at();!!!!!!!!!!!!!!!!!!!!!!DELETE MEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	su3_mat& at();//!!!!!!!!!!!!!!!!!!!!!!DELETE MEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	void setToIdentity();
 	void setToZeros();
@@ -57,5 +57,7 @@ su3_mat operator*(const C_double b,const su3_mat& a);
 su3_mat HermTrLessExp(su3_mat& iP);
 
 bool IsHermTrLess(su3_mat& mat, bool silence= false);
+bool IsAntiHermTrLess(su3_mat& mat, bool silence = false);
+bool isSpecialUnitary(su3_mat& mat, bool silence = false);
 
 std::ostream& operator << (std::ostream& stream, const su3_mat& a);

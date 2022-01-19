@@ -10,10 +10,10 @@ public:
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!TRY WITHOUT MPI_ALLREDUCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	double total_PlaquetteSum();
-
+	double Avg_Plaquette();
 	su3_mat staple(int internal_index, int mu);
 	inline su3_mat plaquette(int internal_index, int mu, int nu);
-
+	
 	void operator= (const SU3_field& field);
-
+	//void  copyFieldVals(const SU3_field& field);
 };

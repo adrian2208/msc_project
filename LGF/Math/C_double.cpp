@@ -55,6 +55,12 @@ C_double C_double::timesMinusI() const{
 C_double operator+(const C_double& a, const C_double& b) {
 	return C_double(a.R() + b.R(), a.I() + b.I());
 }
+C_double operator+(const C_double& a, const double b){
+	return C_double(a.R()+b,a.I());
+}
+C_double operator+(const double b, const C_double& a){
+	return C_double(a.R() + b, a.I());
+}
 C_double operator-(const C_double& a, const C_double& b) {
 	return C_double(a.R() - b.R(), a.I() - b.I());
 }
@@ -73,14 +79,44 @@ C_double operator*(const C_double& a, const double b){
 C_double operator*(const double b, const C_double& a){
 	return a*b;
 }
+/// <summary>
+/// USES OR 
+/// </summary>
 bool operator<(const C_double& a, const C_double& b){
-	if (a.R() < b.R() && a.I() < b.I()) {
+	if (a.R() < b.R() || a.I() < b.I()) {
 		return true;
 	}
 	return false;
 }
+/// <summary>
+/// USES OR 
+/// </summary>
 bool operator>(const C_double& a, const C_double& b){
-	if (a.R() > b.R() && a.I() > b.I()) {
+	if (a.R() > b.R() || a.I() > b.I()) {
+		return true;
+	}
+	return false;
+}
+bool operator>(const C_double& a, const double b){
+	if (a.R() > b ) {
+		return true;
+	}
+	return false;
+}
+bool operator>(const double b, const C_double& a){
+	if (b > a.R()) {
+		return true;
+	}
+	return false;
+}
+bool operator<(const C_double& a, const double b){
+	if (a.R() < b) {
+		return true;
+	}
+	return false;
+}
+bool operator<(const double b, const C_double& a){
+	if (b < a.R()) {
 		return true;
 	}
 	return false;

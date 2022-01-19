@@ -10,6 +10,7 @@ public:
 	double calculate_KineticEnergy(SU3_field& P);
 	void leapfrog(SU3_field& U, SU3_field& P,SU3_field& F, Action& action);
 	void update();
+	double acceptanceRate();
 private:
 	SU3_field* m_P;
 	SU3_field* m_F;
@@ -25,4 +26,13 @@ private:
 	int m_NrstepsTaken;
 	int m_NrleapfrogSteps;
 	double m_epsilon;
+
+
+
+	double exp_val_Plaquette;
+#ifdef _DEBUG
+	
+	double exp_val_expdeltaH;
+#endif // _DEBUG
+
 };

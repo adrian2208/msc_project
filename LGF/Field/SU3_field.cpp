@@ -127,11 +127,26 @@ double SU3_field::total_PlaquetteSum(){
 	for (int i = 0; i < m_lattice->m_responsible_Volume; i++) {
 		for (int mu = 0; mu < m_NrExtDOF-1; mu++) {
 			for (int nu = mu + 1; nu < m_NrExtDOF; nu++) {
-				localSum += plaquette(i, mu, nu).ReTr();
+				localSum += 1.0-1.0/3.0*(plaquette(i, mu, nu).ReTr());
 			}
 		}
 	}
 	
+	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
+	return totalSum;
+}
+double SU3_field::Avg_Plaquette() {
+	double localSum = 0.0;
+	double totalSum = 0.0;
+	int div = m_lattice->m_responsible_Volume;
+	for (int i = 0; i < m_lattice->m_responsible_Volume; i++) {
+		for (int mu = 0; mu < m_NrExtDOF - 1; mu++) {
+			for (int nu = mu + 1; nu < m_NrExtDOF; nu++) {
+				localSum += plaquette(i, mu, nu).ReTr();
+			}
+		}
+	}
+	localSum /= 3.0*6.0*(double)div;
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
 	return totalSum;
 }
@@ -158,19 +173,28 @@ su3_mat SU3_field::staple(int internal_index, int mu){
 	for (int nu = 0; nu < m_NrExtDOF; nu++) {
 		if (mu != nu) {
 			displacedIdx = m_lattice->m_back[internal_index][nu];
-			out = out + this->fwd_fieldVal(internal_index, mu, nu) * (this->fwd_fieldVal(internal_index, nu, mu)).dagger() * ((*this)(internal_index, mu)).dagger()
-				+ this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * ((*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx, nu);
+			out = out + this->fwd_fieldVal(internal_index, mu, nu) * (this->fwd_fieldVal(internal_index, nu, mu)).dagger() * ((*this)(internal_index, nu)).dagger()
+				+ (this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * ((*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx, nu);
 		}
 	}
 	return out;
 }
 
 inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){
-	return (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu) * this->fwd_fieldVal(internal_index, nu, mu).dagger() * (*this)(internal_index, nu).dagger();
+	su3_mat out;
+	out = (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu) * this->fwd_fieldVal(internal_index, nu, mu).dagger() * (*this)(internal_index, nu).dagger();
+	isSpecialUnitary(out);
+	return out;
 }
 
 void SU3_field::operator=(const SU3_field& field){
-	for (int i = 0; i < 9*field.m_NrExtDOF*field.m_lattice->getthisProc_Volume(); i++) {
+	for (int i = 0; i < field.m_NrExtDOF*field.m_lattice->getthisProc_Volume(); i++) {
 		FieldArray[i] = field.FieldArray[i];
 	}
 }
+
+//void  SU3_field::copyFieldVals(const SU3_field& field) {
+//	for (int i = 0; i < field.m_NrExtDOF * field.m_lattice->getthisProc_Volume(); i++) {
+//				FieldArray[i] = field.FieldArray[i];
+//		}
+//}

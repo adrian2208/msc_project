@@ -63,13 +63,13 @@ su3_mat su3_mat::dagger(){
 su3_mat su3_mat::timesI() const{
 	su3_mat out;
 	out[0] = mat[0].timesI();
-	out[1] = mat[3].timesI();
-	out[2] = mat[6].timesI();
-	out[3] = mat[1].timesI();
+	out[1] = mat[1].timesI();
+	out[2] = mat[2].timesI();
+	out[3] = mat[3].timesI();
 	out[4] = mat[4].timesI();
-	out[5] = mat[7].timesI();
-	out[6] = mat[2].timesI();
-	out[7] = mat[5].timesI();
+	out[5] = mat[5].timesI();
+	out[6] = mat[6].timesI();
+	out[7] = mat[7].timesI();
 	out[8] = mat[8].timesI();
 	return out;
 }
@@ -77,13 +77,13 @@ su3_mat su3_mat::timesI() const{
 su3_mat su3_mat::timesMinusI() const{
 	su3_mat out;
 	out[0] = mat[0].timesMinusI();
-	out[1] = mat[3].timesMinusI();
-	out[2] = mat[6].timesMinusI();
-	out[3] = mat[1].timesMinusI();
+	out[1] = mat[1].timesMinusI();
+	out[2] = mat[2].timesMinusI();
+	out[3] = mat[3].timesMinusI();
 	out[4] = mat[4].timesMinusI();
-	out[5] = mat[7].timesMinusI();
-	out[6] = mat[2].timesMinusI();
-	out[7] = mat[5].timesMinusI();
+	out[5] = mat[5].timesMinusI();
+	out[6] = mat[6].timesMinusI();
+	out[7] = mat[7].timesMinusI();
 	out[8] = mat[8].timesMinusI();
 	return out;
 }
@@ -211,7 +211,7 @@ su3_mat operator*(const C_double b, const su3_mat& a){
 su3_mat HermTrLessExp(su3_mat& iP){
 
 #ifdef _DEBUG
-	bool Is_iP_appropriate = IsHermTrLess(iP, true);
+	bool Is_iP_appropriate = IsAntiHermTrLess(iP);
 	if (!Is_iP_appropriate) {
 		std::cout << "Attempted exponentiation of unfit matrix" << "\n";
 	}
@@ -220,13 +220,15 @@ su3_mat HermTrLessExp(su3_mat& iP){
 	su3_mat Q = iP.timesMinusI();
 	su3_mat Q_squared = Q * Q;
 	double c0 = (Q * Q_squared).ReTr() / 3.0;//eq(14)
-	double c0_abs = abs(c0);//explanation below eq(34)
+	long double c0_abs = abs(c0);//explanation below eq(34)
 	double c1 = Q_squared.ReTr() / 2.0;//eq(15)
 	double c1_sqrt = sqrt(c1);
-	double c0_max = 2.0 * pow((c1 / 3.0), 1.5);//eq(17)
-	double absOverMax = c0_abs / c0_max;
+	long double c0_max = 2.0 * pow((c1 / 3.0), 1.5);//eq(17)
+	long double absOverMax = c0_abs / c0_max;
 	if (absOverMax > 1.0 || absOverMax< 0.0) {
 		std::cout << "ERROR: attempted acos(x) with invalid entry: x = "<<absOverMax << "\n";
+		//TESTING PURPOSE ONLY!!!!!!!!!!!!!!! REMOVE \/
+		absOverMax = 1.0;
 	}
 	double theta_div3 = acos(absOverMax) / 3.0;//eq(25)
 	double u = sqrt(1.0 / 3.0)*c1_sqrt * cos(theta_div3);//eq(23)
@@ -272,29 +274,88 @@ su3_mat HermTrLessExp(su3_mat& iP){
 		f1 = C_double(c0 * (1.0 - c1 * (1.0 - 3.0 * c1 / 112.0) / 15.0) / 24.0, 1.0 - c1 * (1.0 - c1 * (1 - c1 / 42.0) / 20.0) / 6.0 - c0_squared / 5040.0);
 		f2 = C_double((-1.0 + c1 * (1.0 - c1 * (1.0 - c1 / 56.0) / 30.0) / 12.0 + c0_squared / 20160.0)/2.0, (c0 * (1.0 - c1 * (1.0 - c1 / 48.0) / 21.0) / 60.0)/2.0);
 	}
-
-	Q = f1 * Q + f2 * Q_squared;
-	Q[0] += f0;
-	Q[4] += f0;
-	Q[8] += f0;
+	su3_mat identity;
+	identity.setToIdentity();
+	Q = f0*identity+f1 * Q + f2 * Q_squared;
+	//Q[0] += f0;
+	//Q[4] += f0;
+	//Q[8] += f0;
 	return Q;
 }
 
 bool IsHermTrLess(su3_mat& mat,bool silence){
-	C_double tolerance(0.001,0.001);
+	C_double tolerance(0.00001,0.00001);
 	C_double trace = mat.Tr();
 	su3_mat matSum(mat - mat.dagger());
 	bool out = true;
-	if (trace > tolerance) {
+	if (trace.R() > tolerance.R() || trace.I() > tolerance.I() || trace.R() < (-1.0 * tolerance.R()) || trace.I() < (-1.0 * tolerance.I())) {
 		if (!silence) {
-			std::cout << "Not hermitian due to trace: " << mat.Tr() << "\n";
+			std::cout << "Not hermitian and traceless due to trace: " << mat.Tr() << "\n";
 		}
 		out = false;
 	}
 	for (int i = 0; i < 9; i++) {
-		if (matSum[i] > tolerance) {
+		if (matSum[i].R() > tolerance.R() || matSum[i].I() > tolerance.I() || matSum[i].R() < (-1.0 * tolerance.R()) || matSum[i].I() < (-1.0 * tolerance.I())) {
 			if (!silence) {
-				std::cout << "Not hermitian due to entry" << i << "of mat-mat^dagger being" << matSum[i] << "\n";
+				std::cout << "Not hermitian and traceless due to entry " << i << " of mat-mat^dagger being " << matSum[i] << "\n";
+			}
+			out = false;
+		}
+	}
+	return out;
+}
+
+bool IsAntiHermTrLess(su3_mat& mat, bool silence) {
+	C_double tolerance(0.00001, 0.00001);
+	C_double trace = mat.Tr();
+	su3_mat matSum(mat + mat.dagger());
+	bool out = true;
+	if (trace.R() > tolerance.R() || trace.I() > tolerance.I() || trace.R() < (-1.0*tolerance.R()) || trace.I() < (-1.0*tolerance.I())) {
+		if (!silence) {
+			std::cout << "Not AntiHermTrLess due to trace: " << mat.Tr() << "\n";
+		}
+		out = false;
+	}
+	for (int i = 0; i < 9; i++) {
+		if (matSum[i].R() > tolerance.R() || matSum[i].I() > tolerance.I() || matSum[i].R() < (-1.0*tolerance.R()) || matSum[i].I() < (-1.0 * tolerance.I())) {
+			if (!silence) {
+				std::cout << "Not AntiHermTrLess due to entry " << i << " of mat+mat^dagger being " << matSum[i] << "\n";
+			}
+			out = false;
+		}
+	}
+	return out;
+}
+
+bool isSpecialUnitary(su3_mat& mat, bool silence) {
+	double smallNumber = 0.00001;
+	C_double tolerance(1.0+ smallNumber, 0.0+ smallNumber);
+	double tol = smallNumber;
+	C_double tol_offdiag(smallNumber, smallNumber);
+	C_double determinant = mat.det();
+	su3_mat matProduct(mat*mat.dagger());
+	bool out = true;
+	bool det_over= determinant > (1.0 + tol);
+	bool det_below = determinant < (1.0 - tol);
+	if (det_over || det_below) {
+		if (!silence) {
+			std::cout << "Not Special-Unitary due to determinant: " << determinant << "\n";
+		}
+		out = false;
+	}
+	for (int i = 0; i < 9; i+=4) {
+		if (matProduct[i] > tolerance || matProduct[i] < (tolerance-2.0* tol_offdiag)) {
+			if (!silence) {
+				std::cout << "Not Special-Unitary due to entry " << i << " of mat*mat^dagger being " << matProduct[i] << "\n";
+			}
+			out = false;
+		}
+	}
+	for (int i = 1; i < 8; i++) {
+		if (i == 4) { i++;}
+		if (matProduct[i] > tol_offdiag || matProduct[i] < -1.0*tol_offdiag) {
+			if (!silence) {
+				std::cout << "Not Special-Unitary due to entry " << i << " of mat*mat^dagger being " << matProduct[i] << "\n";
 			}
 			out = false;
 		}
@@ -306,29 +367,30 @@ std::ostream& operator << (std::ostream& stream, const su3_mat& a) {
 	stream << a[0] << " " << a[1] << " " << a[2] << "\n" << a[3] << " " << a[4] << " " << a[5] << "\n" << a[6] << " " << a[7] << " " << a[8];
 	return stream;
 }
+
 //DDDDDDDDDDDDEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEETTTTTTTTTTTTTTEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEE
-//su3_mat& su3_mat::at()
-//{
-//	for (int a = 0; a < 3; ++a) {
-//		for (int b = a + 1; b < 3; ++b) {
-//			double re = mat[(3 * a + b)].R() - mat[(3 * b + a)].R();
-//			double im = mat[(3 * a + b)].I() + mat[ (3 * b + a)].I();
-//
-//			mat[(3* a + b)].R() = 0.5 * re;
-//			mat[(3 * a + b)].I() = 0.5 * im;
-//
-//			mat[(3 * b + a)].R() = -0.5 * re;
-//			mat[(3 * b + a)].I() = 0.5 * im;
-//		}
-//	}
-//	double tr = 0.0;
-//	for (int cc = 0; cc < 3; ++cc) {
-//		tr += mat[(3 * cc + cc)].I();
-//	}
-//	tr = tr / 3;
-//	for (int cc = 0; cc < 3; ++cc) {
-//		mat[(3 * cc + cc)].R() = 0.0;
-//		mat[(3 * cc + cc)].I() -= tr;
-//	}
-//	return *this;
-//}
+su3_mat& su3_mat::at()
+{
+	for (int a = 0; a < 3; ++a) {
+		for (int b = a + 1; b < 3; ++b) {
+			double re = mat[(3 * a + b)].R() - mat[(3 * b + a)].R();
+			double im = mat[(3 * a + b)].I() + mat[ (3 * b + a)].I();
+
+			mat[(3* a + b)].R() = 0.5 * re;
+			mat[(3 * a + b)].I() = 0.5 * im;
+
+			mat[(3 * b + a)].R() = -0.5 * re;
+			mat[(3 * b + a)].I() = 0.5 * im;
+		}
+	}
+	double tr = 0.0;
+	for (int cc = 0; cc < 3; ++cc) {
+		tr += mat[(3 * cc + cc)].I();
+	}
+	tr = tr / 3;
+	for (int cc = 0; cc < 3; ++cc) {
+		mat[(3 * cc + cc)].R() = 0.0;
+		mat[(3 * cc + cc)].I() -= tr;
+	}
+	return *this;
+}

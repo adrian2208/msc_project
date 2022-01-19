@@ -25,6 +25,8 @@ private:
 };
 
 C_double operator+(const C_double& a, const C_double& b);
+C_double operator+(const C_double& a, const double b);
+C_double operator+(const double b, const C_double& a);
 C_double operator-(const C_double& a, const C_double& b);
 C_double operator*(const C_double& a, const C_double& b);
 C_double operator*(const C_double& a, const int b);
@@ -33,4 +35,8 @@ C_double operator*(const C_double& a, const double b);
 C_double operator*(const double b, const C_double& a);
 bool operator<(const C_double& a, const C_double& b);
 bool operator>(const C_double& a, const C_double& b);
+bool operator>(const C_double& a, const double b);
+bool operator>(const double b, const C_double& a);
+bool operator<(const C_double& a, const double b);
+bool operator<(const double b, const C_double& a);
 std::ostream& operator << (std::ostream& stream, const C_double& a);

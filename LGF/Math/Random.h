@@ -16,6 +16,10 @@ public:
 		std::uniform_real_distribution<double> out(0, 1);
 		return out(m_rng);
 	}
+	double Gaussian_Double(double mean, double std) {
+		std::normal_distribution<double> out(mean,std);
+		return out(m_rng);
+	}
 
 	void rnd_su3_alg(su3_mat& mat, double epsilon) {
 		

@@ -18,6 +18,14 @@ public:
 	inline T& operator() (int i, int mu) {
 		return FieldArray[i * m_NrExtDOF + mu];
 	}
+
+	//void operator=(const Field& field) {
+	//	for (int i = 0; i < field.m_NrExtDOF * field.m_lattice->getthisProc_Volume(); i++) {
+	//		FieldArray[i] = field.FieldArray[i];
+	//	}
+	//}
+
+	
 	/// <summary>
 	/// Returns the field value of ext. dof mu of the site located in the forward spaceTime_direction
 	/// </summary>
