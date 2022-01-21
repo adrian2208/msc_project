@@ -26,7 +26,10 @@ public:
 
 	int* getShape() const;
 	int getNdims() const;
-	int getthisProc_Volume() const;
+	//int getthisProc_Volume() const;
+	inline int getthisProc_Volume() const{
+	return m_thisProc_Volume;
+	}
 	std::string getType() const;
 	
 
@@ -48,8 +51,18 @@ public:
 
 	int** m_InternalIdx_start;//[procID][parity(=0/1)]->the starting internal index for boundary sites governed by procID with that parity
 	int** m_InternalIdx_stop;//[procID][parity(=0/1)]->the last internal index for boundary sites governed by procID with that parity
-	int* m_BufferSize;//The size of the buffer that should be allocated for each process, including itself and processes that don't share sites ID i.e. size=0
-	int** m_Buffer_receive;//indexed by [proc id][idx] with idx=0 corresponding to the first entry of m_InternalIdx_start[SendingTo_id][0] except with this process' internal index
+
+
+	int* m_BufferSize;//The size of the buffer that should be allocated for sending/receiving for each process, including itself and processes that don't share sites ID i.e. size=0
+	/// <summary>
+	/// indexed by [proc id][i] where i runs from 0 to m_BufferSize[proc id]:
+	/// Tells THIS process, which sites <proc id> needs to receive information about in THIS process' internal index
+	/// 
+	/// USE:
+	/// for i=0 -> i< m_buffersize[sending_to_id] -> i++ :
+	///		send field value at site m_Buffer_receive[sending_to_id][i]
+	/// </summary>
+	int** m_Buffer_receive;
 
 
 protected:

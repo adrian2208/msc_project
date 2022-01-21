@@ -13,6 +13,7 @@ HMC::HMC(SU3_field& U, Action& GaugeAction, double epsilon){
 	m_U_init = new SU3_field(U.getLatticePtr(), U.getNrExtDOF());
 	m_F_init = new SU3_field(U.getLatticePtr(), U.getNrExtDOF());
 	m_rand = new RNG_field(U.getLatticePtr());
+	(*m_U).transfer_FieldValues();
 	m_GaugeAction->calculate_Force((*m_U), (*m_F));
 	S_init = m_GaugeAction->calculate_Action((*m_U));
 
@@ -28,7 +29,7 @@ HMC::HMC(SU3_field& U, Action& GaugeAction, double epsilon){
 double HMC::calculate_KineticEnergy(SU3_field& P) {
 	double localSum = 0.0;
 	double totalSum = 0.0;
-	for (int i = 0; i < P.getLatticePtr().m_responsible_Volume; i++) {
+	for (int i = P.Responsible_Start(); i < P.Responsible_Stop(); i++) {
 		for (int mu = 0; mu < P.getNrExtDOF(); mu++) {
 			localSum +=(P(i, mu) * P(i, mu)).ReTr();
 		}
@@ -44,57 +45,26 @@ void HMC::leapfrog(SU3_field& U, SU3_field& P, SU3_field& F,Action& action){
 
 	su3_mat temp;
 	//initial half-step
-	for (int i = 0; i < P.getLatticePtr().m_responsible_Volume; i++) {
+	for (int i = P.Responsible_Start(); i < P.Responsible_Stop(); i++) {
 		for (int mu = 0; mu < P.getNrExtDOF(); mu++) {
 			P(i,mu) = P(i, mu) - (m_epsilon/2.0) * F(i, mu);
 		}
 	}
 
-
-#ifdef _DEBUG
-	for (int i = 0; i < m_P->getLatticePtr().m_responsible_Volume; i++) {
-		for (int mu = 0; mu < m_P->getNrExtDOF(); mu++) {
-			if (!IsHermTrLess(P(i, mu))) {
-				std::cout << "^  P while leapfrog\n";
-			}
-			if (!IsHermTrLess(F(i, mu))) {
-				std::cout << "^  F while leapfrog\n";
-			}
-		}
-	}
-
-#endif // _DEBUG
 	//n-2 full steps
 	for (int k = 1; k < m_NrleapfrogSteps; k++) {
 		//update U
-		for (int i = 0; i < P.getLatticePtr().m_responsible_Volume; i++) {
+		for (int i = U.Responsible_Start(); i < U.Responsible_Stop(); i++) {
 			for (int mu = 0; mu < P.getNrExtDOF(); mu++) {
 				temp = P(i, mu).timesI()*m_epsilon;
 				U(i, mu) = HermTrLessExp(temp) * U(i, mu);
-#ifdef _DEBUG
-				bool somethingWrong = false;
-				if (!IsHermTrLess(P(i, mu))) {
-					std::cout << "^  P\n";
-					somethingWrong = true;
-				}
-				if (!IsAntiHermTrLess(temp)) {
-					std::cout << "^  temp\n";
-					somethingWrong = true;
-				}
-				if (!isSpecialUnitary(U(i, mu))) {
-					std::cout << "^  U\n";
-					somethingWrong = true;
-				}
-				if (somethingWrong) {
-					std::cout << "Error on step nr. " << m_NrstepsTaken << "\n";
-				}
-#endif // _DEBUG
 			}
 		}
 		//update F
+		U.transfer_FieldValues();
 		action.calculate_Force(U, F);
 		//update P
-		for (int i = 0; i < P.getLatticePtr().m_responsible_Volume; i++) {
+		for (int i = P.Responsible_Start(); i < P.Responsible_Stop(); i++) {
 			for (int mu = 0; mu < P.getNrExtDOF(); mu++) {
 				P(i, mu) = P(i, mu) - m_epsilon * F(i, mu);
 			}
@@ -102,7 +72,7 @@ void HMC::leapfrog(SU3_field& U, SU3_field& P, SU3_field& F,Action& action){
 	}
 	//final half-step
 	//update U
-	for (int i = 0; i < P.getLatticePtr().m_responsible_Volume; i++) {
+	for (int i = U.Responsible_Start(); i < U.Responsible_Stop(); i++) {
 		for (int mu = 0; mu < P.getNrExtDOF(); mu++) {
 			temp = P(i, mu).timesI()*m_epsilon;
 			U(i, mu) = HermTrLessExp(temp) * U(i, mu);
@@ -110,9 +80,10 @@ void HMC::leapfrog(SU3_field& U, SU3_field& P, SU3_field& F,Action& action){
 	}
 
 	//update F
+	U.transfer_FieldValues();
 	action.calculate_Force(U, F);
 	//update P
-	for (int i = 0; i < P.getLatticePtr().m_responsible_Volume; i++) {
+	for (int i = P.Responsible_Start(); i < P.Responsible_Stop(); i++) {
 		for (int mu = 0; mu < P.getNrExtDOF(); mu++) {
 			P(i, mu) = P(i, mu) - (m_epsilon/2.0) * F(i, mu);
 		}
@@ -126,13 +97,11 @@ void HMC::update(){
 	Random rng;
 	su3_mat LinCombGen;
 	SU3_gen generators;
-	//double eps = 0.0001;//DELETE ME IF BELOW DOESNT WORK
-	for (int i = 0; i < m_P->getLatticePtr().m_responsible_Volume; i++) {
+	for (int i = (*m_P).Responsible_Start(); i < (*m_P).Responsible_Stop(); i++) {
 		for (int mu = 0; mu < m_P->getNrExtDOF(); mu++) {
 			for (int j = 0; j < 8; j++) {
 				LinCombGen = LinCombGen + rng.Gaussian_Double(0.0,1.0) * generators(j);
 			}
-			//(*m_rand)(i, 0).rnd_su3_alg((*m_P)(i, mu), eps);//MAY NOT WORK.. SEE WORKSHEET
 			(*m_P)(i, mu) = LinCombGen;
 			LinCombGen.setToZeros();
 		}
@@ -140,29 +109,6 @@ void HMC::update(){
 	double KE_init = calculate_KineticEnergy((*m_P));
 	double H_init = S_init + KE_init;
 	leapfrog((*m_U), (*m_P), (*m_F), (*m_GaugeAction));
-
-#ifdef _DEBUG
-	for (int i = 0; i < m_P->getLatticePtr().m_responsible_Volume; i++) {
-		for (int mu = 0; mu < m_P->getNrExtDOF(); mu++) {
-			bool somethingWrong = false;
-			if (!IsHermTrLess((*m_P)(i, mu))) {
-				std::cout << "^  P\n";
-				somethingWrong = true;
-			}
-			if (!IsHermTrLess((*m_F)(i, mu))) {
-				std::cout << "^  F\n";
-				somethingWrong = true;
-			}
-			if (!isSpecialUnitary((*m_U)(i, mu))) {
-				//std::cout << "^  U\n";
-				somethingWrong = true;
-			}
-			if (somethingWrong) {
-				//std::cout << "Error after leapfrog on step nr. " << m_NrstepsTaken << "\n";
-			}
-		}
-	}
-#endif // _DEBUG
 
 	double S_final = m_GaugeAction->calculate_Action((*m_U));
 	double KE = calculate_KineticEnergy((*m_P));
@@ -175,8 +121,9 @@ void HMC::update(){
 	exp_val_expdeltaH+= exp(H_init - H_final);
 	std::cout << "exp_val_expdeltaH: " << exp_val_expdeltaH / ((double)(m_NrstepsTaken+1)) << "\n";
 #endif // _DEBUG
-	
-	if (rng.Uniform_Double() < exp(H_init- H_final)) {
+	double Uni_double = rng.Uniform_Double();
+	MPI_Bcast(&Uni_double, 1, MPI_DOUBLE, 0, mpiWrapper::comm());
+	if (Uni_double < exp(H_init- H_final)) {
 		S_init = S_final;
 		m_NrAccepted++;
 

@@ -33,6 +33,19 @@ inline const su3_mat& su3_mat::operator=(const su3_mat& a) {
 	return *this;
 }
 
+su3_mat su3_mat::operator+=(const su3_mat& a){
+	(*this)[0] = a[0] + (*this)[0];
+	(*this)[1] = a[1] + (*this)[1];
+	(*this)[2] = a[2] + (*this)[2];
+	(*this)[3] = a[3] + (*this)[3];
+	(*this)[4] = a[4] + (*this)[4];
+	(*this)[5] = a[5] + (*this)[5];
+	(*this)[6] = a[6] + (*this)[6];
+	(*this)[7] = a[7] + (*this)[7];
+	(*this)[8] = a[8] + (*this)[8];
+	return *this;
+}
+
 su3_mat su3_mat::dagger() const{
 	su3_mat out;
 	out[0] = mat[0].dagger();
@@ -113,7 +126,7 @@ C_double* su3_mat::getMemPointer(){
 	return mat;
 }
 
-su3_mat operator*(const su3_mat& a, const su3_mat& b){
+su3_mat operator*(const su3_mat& a, const su3_mat& b) {
 	su3_mat out;
 	out[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
 	out[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
@@ -127,7 +140,7 @@ su3_mat operator*(const su3_mat& a, const su3_mat& b){
 	return out;
 }
 
-su3_mat operator+(const su3_mat& a, const su3_mat& b){
+su3_mat operator+(const su3_mat& a, const su3_mat& b) {
 	su3_mat out;
 	out[0] = a[0] + b[0];
 	out[1] = a[1] + b[1];
@@ -220,16 +233,16 @@ su3_mat HermTrLessExp(su3_mat& iP){
 	su3_mat Q = iP.timesMinusI();
 	su3_mat Q_squared = Q * Q;
 	double c0 = (Q * Q_squared).ReTr() / 3.0;//eq(14)
-	long double c0_abs = abs(c0);//explanation below eq(34)
 	double c1 = Q_squared.ReTr() / 2.0;//eq(15)
 	double c1_sqrt = sqrt(c1);
-	long double c0_max = 2.0 * pow((c1 / 3.0), 1.5);//eq(17)
-	long double absOverMax = c0_abs / c0_max;
+	double absOverMax = abs(c0) / (2.0 * pow((c1 / 3.0), 1.5));//explanation below eq(34), see eq(17)
+#ifdef _DEBUG
 	if (absOverMax > 1.0 || absOverMax< 0.0) {
 		std::cout << "ERROR: attempted acos(x) with invalid entry: x = "<<absOverMax << "\n";
 		//TESTING PURPOSE ONLY!!!!!!!!!!!!!!! REMOVE \/
 		absOverMax = 1.0;
 	}
+#endif // _DEBUG
 	double theta_div3 = acos(absOverMax) / 3.0;//eq(25)
 	double u = sqrt(1.0 / 3.0)*c1_sqrt * cos(theta_div3);//eq(23)
 	double u_squared = u * u;
@@ -274,12 +287,12 @@ su3_mat HermTrLessExp(su3_mat& iP){
 		f1 = C_double(c0 * (1.0 - c1 * (1.0 - 3.0 * c1 / 112.0) / 15.0) / 24.0, 1.0 - c1 * (1.0 - c1 * (1 - c1 / 42.0) / 20.0) / 6.0 - c0_squared / 5040.0);
 		f2 = C_double((-1.0 + c1 * (1.0 - c1 * (1.0 - c1 / 56.0) / 30.0) / 12.0 + c0_squared / 20160.0)/2.0, (c0 * (1.0 - c1 * (1.0 - c1 / 48.0) / 21.0) / 60.0)/2.0);
 	}
-	su3_mat identity;
-	identity.setToIdentity();
-	Q = f0*identity+f1 * Q + f2 * Q_squared;
-	//Q[0] += f0;
-	//Q[4] += f0;
-	//Q[8] += f0;
+	//su3_mat identity;
+	//identity.setToIdentity();
+	Q = f1 * Q + f2 * Q_squared;//+f0*identity
+	Q[0] += f0;
+	Q[4] += f0;
+	Q[8] += f0;
 	return Q;
 }
 
@@ -368,29 +381,3 @@ std::ostream& operator << (std::ostream& stream, const su3_mat& a) {
 	return stream;
 }
 
-//DDDDDDDDDDDDEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEETTTTTTTTTTTTTTEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEE
-su3_mat& su3_mat::at()
-{
-	for (int a = 0; a < 3; ++a) {
-		for (int b = a + 1; b < 3; ++b) {
-			double re = mat[(3 * a + b)].R() - mat[(3 * b + a)].R();
-			double im = mat[(3 * a + b)].I() + mat[ (3 * b + a)].I();
-
-			mat[(3* a + b)].R() = 0.5 * re;
-			mat[(3 * a + b)].I() = 0.5 * im;
-
-			mat[(3 * b + a)].R() = -0.5 * re;
-			mat[(3 * b + a)].I() = 0.5 * im;
-		}
-	}
-	double tr = 0.0;
-	for (int cc = 0; cc < 3; ++cc) {
-		tr += mat[(3 * cc + cc)].I();
-	}
-	tr = tr / 3;
-	for (int cc = 0; cc < 3; ++cc) {
-		mat[(3 * cc + cc)].R() = 0.0;
-		mat[(3 * cc + cc)].I() -= tr;
-	}
-	return *this;
-}

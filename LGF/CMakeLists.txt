@@ -9,6 +9,10 @@ project ("LGF")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# EXPERIMENTING -- FIRST TO GO IN CASE OF FAILURE -----------<>
+#set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -pedantic -lm -O3 -funroll-loops -fopenmp")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+# EXPERIMENTING -- FIRST TO GO IN CASE OF FAILURE -------------^
 
 find_package(MPI REQUIRED)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
@@ -16,4 +20,5 @@ include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 # Add source to this project's executable.
 add_executable (LGF "LGF.cpp" "LGF.h"   "Action/Action.h" "Action/Action.cpp" "Action/Gauge/Wilson.h" "Action/Gauge/Wilson.cpp" "Field/Field.h"  "Field/SU3_field.h" "Field/SU3_field.cpp" "Lattice/Lattice.h" "Lattice/Lattice.cpp" "Vertex.h" "Vertex.cpp" "mpiWrapper.h" "mpiWrapper.cpp"  "Math/SU3_mat.h" "Math/SU3_vec.h" "Math/SU3_mat.cpp" "Math/C_double.h" "Math/C_double.cpp" "Math/Random.h" "HMC/HMC.h" "HMC/HMC.cpp" "Field/RNG_field.h" "Field/RNG_field.cpp" "Math/SU3_gen.h" "Math/SU3_gen.cpp" "LMC/LMC.h" "LMC/LMC.cpp")
 target_link_libraries(LGF ${MPI_LIBRARIES})
-# TODO: Add tests and install targets if needed.
+
+

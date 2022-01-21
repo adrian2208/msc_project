@@ -18,6 +18,11 @@
 #include "LMC/LMC.h"
 #include "Math/SU3_gen.h"
 
+
+
 void testSaveLoad(int argc, char** argv);
 void testHMC(int argc, char** argv);
 void testLMC(int argc, char** argv);
+
+
+#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());

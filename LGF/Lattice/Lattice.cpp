@@ -182,21 +182,20 @@ void Lattice::DistributeBuffers() {
 		//The size of the package <<SendingTo_id>> should expect to receive based on the amount of sites
 		//shared between <<ID>> and <<SendingTo_id>> 
 		SizeofProcDomain = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][0];
+		m_BufferSize[SendingTo_id] = SizeofProcDomain;
 
 		//Communicate - wait for resolution
-		MPI_Isend(&SizeofProcDomain, 1, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
-		MPI_Recv(&m_BufferSize[RecFrom_id], 1, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
-		MPI_Wait(&request, &status);
+		//MPI_Isend(&SizeofProcDomain, 1, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
+		//MPI_Recv(&m_BufferSize[RecFrom_id], 1, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+		//MPI_Wait(&request, &status);
 
 		//for each shared site belonging to process <<SendingTo_id>>, convert the internal parameterization (index)
 		//to the total one, which is shared by all processes
 		TotalIdx_procDomain = new int[SizeofProcDomain];
 		for (int j = 0; j < SizeofProcDomain; j++) {
 			TotalIdx_procDomain[j] = m_InternalToTotal_idx[m_InternalIdx_start[SendingTo_id][0] + j];
-			//std::cout << TotalIdx_procDomain[j] << " ";
-			//std::cout << TotalIdx_procDomain[j] << " ";
+
 		}
-		//std::cout << "\n";
 
 		//send the list of shared sites belonging to the process in their total index to the process in question
 		MPI_Isend(TotalIdx_procDomain, SizeofProcDomain, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
@@ -205,11 +204,8 @@ void Lattice::DistributeBuffers() {
 		MPI_Recv(m_Buffer_receive[RecFrom_id], m_BufferSize[RecFrom_id], MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
 		//The sites are currently given by their total index and have to be assigned their internal parameterization
 		for (int j = 0; j < m_BufferSize[RecFrom_id]; j++) {
-			
 			m_Buffer_receive[RecFrom_id][j] = m_TotalToInternal_idx[m_Buffer_receive[RecFrom_id][j]];
-			//std::cout << m_Buffer_receive[RecFrom_id][j] << " ";
 		}
-		//std::cout << "From: " << RecFrom_id << "\n";
 		MPI_Wait(&request, &status);
 		delete[] TotalIdx_procDomain;
 	}
@@ -286,9 +282,9 @@ int Lattice::getNdims() const{
 	return m_Ndims;
 }
 
-int Lattice::getthisProc_Volume() const{
-	return m_thisProc_Volume;
-}
+//int Lattice::getthisProc_Volume() const{
+//	return m_thisProc_Volume;
+//}
 
 std::string Lattice::getType() const{
 	return type;

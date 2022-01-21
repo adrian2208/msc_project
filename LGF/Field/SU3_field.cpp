@@ -118,28 +118,126 @@ void SU3_field::loadSU3FromFile(const std::filesystem::path& identifier){
 	MPI_File_close(&file);
 }
 
-void SU3_field::CommunicateFieldValues(){
+void SU3_field::transfer_FieldValues(){
+	MPI_Request request;
+	MPI_Status status;
+	int result;
+	int Send_id;
+	int Recv_id;
+	int Nr_sites_toSend;
+	int Nr_sites_toRecv;
+	bool Sending = false;
+	bool Receiving = false;
+	C_double* Package;
+	C_double* Package_recv;
+	for (int i = 1; i < mpiWrapper::nProcs(); i++) {
+		Send_id = (mpiWrapper::id() + i) % mpiWrapper::nProcs();
+		Recv_id = (mpiWrapper::id() + mpiWrapper::nProcs() - i) % mpiWrapper::nProcs();
+		/// <summary>
+		/// If the processor <Send_id> shares boundary sites with <id>, Nr_sites_toSend is greater than 0:
+		/// Package the field values into an array of C_doubles and send it to the Process in question
+		/// </summary>
+		Nr_sites_toSend = m_lattice->m_BufferSize[Send_id];
+
+		if (Nr_sites_toSend > 0) {
+			Sending = true;
+			int Nr_C_doubles_toSend = Nr_sites_toSend * m_NrExtDOF*9;
+			Package = new C_double[Nr_C_doubles_toSend];
+			for (int i = 0; i < Nr_sites_toSend;i++) {
+				for (int mu = 0; mu < m_NrExtDOF; mu++) {
+					for (int matEntry = 0; matEntry < 9; matEntry++) {
+						Package[i * 9 * m_NrExtDOF + 9 * mu + matEntry] = FieldArray[m_lattice->m_Buffer_receive[Send_id][i] * m_NrExtDOF + mu][matEntry];
+					}
+				}
+			}
+			result = MPI_Isend(Package, Nr_C_doubles_toSend * sizeof(C_double) / sizeof(char), MPI_CHAR, Send_id, mpiWrapper::id() * mpiWrapper::nProcs() + Send_id, mpiWrapper::comm(), &request);
+			if (result != MPI_SUCCESS) {
+				std::cout << "Error: " << result << "-> MPI_Isend	[FIELDVALUES]  From: "<<mpiWrapper::id() << " To: "<<Send_id << "\n";
+			}
+		}
+
+		Nr_sites_toRecv = m_lattice->m_BufferSize[Recv_id];
+		if (Nr_sites_toRecv > 0) {
+			Receiving = true;
+			int Nr_C_doubles_toRecv = Nr_sites_toRecv * m_NrExtDOF * 9;
+			Package_recv = new C_double[Nr_C_doubles_toRecv];
+			result = MPI_Recv(Package_recv, Nr_C_doubles_toRecv*sizeof(C_double)/sizeof(char),MPI_CHAR,Recv_id, Recv_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+			if (result != MPI_SUCCESS) {
+				std::cout << "Error: " << result << "-> MPI_Recv	[FIELDVALUES]  From: " << Send_id  << " To: " << mpiWrapper::id() << "\n";
+			}
+			int idx = 0;
+			for (int intern_idx = m_lattice->m_InternalIdx_start[Recv_id][0]; intern_idx < m_lattice->m_InternalIdx_stop[Recv_id][1];intern_idx++) {
+				for (int mu = 0; mu < m_NrExtDOF; mu++) {
+					for (int matEntry = 0; matEntry < 9; matEntry++) {
+						FieldArray[intern_idx * m_NrExtDOF + mu][matEntry] = Package_recv[idx * 9 * m_NrExtDOF + 9 * mu + matEntry];
+					}
+				}
+				idx++;
+			}
+		}
+
+		if (Sending) {
+			MPI_Status status_waiting;
+			MPI_Wait(&request, &status_waiting);
+			Sending = false;
+			delete[] Package;
+			
+		}
+		if (Receiving) {
+			Receiving = false;
+			delete[] Package_recv;
+		}
+		
+	}
 }
 
+void SU3_field::InitializeHotStart(){
+	Random rng;
+	su3_mat LinCombGen;
+	SU3_gen generators;
+	for (int i = 0; i < m_lattice->m_thisProc_Volume; i++) {
+		for (int mu = 0; mu < m_NrExtDOF; mu++) {
+			for (int j = 0; j < 8; j++) {
+				LinCombGen = LinCombGen + rng.Gaussian_Double(0.0, 1.0) * generators(j);
+			}
+			LinCombGen = LinCombGen.timesI();
+			(*this)(i, mu) = HermTrLessExp(LinCombGen);
+			LinCombGen.setToZeros();
+		}
+	}
+}
+void SU3_field::InitializeColdStart() {
+	su3_mat unit;
+	unit.setToIdentity();
+	for (int i = 0; i < m_lattice->m_thisProc_Volume; i++) {
+		for (int mu = 0; mu < m_NrExtDOF; mu++) {
+			(*this)(i, mu) = unit;
+		}
+	}
+}
+
+/// <summary>
+/// IMPORTANT: This function will not update the boundary field values before calculating!
+/// Make sure that the boundary field values are up to date before calling this function.
+/// </summary>
 double SU3_field::total_PlaquetteSum(){
 	double localSum = 0.0;
 	double totalSum = 0.0;
-	for (int i = 0; i < m_lattice->m_responsible_Volume; i++) {
+	for (int i = Responsible_Start(); i < Responsible_Stop(); i++) {
 		for (int mu = 0; mu < m_NrExtDOF-1; mu++) {
 			for (int nu = mu + 1; nu < m_NrExtDOF; nu++) {
 				localSum += 1.0-1.0/3.0*(plaquette(i, mu, nu).ReTr());
 			}
 		}
 	}
-	
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
 	return totalSum;
 }
 double SU3_field::Avg_Plaquette() {
 	double localSum = 0.0;
 	double totalSum = 0.0;
-	int div = m_lattice->m_responsible_Volume;
-	for (int i = 0; i < m_lattice->m_responsible_Volume; i++) {
+	int div = m_lattice->m_totalVolume;
+	for (int i = Responsible_Start(); i < Responsible_Stop(); i++) {
 		for (int mu = 0; mu < m_NrExtDOF - 1; mu++) {
 			for (int nu = mu + 1; nu < m_NrExtDOF; nu++) {
 				localSum += plaquette(i, mu, nu).ReTr();
@@ -156,29 +254,33 @@ double SU3_field::Avg_Plaquette() {
 /// <param name="internal_index"></param>
 /// <param name="mu"></param>
 /// <returns></returns>
+//su3_mat SU3_field::staple(int internal_index, int mu){
+//	su3_mat out;
+//	int displacedIdx;
+//	for (int nu = 0; nu < m_NrExtDOF; nu++) {
+//		if (mu != nu) {
+//			displacedIdx = m_lattice->m_back[internal_index][nu];
+//			out = out + this->fwd_fieldVal(internal_index, mu, nu) * (this->fwd_fieldVal(internal_index, nu, mu)).dagger() * ((*this)(internal_index, nu)).dagger()
+//				+ (this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * ((*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx, nu);
+//		}
+//	}
+//	return out;
+//}
+
 su3_mat SU3_field::staple(int internal_index, int mu){
 	su3_mat out;
-	//NOT NESCESSARY -- SEE DEFAULT CONSTRUCTOR!
-	out[0] = C_double(0.0, 0.0);
-	out[1] = C_double(0.0, 0.0);
-	out[2] = C_double(0.0, 0.0);
-	out[3] = C_double(0.0, 0.0);
-	out[4] = C_double(0.0, 0.0);
-	out[5] = C_double(0.0, 0.0);
-	out[6] = C_double(0.0, 0.0);
-	out[7] = C_double(0.0, 0.0);
-	out[8] = C_double(0.0, 0.0);
-	//-----DELETE ME ----------------
 	int displacedIdx;
 	for (int nu = 0; nu < m_NrExtDOF; nu++) {
 		if (mu != nu) {
 			displacedIdx = m_lattice->m_back[internal_index][nu];
-			out = out + this->fwd_fieldVal(internal_index, mu, nu) * (this->fwd_fieldVal(internal_index, nu, mu)).dagger() * ((*this)(internal_index, nu)).dagger()
-				+ (this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * ((*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx, nu);
+			out = out + this->fwd_fieldVal(internal_index, mu, nu) * ((*this)(internal_index, nu)*this->fwd_fieldVal(internal_index, nu, mu)).dagger()
+				+ ((*this)(displacedIdx, mu)*this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
 		}
 	}
 	return out;
 }
+
+
 
 inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){
 	su3_mat out;
@@ -193,8 +295,4 @@ void SU3_field::operator=(const SU3_field& field){
 	}
 }
 
-//void  SU3_field::copyFieldVals(const SU3_field& field) {
-//	for (int i = 0; i < field.m_NrExtDOF * field.m_lattice->getthisProc_Volume(); i++) {
-//				FieldArray[i] = field.FieldArray[i];
-//		}
-//}
+

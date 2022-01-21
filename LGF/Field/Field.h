@@ -13,17 +13,14 @@ public:
 		int NrTs = NrExtDOF * lattice.m_thisProc_Volume;
 		FieldArray = new T[NrTs];
 		m_FieldArray_NrBytes = sizeof(T)* NrExtDOF * lattice.m_thisProc_Volume;
+
+		m_responsible_start = lattice.m_InternalIdx_start[mpiWrapper::id()][0];
+		m_responsible_stop = lattice.m_InternalIdx_stop[mpiWrapper::id()][1];
 	}
 	
 	inline T& operator() (int i, int mu) {
 		return FieldArray[i * m_NrExtDOF + mu];
 	}
-
-	//void operator=(const Field& field) {
-	//	for (int i = 0; i < field.m_NrExtDOF * field.m_lattice->getthisProc_Volume(); i++) {
-	//		FieldArray[i] = field.FieldArray[i];
-	//	}
-	//}
 
 	
 	/// <summary>
@@ -156,17 +153,26 @@ public:
 		MPI_File_close(&file);
 
 	};
-	Lattice &getLatticePtr() const{
+	inline Lattice &getLatticePtr() const{
 		return *m_lattice;
 	}
-	int getNrExtDOF() const {
+	inline int getNrExtDOF() const {
 		return m_NrExtDOF;
 	}
+	inline int Responsible_Start() const {
+		return m_responsible_start;
+	}
+	inline int Responsible_Stop() const {
+		return m_responsible_stop;
+	}
+
+
 protected:
 	T* FieldArray;
 	int m_NrExtDOF;//the number of external DOF e.g. 4: mu=0,1,2,3
 	Lattice* m_lattice;
 	int m_FieldArray_NrBytes;
-private:
+	int m_responsible_start;
+	int m_responsible_stop;
 
 };

@@ -5,6 +5,22 @@
 #include <filesystem>
 
 int main(int argc, char** argv) {
+	//mpiWrapper::begin_parallelSession(argc, argv);
+	//
+	//int NrDims = 2;
+	//int extdofs = 1;
+	//int shape[] = { 8,1};
+	//Lattice lattice(NrDims, shape);
+	//SU3_field U(lattice, extdofs);
+	//U.InitializeColdStart();
+	//for (int i = lattice.m_InternalIdx_start[mpiWrapper::id()][0]; i < lattice.m_InternalIdx_stop[mpiWrapper::id()][1];i++) {
+	//	U(i, 0) = 10*mpiWrapper::id() * U(i, 0) + i* U(i, 0);
+	//}
+	//mpi_debug_breakpoint
+	//U.transfer_FieldValues();
+
+
+	//mpiWrapper::end_parallelSession();
 	testHMC(argc, argv);
 	//testLMC(argc, argv);
 
@@ -55,6 +71,9 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
+
+
 void testLMC(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
 
@@ -95,6 +114,7 @@ void testLMC(int argc, char** argv) {
 }
 
 
+
 void testHMC(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
 
@@ -106,26 +126,11 @@ void testHMC(int argc, char** argv) {
 
 	Lattice lattice(NrDims, shape);
 	SU3_field U(lattice, extdofs);
-	su3_mat unit;
-	Random rng;
-	su3_mat LinCombGen;
-	SU3_gen generators;
-	unit.setToIdentity();
-	for (int i = 0; i < lattice.m_thisProc_Volume; i++) {
-		for (int mu = 0; mu < extdofs; mu++) {
-			//U(i, mu) = unit;
-			for (int j = 0; j < 8; j++) {
-				LinCombGen = LinCombGen + rng.Gaussian_Double(0.0, 1.0) * generators(j);
-			}
-			LinCombGen = LinCombGen.timesI();
-			U(i, mu) = HermTrLessExp(LinCombGen);
-			LinCombGen.setToZeros();
-		}
-	}
-
+	U.InitializeColdStart();
 	Wilson action(beta);
 	HMC updater(U, action, epsilon);
-	for (int i = 0; i < 10; i++) {
+	mpi_debug_breakpoint
+	for (int i = 0; i < 20; i++) {
 		updater.update();
 	}
 	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";

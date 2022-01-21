@@ -17,9 +17,11 @@ void mpiWrapper::begin_parallelSession(int argc, char** argv) {
 		}
 	}
 }
+
 void mpiWrapper::end_parallelSession() {
 	MPI_Finalize();
 }
+
 int mpiWrapper::id() {
 	return proc_id;
 }

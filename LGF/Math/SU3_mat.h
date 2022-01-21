@@ -13,6 +13,8 @@ public:
 	C_double& operator()(int row, int col);
 	C_double& operator[](int i) const;
 	const su3_mat& operator=(const su3_mat& a);
+	
+	su3_mat operator+=(const su3_mat& a);
 
 	su3_mat dagger() const;
 	su3_mat dagger();
@@ -21,7 +23,6 @@ public:
 	C_double det() const;
 	C_double Tr() const;
 	double ReTr() const;
-	su3_mat& at();//!!!!!!!!!!!!!!!!!!!!!!DELETE MEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	void setToIdentity();
 	void setToZeros();
@@ -36,6 +37,7 @@ private:
 };
 
 su3_mat operator*(const su3_mat& a, const su3_mat& b);
+
 su3_mat operator+(const su3_mat& a, const su3_mat& b);
 su3_mat operator-(const su3_mat& a, const su3_mat& b);
 
