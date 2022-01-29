@@ -21,8 +21,19 @@ int main(int argc, char** argv) {
 
 
 	//mpiWrapper::end_parallelSession();
-	testHMC(argc, argv);
+	//testHMC(argc, argv);
+	//testLHMC(argc, argv);
 	//testLMC(argc, argv);
+
+	testGradientFlow(argc, argv);
+
+	//SU3_gen generators;
+	//for (int i = 0; i < 8; i++) {
+	//	std::cout << generators(i) << "\n\n";
+	//	std::cout << HermTrLessExp_noI(generators(i)) << "\n\n";
+	//}
+
+
 
 	//mpiWrapper::begin_parallelSession(argc, argv);
 	//int NrDims = 4;
@@ -71,7 +82,41 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+void testGradientFlow(int argc, char** argv) {
+	mpiWrapper::begin_parallelSession(argc, argv);
+	mpi_debug_breakpoint
+	int NrDims = 4;
+	int extdofs = 4;
+	int shape[] = { 12,12,12,12 };
+	double beta = 6.1;
+	double epsilon = 0.01;
+	double HMCepsilon = 0.25;
 
+	Lattice lattice(NrDims, shape);
+	SU3_field U(lattice, extdofs);
+	U.InitializeHotStart();
+	Wilson action(beta);
+	TopologicalCharge topCharge(U);
+
+	LHMC updater(U, action, HMCepsilon);
+	for (int i = 0; i < 100; i++) {
+		updater.sweep();
+	}
+	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
+	U.saveSU3ToFile();
+
+
+
+	U.loadSU3FromFile();
+	GradientFlow flowing(action, U,epsilon);
+	flowing.Include_TopCharge(topCharge);
+	for (int i = 0; i < 8000; i++) {
+		flowing.flow();
+	}
+	std::filesystem::path specifier("flowed");
+	U.saveSU3ToFile(specifier);
+	mpiWrapper::end_parallelSession();
+}
 
 
 void testLMC(int argc, char** argv) {
@@ -117,10 +162,10 @@ void testLMC(int argc, char** argv) {
 
 void testHMC(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
-
+	mpi_debug_breakpoint
 	int NrDims = 4;
 	int extdofs = 4;
-	int shape[] = { 4,4,4,4};
+	int shape[] = { 2,2,2,2};
 	double beta = 3.0;
 	double epsilon = 0.01;
 
@@ -129,14 +174,37 @@ void testHMC(int argc, char** argv) {
 	U.InitializeColdStart();
 	Wilson action(beta);
 	HMC updater(U, action, epsilon);
-	mpi_debug_breakpoint
-	for (int i = 0; i < 20; i++) {
+	
+	for (int i = 0; i < 150; i++) {
 		updater.update();
 	}
 	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
 
 	mpiWrapper::end_parallelSession();
 }
+
+void testLHMC(int argc, char** argv) {
+	mpiWrapper::begin_parallelSession(argc, argv);
+	int NrDims = 4;
+	int extdofs = 4;
+	int shape[] = { 4,4,4,4 };
+	double beta = 6.0;
+	double epsilon = 0.5;
+
+	Lattice lattice(NrDims, shape);
+	SU3_field U(lattice, extdofs);
+	U.InitializeHotStart();
+	Wilson action(beta);
+	LHMC updater(U, action, epsilon);
+
+	for (int i = 0; i < 20; i++) {
+		updater.sweep();
+	}
+	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
+
+	mpiWrapper::end_parallelSession();
+}
+
 void testSaveLoad(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
 

@@ -1,6 +1,5 @@
 #pragma once
 #include "../Lattice/Lattice.h"
-#include "../Vertex.h"
 #include <filesystem>
 #include <string>
 
@@ -15,6 +14,8 @@ public:
 		m_FieldArray_NrBytes = sizeof(T)* NrExtDOF * lattice.m_thisProc_Volume;
 
 		m_responsible_start = lattice.m_InternalIdx_start[mpiWrapper::id()][0];
+		m_responsible_startOdd = lattice.m_InternalIdx_start[mpiWrapper::id()][1];
+		m_responsible_stopEven = lattice.m_InternalIdx_stop[mpiWrapper::id()][0];
 		m_responsible_stop = lattice.m_InternalIdx_stop[mpiWrapper::id()][1];
 	}
 	
@@ -165,6 +166,14 @@ public:
 	inline int Responsible_Stop() const {
 		return m_responsible_stop;
 	}
+	inline int Responsible_Start(int parity) const {
+		parity = parity % 2;
+		return m_lattice->m_InternalIdx_start[mpiWrapper::id()][parity];
+	}
+	inline int Responsible_Stop(int parity) const {
+		parity = parity % 2;
+		return m_lattice->m_InternalIdx_stop[mpiWrapper::id()][parity];
+	}
 
 
 protected:
@@ -174,5 +183,7 @@ protected:
 	int m_FieldArray_NrBytes;
 	int m_responsible_start;
 	int m_responsible_stop;
+	int m_responsible_startOdd;
+	int m_responsible_stopEven;
 
 };

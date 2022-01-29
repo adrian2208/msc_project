@@ -12,7 +12,7 @@ HMC::HMC(SU3_field& U, Action& GaugeAction, double epsilon){
 	m_F = new SU3_field(U.getLatticePtr(), U.getNrExtDOF());
 	m_U_init = new SU3_field(U.getLatticePtr(), U.getNrExtDOF());
 	m_F_init = new SU3_field(U.getLatticePtr(), U.getNrExtDOF());
-	m_rand = new RNG_field(U.getLatticePtr());
+	m_rand = new RNG_field(U.getLatticePtr(), U.getNrExtDOF());
 	(*m_U).transfer_FieldValues();
 	m_GaugeAction->calculate_Force((*m_U), (*m_F));
 	S_init = m_GaugeAction->calculate_Action((*m_U));

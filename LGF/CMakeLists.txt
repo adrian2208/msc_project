@@ -18,7 +18,7 @@ find_package(MPI REQUIRED)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
 # Add source to this project's executable.
-add_executable (LGF "LGF.cpp" "LGF.h"   "Action/Action.h" "Action/Action.cpp" "Action/Gauge/Wilson.h" "Action/Gauge/Wilson.cpp" "Field/Field.h"  "Field/SU3_field.h" "Field/SU3_field.cpp" "Lattice/Lattice.h" "Lattice/Lattice.cpp" "Vertex.h" "Vertex.cpp" "mpiWrapper.h" "mpiWrapper.cpp"  "Math/SU3_mat.h" "Math/SU3_vec.h" "Math/SU3_mat.cpp" "Math/C_double.h" "Math/C_double.cpp" "Math/Random.h" "HMC/HMC.h" "HMC/HMC.cpp" "Field/RNG_field.h" "Field/RNG_field.cpp" "Math/SU3_gen.h" "Math/SU3_gen.cpp" "LMC/LMC.h" "LMC/LMC.cpp")
+add_executable (LGF "LGF.cpp" "LGF.h"   "Action/Action.h" "Action/Action.cpp" "Action/Gauge/Wilson.h" "Action/Gauge/Wilson.cpp" "Field/Field.h"  "Field/SU3_field.h" "Field/SU3_field.cpp" "Lattice/Lattice.h" "Lattice/Lattice.cpp"   "mpiWrapper.h" "mpiWrapper.cpp"  "Math/SU3_mat.h" "Math/SU3_vec.h" "Math/SU3_mat.cpp" "Math/C_double.h" "Math/C_double.cpp" "Math/Random.h" "HMC/HMC.h" "HMC/HMC.cpp" "Field/RNG_field.h" "Field/RNG_field.cpp" "Math/SU3_gen.h" "Math/SU3_gen.cpp" "LMC/LMC.h" "LMC/LMC.cpp" "HMC/LHMC.cpp" "HMC/LHMC.h" "Field/Double_field.h" "Field/Double_field.cpp" "Gradient_Flow/GradientFlow.h" "Gradient_Flow/GradientFlow.cpp" "Observables/TopologicalCharge.cpp" "Observables/TopologicalCharge.h" )
 target_link_libraries(LGF ${MPI_LIBRARIES})
 
 

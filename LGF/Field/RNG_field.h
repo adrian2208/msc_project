@@ -4,6 +4,6 @@
 #pragma once
 class RNG_field : public Field<Random> {
 public:
-	RNG_field(Lattice& lattice);
+	RNG_field(Lattice& lattice, int NrExtDOF);
 
 };

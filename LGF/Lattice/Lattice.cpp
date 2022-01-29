@@ -182,12 +182,12 @@ void Lattice::DistributeBuffers() {
 		//The size of the package <<SendingTo_id>> should expect to receive based on the amount of sites
 		//shared between <<ID>> and <<SendingTo_id>> 
 		SizeofProcDomain = m_InternalIdx_stop[SendingTo_id][1] - m_InternalIdx_start[SendingTo_id][0];
-		m_BufferSize[SendingTo_id] = SizeofProcDomain;
+		//m_BufferSize[SendingTo_id] = SizeofProcDomain;
 
 		//Communicate - wait for resolution
-		//MPI_Isend(&SizeofProcDomain, 1, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
-		//MPI_Recv(&m_BufferSize[RecFrom_id], 1, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
-		//MPI_Wait(&request, &status);
+		MPI_Isend(&SizeofProcDomain, 1, MPI_INT, SendingTo_id, mpiWrapper::id() * mpiWrapper::nProcs() + SendingTo_id, mpiWrapper::comm(), &request);
+		MPI_Recv(&m_BufferSize[RecFrom_id], 1, MPI_INT, RecFrom_id, RecFrom_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
+		MPI_Wait(&request, &status);
 
 		//for each shared site belonging to process <<SendingTo_id>>, convert the internal parameterization (index)
 		//to the total one, which is shared by all processes

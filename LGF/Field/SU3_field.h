@@ -20,6 +20,7 @@ public:
 	double total_PlaquetteSum();
 	double Avg_Plaquette();
 	su3_mat staple(int internal_index, int mu);
+	su3_mat clover_avg(int internal_index, int mu, int nu);
 	inline su3_mat plaquette(int internal_index, int mu, int nu);
 	
 	void operator= (const SU3_field& field);

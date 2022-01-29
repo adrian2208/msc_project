@@ -296,6 +296,91 @@ su3_mat HermTrLessExp(su3_mat& iP){
 	return Q;
 }
 
+su3_mat HermTrLessExp_noI(su3_mat& Q) {
+
+#ifdef _DEBUG
+	bool Is_iP_appropriate = IsHermTrLess(Q);
+	if (!Is_iP_appropriate) {
+		std::cout << "Attempted exponentiation of unfit matrix" << "\n";
+	}
+#endif // _DEBUG
+
+	su3_mat Q_squared = Q * Q;
+	double c0 = (Q * Q_squared).ReTr() / 3.0;//eq(14)
+	double c1 = Q_squared.ReTr() / 2.0;//eq(15)
+	double c1_sqrt = sqrt(c1);
+	double absOverMax = abs(c0) / (2.0 * pow((c1 / 3.0), 1.5));//explanation below eq(34), see eq(17)
+#ifdef _DEBUG
+	if (absOverMax > 1.0 || absOverMax < 0.0) {
+		std::cout << "ERROR: attempted acos(x) with invalid entry: x = " << absOverMax << "\n";
+		//TESTING PURPOSE ONLY!!!!!!!!!!!!!!! REMOVE \/
+		absOverMax = 1.0;
+	}
+#endif // _DEBUG
+	double theta_div3 = acos(absOverMax) / 3.0;//eq(25)
+	double u = sqrt(1.0 / 3.0) * c1_sqrt * cos(theta_div3);//eq(23)
+	double u_squared = u * u;
+	double u_cos = cos(u);
+	double u_sin = sin(u);
+	double w = c1_sqrt * sin(theta_div3);//eq(23)
+	double w_squared = w * w;
+	double w_cos = cos(w);
+	double xi0;//between eqs. (33) and (34)
+	double xi1;
+	if (abs(w) > 0.000001) {
+		xi0 = exp(w) / w;
+		xi1 = exp(-w) / w;
+	}
+	else {
+		xi0 = 1000000.0;
+		xi1 = 1000000.0;
+	}
+
+
+	double f0, f1, f2;
+	if (c1 > 0.00000001) {//0.0001
+		//if c1 is close to zero, 
+		double div = 1.0 / (9.0 * u_squared - w_squared);
+		//C_double e_pow2Iu((2.0 * u_cos * u_cos - 1.0), 2.0 * u_cos * u_sin);
+		double e_pow2u = exp(2*u);
+		//C_double e_powminIu(u_cos, -u_sin);
+		double e_powminu = exp(-u);
+
+		//C_double curlyBrackets(8.0 * u_squared * w_cos, 2.0 * u * (3.0 * u_squared + w_squared) * xi0);
+		double curlyBrackets = u * (u + w) * (3 * u + w) * xi0 - u * (u - w) * (3 * u - w) * xi1;
+		f0 = div * ((u_squared - w_squared) * e_pow2u + e_powminu * curlyBrackets);
+		
+		curlyBrackets = -0.5*(w-u) * (3 * u + w) * xi0 - 0.5 * (u + w) * (3 * u - w) * xi1;
+		f1 = div * (2.0 * u * e_pow2u + e_powminu * curlyBrackets);
+
+		curlyBrackets = -0.5 *(3 * u + w) * xi0 + 0.5* (3 * u - w) * xi1;
+		f2 = div * (e_pow2u + e_powminu * curlyBrackets);
+
+		if (c0 < 0.0) {//eq (34)
+			//f0 = f0.dagger();
+			f1 = -1.0 * f1;// .dagger();
+			//f2 = f2.dagger();
+		}
+	}
+	else {
+		std::cout << "fatal error: HermTrLessExp_noI -> c1 = " << c1 << "\n";
+		exit;
+
+		double c0_squared = c0 * c0;
+		f0 = 0;//C_double(1.0 - c0_squared / 720.0, -c0 * (1.0 - c1 * (1 - c1 / 42.0) / 20.0) / 6.0);
+		f1 = 0;//C_double(c0 * (1.0 - c1 * (1.0 - 3.0 * c1 / 112.0) / 15.0) / 24.0, 1.0 - c1 * (1.0 - c1 * (1 - c1 / 42.0) / 20.0) / 6.0 - c0_squared / 5040.0);
+		f2 = 0;//C_double((-1.0 + c1 * (1.0 - c1 * (1.0 - c1 / 56.0) / 30.0) / 12.0 + c0_squared / 20160.0) / 2.0, (c0 * (1.0 - c1 * (1.0 - c1 / 48.0) / 21.0) / 60.0) / 2.0);
+	}
+	//su3_mat identity;
+	//identity.setToIdentity();
+	su3_mat exp_Q;
+	exp_Q = f1 * Q + f2 * Q_squared;//+f0*identity
+	exp_Q[0] += f0;
+	exp_Q[4] += f0;
+	exp_Q[8] += f0;
+	return exp_Q;
+}
+
 bool IsHermTrLess(su3_mat& mat,bool silence){
 	C_double tolerance(0.00001,0.00001);
 	C_double trace = mat.Tr();

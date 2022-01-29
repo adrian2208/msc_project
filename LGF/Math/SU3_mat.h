@@ -57,6 +57,7 @@ su3_mat operator*(const C_double b,const su3_mat& a);
 /// </summary>
 /// <param name="Q"></param>
 su3_mat HermTrLessExp(su3_mat& iP);
+su3_mat HermTrLessExp_noI(su3_mat& Q);
 
 bool IsHermTrLess(su3_mat& mat, bool silence= false);
 bool IsAntiHermTrLess(su3_mat& mat, bool silence = false);

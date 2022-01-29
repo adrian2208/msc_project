@@ -156,7 +156,7 @@ void SU3_field::transfer_FieldValues(){
 			}
 		}
 
-		Nr_sites_toRecv = m_lattice->m_BufferSize[Recv_id];
+		Nr_sites_toRecv = m_lattice->m_InternalIdx_stop[Recv_id][1] - m_lattice->m_InternalIdx_start[Recv_id][0];
 		if (Nr_sites_toRecv > 0) {
 			Receiving = true;
 			int Nr_C_doubles_toRecv = Nr_sites_toRecv * m_NrExtDOF * 9;
@@ -277,6 +277,26 @@ su3_mat SU3_field::staple(int internal_index, int mu){
 				+ ((*this)(displacedIdx, mu)*this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
 		}
 	}
+	return out;
+}
+
+su3_mat SU3_field::clover_avg(int internal_index, int mu,int nu) {
+	su3_mat out;
+	int displacedIdx;
+
+	displacedIdx = m_lattice->m_fwd[internal_index][nu];
+	out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * (*this)(internal_index, mu).dagger() * this->fwd_fieldVal(internal_index, mu, nu).dagger();
+
+	displacedIdx = m_lattice->m_back[internal_index][nu];
+	out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+
+	displacedIdx = m_lattice->m_back[internal_index][mu];
+	out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+
+	displacedIdx = m_lattice->m_back[displacedIdx][nu];
+	out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+
+	out = -0.25 * out;
 	return out;
 }
 
