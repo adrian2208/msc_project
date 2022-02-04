@@ -4,9 +4,9 @@ class TopologicalCharge {
 
 public:
 	TopologicalCharge(SU3_field& U);
-	void calculate();
+	void calculate(double flowTime);
 	int calculate_AutoCorrTime();
-
+	void saveTopologicalChargeToFile(double beta, const std::filesystem::path& identifier = "");
 private:
 	SU3_field* m_U;
 	int m_AutoCorrTime;

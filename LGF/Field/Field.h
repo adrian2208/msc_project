@@ -18,6 +18,9 @@ public:
 		m_responsible_stopEven = lattice.m_InternalIdx_stop[mpiWrapper::id()][0];
 		m_responsible_stop = lattice.m_InternalIdx_stop[mpiWrapper::id()][1];
 	}
+	~Field() {
+		delete[] FieldArray;
+	}
 	
 	inline T& operator() (int i, int mu) {
 		return FieldArray[i * m_NrExtDOF + mu];

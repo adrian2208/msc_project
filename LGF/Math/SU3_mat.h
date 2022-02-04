@@ -10,8 +10,15 @@ public:
 	su3_mat(const su3_mat& matrix);
 	~su3_mat();
 
-	C_double& operator()(int row, int col);
-	C_double& operator[](int i) const;
+	//C_double& operator()(int row, int col);
+	//C_double& operator[](int i) const;
+	inline C_double& operator() (int row, int col) {
+		return mat[3 * row + col];
+	}
+
+	inline C_double& operator[] (int i) const {
+		return mat[i];
+	}
 	const su3_mat& operator=(const su3_mat& a);
 	
 	su3_mat operator+=(const su3_mat& a);
@@ -23,6 +30,7 @@ public:
 	C_double det() const;
 	C_double Tr() const;
 	double ReTr() const;
+	double ImTr() const;
 
 	void setToIdentity();
 	void setToZeros();

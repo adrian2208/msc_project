@@ -17,7 +17,6 @@ private:
 	SU3_field* m_U;
 	SU3_field* m_F_init;
 	SU3_field* m_U_init;
-	RNG_field* m_rand;
 	Action* m_GaugeAction;
 
 	double S_init;

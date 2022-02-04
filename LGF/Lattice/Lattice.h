@@ -72,7 +72,10 @@ protected:
 	int* m_coordinate;//stores the current working coordinate 
 	int* m_coorFwd;//stores a coordinate forwardly neighbouring the current working coordinate 
 	int* m_coorBack;//stores a coordinate backwardly neighbouring the current working coordinate 
-
+	int* m_coorFwdFwd;//stores a coordinate forwardly neighbouring the current working coordinate 
+	int* m_coorBackBack;//stores a coordinate backwardly neighbouring the current working coordinate 
+	int* m_coorFwdBack;//stores a coordinate forwardly neighbouring the current working coordinate 
+	int* m_coorBackFwd;//stores a coordinate backwardly neighbouring the current working coordinate 
 	std::string type;
 
 };

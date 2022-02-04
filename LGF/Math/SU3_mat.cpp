@@ -19,13 +19,7 @@ inline void su3_mat::allocate_matrix(){
 	mat = new C_double[9];
 }
 
-inline C_double& su3_mat::operator() (int row, int col) {
-	return mat[3 * row + col];
-}
 
-inline C_double& su3_mat::operator[] (int i) const{
-	return mat[i];
-}
 inline const su3_mat& su3_mat::operator=(const su3_mat& a) {
 	for (int i = 0; i < 9; i++) {
 		mat[i] = a[i];
@@ -111,6 +105,9 @@ C_double su3_mat::Tr() const{
 
 double su3_mat::ReTr() const{
 	return mat[0].R() + mat[4].R() + mat[8].R();
+}
+double su3_mat::ImTr() const {
+	return mat[0].I() + mat[4].I() + mat[8].I();
 }
 
 void su3_mat::setToIdentity(){

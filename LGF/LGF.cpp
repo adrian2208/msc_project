@@ -4,83 +4,144 @@
 #include "LGF.h"
 #include <filesystem>
 
+
 int main(int argc, char** argv) {
-	//mpiWrapper::begin_parallelSession(argc, argv);
-	//
-	//int NrDims = 2;
-	//int extdofs = 1;
-	//int shape[] = { 8,1};
-	//Lattice lattice(NrDims, shape);
-	//SU3_field U(lattice, extdofs);
-	//U.InitializeColdStart();
-	//for (int i = lattice.m_InternalIdx_start[mpiWrapper::id()][0]; i < lattice.m_InternalIdx_stop[mpiWrapper::id()][1];i++) {
-	//	U(i, 0) = 10*mpiWrapper::id() * U(i, 0) + i* U(i, 0);
-	//}
-	//mpi_debug_breakpoint
-	//U.transfer_FieldValues();
-
-
-	//mpiWrapper::end_parallelSession();
 	//testHMC(argc, argv);
 	//testLHMC(argc, argv);
 	//testLMC(argc, argv);
-
-	testGradientFlow(argc, argv);
-
-	//SU3_gen generators;
-	//for (int i = 0; i < 8; i++) {
-	//	std::cout << generators(i) << "\n\n";
-	//	std::cout << HermTrLessExp_noI(generators(i)) << "\n\n";
-	//}
-
-
-
+	//testSU3_Heatbath(argc, argv);
+	//testGradientFlow(argc, argv);
+	GenerateGaugeEnsembles(argc, argv);
+	//FlowSavedGaugeEnsembles(argc, argv);
 	//mpiWrapper::begin_parallelSession(argc, argv);
+	//mpi_debug_breakpoint
 	//int NrDims = 4;
 	//int extdofs = 4;
-	//int shape[] = { 2,2,2,2 };
-	//double beta = 6.1;
+	//int shape[] = { 8,8,8,8 };
+	//double beta = 6.0;
 	//double epsilon = 0.01;
+	//double HMCepsilon = 0.25;
 
-	//Wilson action(beta);
 	//Lattice lattice(NrDims, shape);
 	//SU3_field U(lattice, extdofs);
-	//SU3_field F(lattice, extdofs);
-	//su3_mat unit;
-	//Random rng;
-	//su3_mat LinCombGen;
-	//SU3_gen generators;
-	//unit.setToIdentity();
-	//for (int attempts = 0; attempts < 50; attempts++) {
-	//	for (int i = 0; i < lattice.m_thisProc_Volume; i++) {
-	//		for (int mu = 0; mu < extdofs; mu++) {
-	//			//U(i, mu) = unit;
-	//			for (int j = 0; j < 8; j++) {
-	//				LinCombGen = LinCombGen + rng.Gaussian_Double(0.0, 1.0) * generators(j);
-	//			}
-	//			LinCombGen = LinCombGen.timesI();
-	//			U(i, mu) = HermTrLessExp(LinCombGen);
-	//			isSpecialUnitary(U(i, mu), false);
-	//			LinCombGen.setToZeros();
-	//			
-	//		}
-	//	}
-	//	action.calculate_Force(U,F);
-	//	for (int i = 0; i < lattice.m_thisProc_Volume; i++) {
-	//		for (int mu = 0; mu < extdofs; mu++) {
-	//			std::cout << F(i, mu) << "\n\n";
-	//		}
-	//		std::cout << "\n";
-	//	}
-
-	//	std::cout << "avg. plaquette = " << U.Avg_Plaquette() << "\n";
-	//	std::cout << "Action = " << action.calculate_Action(U) << "\n";
-	//	std::cout << "normalized Action = " << action.calculate_Action(U)/((double)U.getLatticePtr().m_responsible_Volume*12.0) << "\n\n";
-	//}
+	//U.InitializeHotStart();
+	//Wilson action(beta);
+	//TopologicalCharge topCharge(U);
+	//topCharge.calculate(0.0);
+	////std::cout << (U.clover_avg(0, 0,1)* U.clover_avg(0, 0, 1)).ReTr() <<"\n";
+	////std::cout << (U.clover_avg1(0, 0,1)* U.clover_avg1(0, 0, 1)).ReTr() << "\n";
 	//mpiWrapper::end_parallelSession();
 
 
 	return 0;
+}
+void testSU3_Heatbath(int argc, char** argv) {
+	mpiWrapper::begin_parallelSession(argc, argv);
+	mpi_debug_breakpoint
+	int NrDims = 4;
+	int extdofs = 4;
+	int shape[] = { 24,24,24,24 };
+	double beta = 0.2;
+
+	Lattice lattice(NrDims, shape);
+	//Wilson action(beta);
+
+	SU3_field U(lattice, extdofs);
+	U.InitializeHotStart();
+	TopologicalCharge topCharge(U);
+
+	SU3_Heatbath heatbath(U);
+	int NrRuns = 2;
+	for (int i = 0; i < NrRuns; i++) {
+		std::filesystem::path ensembleNum("ensemble_Heatbath");
+		heatbath.update(U,30,beta);
+		topCharge.calculate(0.0);
+		//topCharge.saveTopologicalChargeToFile(6.0, ensembleNum);
+		std::filesystem::path ensemblename("ensemble_Heatbath" + std::to_string(i));
+		U.saveSU3ToFile(beta,ensemblename);
+	}
+
+	mpiWrapper::end_parallelSession();
+}
+void FlowSavedGaugeEnsembles(int argc, char** argv) {
+	mpiWrapper::begin_parallelSession(argc, argv);
+	int NrDims = 4;
+	int extdofs = 4;
+	int shape[] = { 12,12,12,12 };
+	double beta = 6.0;
+	double epsilon = 0.01;
+
+	Lattice lattice(NrDims, shape);
+	Wilson action(beta);
+	int NrEnsembles = 150;
+	for (int i = 31; i < NrEnsembles; i++) {
+		std::filesystem::path ensembleNum("ensemble_" + std::to_string(i));
+		SU3_field U(lattice, extdofs);
+		U.loadSU3FromFile(beta, ensembleNum);
+		TopologicalCharge topCharge(U);
+		EnergyDensity Edensity(U);
+		GradientFlow flowing(action, U, epsilon);
+		flowing.Include_TopCharge(topCharge);
+		flowing.Include_EnergyDensity(Edensity);
+		for (int i = 0; i < 600; i++) {
+			flowing.flow();
+		}
+		topCharge.saveTopologicalChargeToFile(beta, ensembleNum);
+		Edensity.saveEnergyDensityToFile(beta, ensembleNum);
+	}
+	//std::filesystem::path specifier("flowed");
+	//U.saveSU3ToFile(specifier);
+	mpiWrapper::end_parallelSession();
+}
+void GenerateGaugeEnsembles(int argc, char** argv) {
+	mpiWrapper::begin_parallelSession(argc, argv);
+	mpi_debug_breakpoint
+	int NrDims = 4;
+	int extdofs = 4;
+	int shape[] = { 12,12,12,12 };
+	double beta = 6.0;
+	
+	double LHMCepsilon = 0.33;
+	int NrLeaps = 3;
+
+	Lattice lattice(NrDims, shape);
+	Wilson action(beta);
+	int NrEnsembles = 150;
+	for (int i = 45; i < NrEnsembles; i++) {
+		std::filesystem::path ensembleNum("ensemble_"+ std::to_string(i));
+		SU3_field U(lattice, extdofs);
+		U.InitializeHotStart();
+		LHMC updater(U, action, LHMCepsilon,NrLeaps);
+		for (int i = 0; i < 120; i++) {
+			updater.sweep();
+		}
+		std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
+		MPI_Barrier(mpiWrapper::comm());
+		U.saveSU3ToFile(beta, ensembleNum);
+	}
+
+	/// //////////////////////////////////////////////////////////////////
+	for (int i = 31; i < NrEnsembles; i++) {
+		std::filesystem::path ensembleNum("ensemble_" + std::to_string(i));
+		SU3_field U(lattice, extdofs);
+		U.loadSU3FromFile(beta, ensembleNum);
+		TopologicalCharge topCharge(U);
+		EnergyDensity Edensity(U);
+		GradientFlow flowing(action, U, 0.01);
+		flowing.Include_TopCharge(topCharge);
+		flowing.Include_EnergyDensity(Edensity);
+		for (int i = 0; i < 600; i++) {
+			flowing.flow();
+		}
+		topCharge.saveTopologicalChargeToFile(beta, ensembleNum);
+		Edensity.saveEnergyDensityToFile(beta, ensembleNum);
+	}
+
+
+	/// REMOVE
+	/// //////////////////////////////////////////////////////////////////
+
+	mpiWrapper::end_parallelSession();
 }
 void testGradientFlow(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
@@ -88,7 +149,7 @@ void testGradientFlow(int argc, char** argv) {
 	int NrDims = 4;
 	int extdofs = 4;
 	int shape[] = { 12,12,12,12 };
-	double beta = 6.1;
+	double beta = 6.0;
 	double epsilon = 0.01;
 	double HMCepsilon = 0.25;
 
@@ -101,20 +162,16 @@ void testGradientFlow(int argc, char** argv) {
 	LHMC updater(U, action, HMCepsilon);
 	for (int i = 0; i < 100; i++) {
 		updater.sweep();
+		topCharge.calculate(0.0);
 	}
-	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
-	U.saveSU3ToFile();
 
-
-
-	U.loadSU3FromFile();
 	GradientFlow flowing(action, U,epsilon);
 	flowing.Include_TopCharge(topCharge);
-	for (int i = 0; i < 8000; i++) {
+	topCharge.calculate(0.0);
+	for (int i = 0; i < 10000; i++) {
 		flowing.flow();
 	}
-	std::filesystem::path specifier("flowed");
-	U.saveSU3ToFile(specifier);
+
 	mpiWrapper::end_parallelSession();
 }
 
@@ -124,34 +181,20 @@ void testLMC(int argc, char** argv) {
 
 	int NrDims = 4;
 	int extdofs = 4;
-	int shape[] = { 6,6,6,6 };
-	double beta = 6.1;
+	int shape[] = { 4,4,4,4 };
+	double beta = 3.1;
 	double epsilon = 0.05;
 
 	Lattice lattice(NrDims, shape);
 	SU3_field U(lattice, extdofs);
-	su3_mat unit;
-	Random rng;
-	su3_mat LinCombGen;
-	SU3_gen generators;
-	unit.setToIdentity();
-	for (int i = 0; i < lattice.m_thisProc_Volume; i++) {
-		for (int mu = 0; mu < extdofs; mu++) {
-			U(i, mu) = unit;
-			//for (int j = 0; j < 8; j++) {
-			//	LinCombGen = LinCombGen + rng.Gaussian_Double(0.0, 1.0) * generators(j);
-			//}
-			//LinCombGen = LinCombGen.timesI();
-			//U(i, mu) = HermTrLessExp(LinCombGen);
-			//LinCombGen.setToZeros();
-		}
-	}
-
+	U.InitializeHotStart();
 	Wilson action(beta);
 	LMC updater(U,epsilon);
+	TopologicalCharge topCharge(U);
 	std::cout << "updating...\n";
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 500; i++) {
 		updater.update();
+		topCharge.calculate(0.0);
 	}
 	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
 
@@ -165,18 +208,20 @@ void testHMC(int argc, char** argv) {
 	mpi_debug_breakpoint
 	int NrDims = 4;
 	int extdofs = 4;
-	int shape[] = { 2,2,2,2};
-	double beta = 3.0;
-	double epsilon = 0.01;
+	int shape[] = { 6,6,6,6};
+	double beta = 6.0;
+	double epsilon = 0.007;
 
 	Lattice lattice(NrDims, shape);
 	SU3_field U(lattice, extdofs);
-	U.InitializeColdStart();
+	U.InitializeHotStart();
 	Wilson action(beta);
 	HMC updater(U, action, epsilon);
-	
+	TopologicalCharge topCharge(U);
+	topCharge.calculate(0.0);
 	for (int i = 0; i < 150; i++) {
 		updater.update();
+		topCharge.calculate(0.0);
 	}
 	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
 
@@ -187,18 +232,23 @@ void testLHMC(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
 	int NrDims = 4;
 	int extdofs = 4;
-	int shape[] = { 4,4,4,4 };
-	double beta = 6.0;
+	int shape[] = { 12,12,12,12};
+	double beta = 6.2;
 	double epsilon = 0.5;
-
+	int NrLeaps = 2;
 	Lattice lattice(NrDims, shape);
 	SU3_field U(lattice, extdofs);
 	U.InitializeHotStart();
 	Wilson action(beta);
-	LHMC updater(U, action, epsilon);
-
-	for (int i = 0; i < 20; i++) {
+	mpi_debug_breakpoint
+	LHMC updater(U, action, epsilon,NrLeaps);
+	//TopologicalCharge topCharge(U);
+	//topCharge.calculate(0.0);
+	EnergyDensity Edensity(U);
+	for (int i = 0; i < 100; i++) {
 		updater.sweep();
+		//topCharge.calculate(0.0);
+		Edensity.calculate(0.0);
 	}
 	std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
 
@@ -231,10 +281,10 @@ void testSaveLoad(int argc, char** argv) {
 		}
 	}
 
-	field.saveSU3ToFile();
+	// field.saveSU3ToFile();
 
 	SU3_field field2(lattice, extdofs);
-	field2.loadSU3FromFile();
+	//field2.loadSU3FromFile();
 	if (mpiWrapper::id() == 0) {
 		for (int i = 0; i < lattice.m_thisProc_Volume; i++) {
 			for (int mu = 0; mu < extdofs; mu++) {

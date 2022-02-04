@@ -20,12 +20,13 @@ void LMC::update() {
 	Random rng;
 	su3_mat randomSU3;
 	su3_mat A;
+	for (int mu = 0; mu < m_U->getNrExtDOF(); mu++) {
 	for (int i = 0; i < m_U->getLatticePtr().m_responsible_Volume; i++) {
-		for (int mu = 0; mu < m_U->getNrExtDOF(); mu++) {
+		
 			U_init = (*m_U)(i, mu);
 			A = m_U->staple(i, mu);
 			
-			for (int hit = 0; hit < 30; hit++) {
+			for (int hit = 0; hit < 20; hit++) {
 				rng.rnd_su3_alg(randomSU3, m_epsilon);
 				(*m_U)(i, mu) = randomSU3 * (*m_U)(i, mu);
 				double expdeltaS = exp(-(beta / (double)N) * (((*m_U)(i, mu) - U_init) * A).ReTr());
@@ -40,8 +41,8 @@ void LMC::update() {
 				}
 				m_NrstepsTaken++;
 			}
-			std::cout << "Acceptance rate: " << (double)m_NrstepsTaken / ((double)m_NrAccepted) << "\n";
-			std::cout << "exp_val_Plaquette: " << exp_val_Plaquette / ((double)m_NrAccepted) << "\n\n";
+			//std::cout << "Acceptance rate: " << (double)m_NrstepsTaken / ((double)m_NrAccepted) << "\n";
+			//std::cout << "exp_val_Plaquette: " << exp_val_Plaquette / ((double)m_NrAccepted) << "\n\n";
 
 		}
 		

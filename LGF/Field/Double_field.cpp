@@ -1,7 +1,7 @@
 #include "Double_field.h"
 
 Double_field::Double_field(Lattice& lattice, int NrExtDOF) : Field(lattice, NrExtDOF) {
-	for (int i = 0; i < lattice.m_thisProc_Volume; i++) {
+	for (int i = (*this).Responsible_Start(); i < (*this).Responsible_Stop(); i++) {
 		for (int mu = 0; mu < m_NrExtDOF; mu++) {
 			(*this)(i, mu) = 0.0;
 		}

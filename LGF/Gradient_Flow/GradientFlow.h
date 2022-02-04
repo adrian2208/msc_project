@@ -3,13 +3,15 @@
 #include "../Action/Action.h"
 #include "../Math/SU3_mat.h"
 #include "../Observables/TopologicalCharge.h"
+#include "../Observables/EnergyDensity.h"
 class GradientFlow {
 public:
 	GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon);
 	void flow();
 
 	void Include_TopCharge(TopologicalCharge& TopCharge);
-
+	void Include_EnergyDensity(EnergyDensity& Edensity);
+	
 	void MakeMeasurements();
 
 private: 
@@ -23,4 +25,5 @@ private:
 	double m_flowTime;
 
 	TopologicalCharge* m_topologicalCharge = nullptr;
+	EnergyDensity* m_EnergyDensity = nullptr;
 };

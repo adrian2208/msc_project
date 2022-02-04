@@ -1,5 +1,5 @@
 #include "Lattice.h"
-
+#include <assert.h>
 Lattice::Lattice(int Ndims, int shape[]) {
 	
 	//Storing local variables
@@ -9,6 +9,10 @@ Lattice::Lattice(int Ndims, int shape[]) {
 	m_coordinate = new int[Ndims];
 	m_coorFwd = new int[Ndims];
 	m_coorBack = new int[Ndims];
+	m_coorFwdFwd = new int[Ndims];
+	m_coorBackBack = new int[Ndims];
+	m_coorFwdBack = new int[Ndims];
+	m_coorBackFwd = new int[Ndims];
 	//Calculates the total volume of the lattice & writing to member variables
 	m_totalVolume = 1;
 	m_thisProc_Volume = 0;
@@ -214,6 +218,7 @@ void Lattice::DistributeBuffers() {
 
 int Lattice::Coordinate_ProcID(int* coordinate){
 	int NrProcs = mpiWrapper::nProcs();
+	assert(m_shape[0] % NrProcs == 0);
 	int remainder = (int)m_shape[0] % NrProcs;
 	if (remainder == 0 && NrProcs>1) {
 		return coordinate[0] / (m_shape[0] / NrProcs);
@@ -269,6 +274,18 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 		if (mpiWrapper::id() == id_fwd || mpiWrapper::id() == id_back) {
 			return true;
 		}
+		//////////////////////////////////////////////////////////
+		//for (int j = 0; j < m_Ndims; j++) {
+		//	NearestNeighbour(coorFwd, j, m_coorFwdFwd, m_coorFwdBack);
+		//	NearestNeighbour(coorBack, j, m_coorBackFwd, m_coorBackBack);
+		//	if (Coordinate_ProcID(m_coorFwdFwd) == mpiWrapper::id() ||
+		//		Coordinate_ProcID(m_coorBackBack) == mpiWrapper::id() ||
+		//		Coordinate_ProcID(m_coorFwdBack) == mpiWrapper::id() ||
+		//		Coordinate_ProcID(m_coorBackFwd) == mpiWrapper::id()) {
+		//		return true;
+		//	}
+		//}
+		//////////////////////////////////////////////////////////
 	}
 	return false;
 }

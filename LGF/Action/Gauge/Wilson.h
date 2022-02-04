@@ -11,10 +11,13 @@ public:
 	/// </summary>
 	/// <returns>the Action</returns>
 	double calculate_Action(SU3_field& field);
-	double calculate_LocalActionChange(SU3_field& U_old, SU3_field& U_new, int i, int mu);
-	void calculate_LocalForce(SU3_field& field, SU3_field& F, int i, int mu);
+	double calculate_LocalActionChange(su3_mat& U_old, SU3_field& U_new, int i, int mu);
+	void calculate_LocalForce(SU3_field& field, su3_mat& F, int i, int mu);
 	void calculate_Force(SU3_field& field, SU3_field& F);
 	void calculate_FlowGradient(SU3_field& field, SU3_field& F);
+	inline double getBeta() const {
+		return m_beta;
+	}
 private:
 	double m_beta;
 };

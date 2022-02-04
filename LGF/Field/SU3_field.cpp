@@ -1,11 +1,15 @@
 #include "SU3_field.h"
+#include <algorithm>
 
 SU3_field::SU3_field(Lattice& lattice, int NrExtDOF) : Field(lattice, NrExtDOF){
 	m_FieldArray_NrBytes = 8*2*9 * NrExtDOF * lattice.m_thisProc_Volume;//9 entries of C_double each containing 16 bytes
 }
 
-void SU3_field::saveSU3ToFile(const std::filesystem::path& identifier){
-	std::filesystem::path fieldType("/su3/");
+void SU3_field::saveSU3ToFile(double beta,const std::filesystem::path& identifier){
+	(*this).transfer_FieldValues();
+	std::string beta_str = std::to_string(beta);
+	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
+	std::filesystem::path fieldType("/su3/beta"+beta_str+"/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
@@ -14,14 +18,16 @@ void SU3_field::saveSU3ToFile(const std::filesystem::path& identifier){
 	std::filesystem::path outPath("../../../../data/ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
-	std::filesystem::create_directories(outPath);
-	//write the lattice shape to the filename
 	int i;
 	for (i = 0; i < m_lattice->getNdims() - 1; i++) {
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
+	outPath += std::to_string(m_lattice->getShape()[i]) + "/";
+	std::filesystem::create_directories(outPath);
+	//write the lattice shape to the filename
+
 	//write the lattice type and the .bin extension to the filename
-	outPath += std::to_string(m_lattice->getShape()[i]) + "_" + m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_" + std::to_string(mpiWrapper::nProcs()) + "_";
+	outPath +=  m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_Nprocs" + std::to_string(mpiWrapper::nProcs()) + "_";
 	outPath += identifier;
 	outPath += ".bin";
 	//convert the filesystem path to a format suitable for the MPI_File_open argument
@@ -61,8 +67,11 @@ void SU3_field::saveSU3ToFile(const std::filesystem::path& identifier){
 	MPI_File_close(&file);
 }
 
-void SU3_field::loadSU3FromFile(const std::filesystem::path& identifier){
-	std::filesystem::path fieldType("/su3/");
+void SU3_field::loadSU3FromFile(double beta, const std::filesystem::path& identifier){
+
+	std::string beta_str = std::to_string(beta);
+	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
+	std::filesystem::path fieldType("/su3/beta" + beta_str + "/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
@@ -71,20 +80,26 @@ void SU3_field::loadSU3FromFile(const std::filesystem::path& identifier){
 	std::filesystem::path outPath("../../../../data/ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
-	std::filesystem::create_directories(outPath);
-	//write the lattice shape to the filename
 	int i;
 	for (i = 0; i < m_lattice->getNdims() - 1; i++) {
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
+	outPath += std::to_string(m_lattice->getShape()[i]) + "/";
+	std::filesystem::create_directories(outPath);
+	//write the lattice shape to the filename
+
 	//write the lattice type and the .bin extension to the filename
-	outPath += std::to_string(m_lattice->getShape()[i]) + "_" + m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_" + std::to_string(mpiWrapper::nProcs()) + "_";
+	outPath += m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_Nprocs" + std::to_string(mpiWrapper::nProcs()) + "_";
 	outPath += identifier;
 	outPath += ".bin";
 	//convert the filesystem path to a format suitable for the MPI_File_open argument
 	std::string outPath_string = outPath.string();
 	const char* outPath_pointer = outPath_string.c_str();
-
+	if (mpiWrapper::id() == 0) {
+		std::cout << "Loading SU3 Field onto " << std::to_string(mpiWrapper::nProcs()) << " processes\nFrom path " << outPath_string << "\n";
+		std::cout.flush();
+	}
+	
 	//Divide the size of FieldArray in bytes by the size of a char
 	//then tell MPI that the datatype you're using is char.
 	// This way it allocates enough bytes regardless of the size of T
@@ -116,6 +131,10 @@ void SU3_field::loadSU3FromFile(const std::filesystem::path& identifier){
 		std::cout << "Error: " << result << "-> MPI_File_write_at\n";
 	}
 	MPI_File_close(&file);
+	if (mpiWrapper::id() == 0) {
+		std::cout << "File loaded \n";
+		std::cout.flush();
+	}
 }
 
 void SU3_field::transfer_FieldValues(){
@@ -195,16 +214,19 @@ void SU3_field::InitializeHotStart(){
 	Random rng;
 	su3_mat LinCombGen;
 	SU3_gen generators;
-	for (int i = 0; i < m_lattice->m_thisProc_Volume; i++) {
+	for (int i = (*this).Responsible_Start(); i < (*this).Responsible_Stop(); i++) {
 		for (int mu = 0; mu < m_NrExtDOF; mu++) {
-			for (int j = 0; j < 8; j++) {
+			/*for (int j = 0; j < 8; j++) {
 				LinCombGen = LinCombGen + rng.Gaussian_Double(0.0, 1.0) * generators(j);
 			}
 			LinCombGen = LinCombGen.timesI();
 			(*this)(i, mu) = HermTrLessExp(LinCombGen);
-			LinCombGen.setToZeros();
+			LinCombGen.setToZeros();*/
+			(*this)(i, mu) = rng.rnd_SU3_Group_elem();
+
 		}
 	}
+	(*this).transfer_FieldValues();
 }
 void SU3_field::InitializeColdStart() {
 	su3_mat unit;
@@ -280,25 +302,97 @@ su3_mat SU3_field::staple(int internal_index, int mu){
 	return out;
 }
 
-su3_mat SU3_field::clover_avg(int internal_index, int mu,int nu) {
+
+su3_mat SU3_field::clover_avg1(int internal_index, int mu,int nu) {
 	su3_mat out;
 	int displacedIdx;
 
+	//displacedIdx = m_lattice->m_fwd[internal_index][nu];
+	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
+	//
+	//displacedIdx = m_lattice->m_back[internal_index][nu];
+	//out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+	//
+	//displacedIdx = m_lattice->m_back[internal_index][mu];
+	//out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+
+	//displacedIdx = m_lattice->m_back[displacedIdx][nu];
+	//out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+
+	//By exploiting the property that A.dagger()*B.dagger() = (B*A).dagger(), we can reduce the number of evaluations needed here
 	displacedIdx = m_lattice->m_fwd[internal_index][nu];
-	out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * (*this)(internal_index, mu).dagger() * this->fwd_fieldVal(internal_index, mu, nu).dagger();
+	out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * ((*this)(internal_index, mu)*this->fwd_fieldVal(internal_index, mu, nu)).dagger();
 
 	displacedIdx = m_lattice->m_back[internal_index][nu];
-	out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+	out = out + (*this)(internal_index, mu) * ((*this)(displacedIdx, mu)*this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
 
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
 
 	displacedIdx = m_lattice->m_back[displacedIdx][nu];
-	out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+	out = out + ((*this)(displacedIdx, mu)*this->back_fieldVal(internal_index, nu, nu)).dagger()  * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
 
-	out = -0.25 * out;
+	out = 0.25 * out;
+	//for (int i = 0; i < 9; i++) {
+	//	out[i].Re = 0;
+	//}
+	
+	
+	su3_mat identity;
+	identity.setToIdentity();
+	double trace = 1.0 / 3.0 * out.Tr().I();
+	out = out - out.dagger();
+	out = (1.0 / 2.0)*out + trace * identity;
+
 	return out;
 }
+
+su3_mat SU3_field::clover_avg(int internal_index, int mu, int nu) {
+	su3_mat out;
+	int displacedIdx;
+
+	//displacedIdx = m_lattice->m_fwd[internal_index][nu];
+	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
+	//
+	//displacedIdx = m_lattice->m_back[internal_index][nu];
+	//out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+	//
+	//displacedIdx = m_lattice->m_back[internal_index][mu];
+	//out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+
+	//displacedIdx = m_lattice->m_back[displacedIdx][nu];
+	//out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+
+	//By exploiting the property that A.dagger()*B.dagger() = (B*A).dagger(), we can reduce the number of evaluations needed here
+	displacedIdx = m_lattice->m_fwd[internal_index][nu];
+	out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * ((*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu)).dagger();
+
+	displacedIdx = m_lattice->m_back[internal_index][nu];
+	out = out + (*this)(internal_index, mu) * ((*this)(displacedIdx, mu) * this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
+
+	displacedIdx = m_lattice->m_back[internal_index][mu];
+	out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+
+	displacedIdx = m_lattice->m_back[displacedIdx][nu];
+	out = out + ((*this)(displacedIdx, mu) * this->back_fieldVal(internal_index, nu, nu)).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+
+	out = 0.25 * out;
+	//for (int i = 0; i < 9; i++) {
+	//	out[i].Re = 0;
+	//}
+
+
+	su3_mat identity;
+	identity.setToIdentity();
+	double trace = 1.0 / 3.0 * out.Tr().I();
+	out = out - out.dagger();
+	out[0].Im -= trace;
+	out[4].Im -= trace;
+	out[8].Im -= trace;
+	return out;
+}
+
+
 
 
 

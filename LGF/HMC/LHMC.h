@@ -7,31 +7,24 @@
 #include "../Math/SU3_gen.h"
 class LHMC {
 public:
-	LHMC(SU3_field& U, Wilson& GaugeAction, double epsilon);
+	LHMC(SU3_field& U, Wilson& GaugeAction, double epsilon,int NrLeaps = 0);
+	~LHMC();
 	//void Initialize_P();
-	double calculate_KineticEnergy(SU3_field& P, int i, int mu);
-	void leapfrog(SU3_field& U, SU3_field& P, SU3_field& F, Wilson& action, int parity, int i, int mu);
+	double calculate_KineticEnergy(su3_mat& P);
+	void leapfrog(SU3_field& U, su3_mat& P, su3_mat& F, Wilson& action, int parity, int i, int mu);
 	void update(int parity);
 	void sweep();
 	double acceptanceRate();
 private:
-	SU3_field* m_P;
-	SU3_field* m_F;
 	SU3_field* m_U;
-	SU3_field* m_F_init;
-	SU3_field* m_U_init;
-	RNG_field* m_rand;
-	Double_field* m_K_init;
-	Double_field* m_localEpsilon;
-	//Double_field* m_S_init;
+	//RNG_field* m_rand; I would use this, but it takes up too much RAM
+	Random* m_rand;
 	Wilson* m_GaugeAction;
 
 	int m_NrAccepted;
 	int m_NrstepsTaken;
 	int m_NrleapfrogSteps;
 	double m_epsilon;
-
-
 
 	double avg_Plaquette;
 #ifdef _DEBUG

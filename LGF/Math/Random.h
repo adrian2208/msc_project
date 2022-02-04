@@ -10,7 +10,8 @@ public:
 }
 	Random() {
 		std::random_device seed;
-		m_rng = std::mt19937_64(seed());
+		int seed1 = seed() + mpiWrapper::id();
+		m_rng = std::mt19937_64(seed1);
 	}
 	double Uniform_Double() {
 		std::uniform_real_distribution<double> out(0, 1);
@@ -20,7 +21,34 @@ public:
 		std::normal_distribution<double> out(mean,std);
 		return out(m_rng);
 	}
-
+	su3_mat rnd_SU3_Group_elem() {
+		static const double PI = 4.0 * atan(1.0);
+		double alpha, sinOf_alpha, phi, a_0, a_1, a_2, a_3;
+		double cosOf_theta, sinOf_theta;
+		su3_mat temp;
+		su3_mat out;
+		out.setToIdentity();
+		for (int i = 0; i < 2; i++) {
+			for (int j = i + 1; j < 3; j++) {
+				alpha = PI * (*this).Uniform_Double();
+				phi = 2.0*PI* (*this).Uniform_Double();
+				cosOf_theta = 2.0 * (*this).Uniform_Double() - 1.0;
+				sinOf_theta = sqrt(1.0 - cosOf_theta * cosOf_theta);
+				sinOf_alpha = sin(alpha);
+				a_0 = cos(alpha);
+				a_1 = sinOf_alpha * cos(phi) * sinOf_theta;
+				a_2 = sinOf_alpha * sin(phi) * sinOf_theta;
+				a_3 = sinOf_alpha * cosOf_theta;
+				temp.setToIdentity();
+				temp(i, i) = C_double(a_0, a_3);
+				temp(i, j) = C_double(a_2, a_1);
+				temp(j, i) = C_double(-a_2, a_1);
+				temp(j, j) = C_double(a_0, -a_3);
+				out = temp * out;
+			}
+		}
+		return out;
+	}
 	void rnd_su3_alg(su3_mat& mat, double epsilon) {
 		
 		//check whether its ok to use the same distribution many times...
