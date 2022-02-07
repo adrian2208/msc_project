@@ -2,17 +2,26 @@
 #include <random>
 #include "SU3_mat.h"
 #include <iostream>
+//#define SEED_RNG 50
 class Random {
 
 public:
 	Random(int seed) {
 		m_rng = std::mt19937_64(seed);
-}
+	}
+#ifdef SEED_RNG
+	std::cout << "WARNING!!! -> RANDOM OBJECT INSTANTIATED WITH SEED! "
+	Random() {
+		m_rng = std::mt19937_64(SEED_RNG);
+	}
+#else
 	Random() {
 		std::random_device seed;
 		int seed1 = seed() + mpiWrapper::id();
 		m_rng = std::mt19937_64(seed1);
 	}
+#endif // SEED_RNG
+
 	double Uniform_Double() {
 		std::uniform_real_distribution<double> out(0, 1);
 		return out(m_rng);

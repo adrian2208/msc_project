@@ -5,7 +5,7 @@ SU3_field::SU3_field(Lattice& lattice, int NrExtDOF) : Field(lattice, NrExtDOF){
 	m_FieldArray_NrBytes = 8*2*9 * NrExtDOF * lattice.m_thisProc_Volume;//9 entries of C_double each containing 16 bytes
 }
 
-void SU3_field::saveSU3ToFile(double beta,const std::filesystem::path& identifier){
+void SU3_field::saveSU3ToFile(double beta, const std::string& identifier, const std::string& dataFolder) {
 	(*this).transfer_FieldValues();
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -15,7 +15,7 @@ void SU3_field::saveSU3ToFile(double beta,const std::filesystem::path& identifie
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath("../../../../data/ensembles");
+	std::filesystem::path outPath(dataFolder+"ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -42,32 +42,52 @@ void SU3_field::saveSU3ToFile(double beta,const std::filesystem::path& identifie
 
 	result = MPI_File_open(mpiWrapper::comm(), outPath_pointer, MPI_MODE_RDWR | MPI_MODE_CREATE, MPI_INFO_NULL, &file);
 	if (result != MPI_SUCCESS) {
-		std::cout << "Error: " << result << "-> MPI_File_open\n";
+		char Error_string[MPI_MAX_ERROR_STRING];
+		int Error_class;
+		int Error_len;
+		MPI_Error_class(result, &Error_class);
+		MPI_Error_string(result, Error_string, &Error_len);
+		std::cout << Error_class << " Error: " << Error_string << std::endl;
 	}
-	result = MPI_File_set_view(file, displacement, dataType, dataType, (char*)NULL, MPI_INFO_NULL);
+	char datarep[7] = "native";
+	result = MPI_File_set_view(file, displacement, dataType, dataType, datarep,MPI_INFO_NULL);
 	if (result != MPI_SUCCESS) {
-		std::cout << "Error: " << result << "-> MPI_File_set_view\n";
+		char Error_string[MPI_MAX_ERROR_STRING];
+		int Error_class;
+		int Error_len;
+		MPI_Error_class(result, &Error_class);
+		MPI_Error_string(result, Error_string, &Error_len);
+		std::cout << Error_class << " Error: " << Error_string << std::endl;
 	}
 
 	//the displacement in bytes sets the offset between the field stored by 
 	//process n and process n-1
 	displacement = mpiWrapper::id();
 	displacement *= m_FieldArray_NrBytes;
-
+	if (mpiWrapper::id() == 0) {
+		std::cout << "Saving SU3 Field onto " << std::to_string(mpiWrapper::nProcs()) << " processes\nTo path " << outPath_string << "\n";
+		std::cout.flush();
+	}
 	//The file is written
 	for (int site = 0; site < m_lattice->getthisProc_Volume(); site++) {
 		for (int extDOF = 0; extDOF < m_NrExtDOF; extDOF++) {
 			result = MPI_File_write_at(file, displacement, FieldArray[site*m_NrExtDOF+extDOF].getMemPointer(), 144, dataType, &status);
 			displacement += 144;
+			if (result != MPI_SUCCESS) {
+				char Error_string[MPI_MAX_ERROR_STRING];
+				int Error_class;
+				int Error_len;
+				MPI_Error_class(result, &Error_class);
+				MPI_Error_string(result, Error_string, &Error_len);
+				std::cout << Error_class << " Error: " << Error_string << std::endl;
+			}
 		}
 	}
-	if (result != MPI_SUCCESS) {
-		std::cout << "Error: " << result << "-> MPI_File_write_at\n";
-	}
+
 	MPI_File_close(&file);
 }
 
-void SU3_field::loadSU3FromFile(double beta, const std::filesystem::path& identifier){
+void SU3_field::loadSU3FromFile(double beta, const std::string& identifier, const std::string& dataFolder) {
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -77,7 +97,7 @@ void SU3_field::loadSU3FromFile(double beta, const std::filesystem::path& identi
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath("../../../../data/ensembles");
+	std::filesystem::path outPath(dataFolder+"ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -108,11 +128,22 @@ void SU3_field::loadSU3FromFile(double beta, const std::filesystem::path& identi
 
 	result = MPI_File_open(mpiWrapper::comm(), outPath_pointer, MPI_MODE_RDONLY, MPI_INFO_NULL, &file);
 	if (result != MPI_SUCCESS) {
-		std::cout << "Error: " << result << "-> MPI_File_open\n";
+		char Error_string[MPI_MAX_ERROR_STRING];
+		int Error_class;
+		int Error_len;
+		MPI_Error_class(result, &Error_class);
+		MPI_Error_string(result, Error_string, &Error_len);
+		std::cout << Error_class <<" Error: " << Error_string << std::endl;
 	}
-	result = MPI_File_set_view(file, displacement, dataType, dataType, (char*)NULL, MPI_INFO_NULL);
+	char datarep[7] = "native";
+	result = MPI_File_set_view(file, displacement, dataType, dataType, datarep, MPI_INFO_NULL);
 	if (result != MPI_SUCCESS) {
-		std::cout << "Error: " << result << "-> MPI_File_set_view\n";
+		char Error_string[MPI_MAX_ERROR_STRING];
+		int Error_class;
+		int Error_len;
+		MPI_Error_class(result, &Error_class);
+		MPI_Error_string(result, Error_string, &Error_len);
+		std::cout << Error_class << " Error: " << Error_string << std::endl;
 	}
 
 	//the displacement in bytes sets the offset between the field stored by 
@@ -125,16 +156,23 @@ void SU3_field::loadSU3FromFile(double beta, const std::filesystem::path& identi
 		for (int extDOF = 0; extDOF < m_NrExtDOF; extDOF++) {
 			result = MPI_File_read_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].getMemPointer(), 144, dataType, &status);
 			displacement += 144;
+			if (result != MPI_SUCCESS) {
+				char Error_string[MPI_MAX_ERROR_STRING];
+				int Error_class;
+				int Error_len;
+				MPI_Error_class(result, &Error_class);
+				MPI_Error_string(result, Error_string, &Error_len);
+				std::cout << Error_class << " Error: " << Error_string << std::endl;
+			}
 		}
 	}
-	if (result != MPI_SUCCESS) {
-		std::cout << "Error: " << result << "-> MPI_File_write_at\n";
-	}
+
 	MPI_File_close(&file);
 	if (mpiWrapper::id() == 0) {
 		std::cout << "File loaded \n";
 		std::cout.flush();
 	}
+	(*this).transfer_FieldValues();
 }
 
 void SU3_field::transfer_FieldValues(){
@@ -172,6 +210,12 @@ void SU3_field::transfer_FieldValues(){
 			result = MPI_Isend(Package, Nr_C_doubles_toSend * sizeof(C_double) / sizeof(char), MPI_CHAR, Send_id, mpiWrapper::id() * mpiWrapper::nProcs() + Send_id, mpiWrapper::comm(), &request);
 			if (result != MPI_SUCCESS) {
 				std::cout << "Error: " << result << "-> MPI_Isend	[FIELDVALUES]  From: "<<mpiWrapper::id() << " To: "<<Send_id << "\n";
+				char Error_string[MPI_MAX_ERROR_STRING];
+				int Error_class;
+				int Error_len;
+				MPI_Error_class(result, &Error_class);
+				MPI_Error_string(result, Error_string, &Error_len);
+				std::cout << Error_class << " Error: " << Error_string << std::endl;
 			}
 		}
 
@@ -183,6 +227,12 @@ void SU3_field::transfer_FieldValues(){
 			result = MPI_Recv(Package_recv, Nr_C_doubles_toRecv*sizeof(C_double)/sizeof(char),MPI_CHAR,Recv_id, Recv_id * mpiWrapper::nProcs() + mpiWrapper::id(), mpiWrapper::comm(), &status);
 			if (result != MPI_SUCCESS) {
 				std::cout << "Error: " << result << "-> MPI_Recv	[FIELDVALUES]  From: " << Send_id  << " To: " << mpiWrapper::id() << "\n";
+				char Error_string[MPI_MAX_ERROR_STRING];
+				int Error_class;
+				int Error_len;
+				MPI_Error_class(result, &Error_class);
+				MPI_Error_string(result, Error_string, &Error_len);
+				std::cout << Error_class << " Error: " << Error_string << std::endl;
 			}
 			int idx = 0;
 			for (int intern_idx = m_lattice->m_InternalIdx_start[Recv_id][0]; intern_idx < m_lattice->m_InternalIdx_stop[Recv_id][1];intern_idx++) {
@@ -303,49 +353,49 @@ su3_mat SU3_field::staple(int internal_index, int mu){
 }
 
 
-su3_mat SU3_field::clover_avg1(int internal_index, int mu,int nu) {
-	su3_mat out;
-	int displacedIdx;
-
-	//displacedIdx = m_lattice->m_fwd[internal_index][nu];
-	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
-	//
-	//displacedIdx = m_lattice->m_back[internal_index][nu];
-	//out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
-	//
-	//displacedIdx = m_lattice->m_back[internal_index][mu];
-	//out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
-
-	//displacedIdx = m_lattice->m_back[displacedIdx][nu];
-	//out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
-
-	//By exploiting the property that A.dagger()*B.dagger() = (B*A).dagger(), we can reduce the number of evaluations needed here
-	displacedIdx = m_lattice->m_fwd[internal_index][nu];
-	out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * ((*this)(internal_index, mu)*this->fwd_fieldVal(internal_index, mu, nu)).dagger();
-
-	displacedIdx = m_lattice->m_back[internal_index][nu];
-	out = out + (*this)(internal_index, mu) * ((*this)(displacedIdx, mu)*this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
-
-	displacedIdx = m_lattice->m_back[internal_index][mu];
-	out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
-
-	displacedIdx = m_lattice->m_back[displacedIdx][nu];
-	out = out + ((*this)(displacedIdx, mu)*this->back_fieldVal(internal_index, nu, nu)).dagger()  * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
-
-	out = 0.25 * out;
-	//for (int i = 0; i < 9; i++) {
-	//	out[i].Re = 0;
-	//}
-	
-	
-	su3_mat identity;
-	identity.setToIdentity();
-	double trace = 1.0 / 3.0 * out.Tr().I();
-	out = out - out.dagger();
-	out = (1.0 / 2.0)*out + trace * identity;
-
-	return out;
-}
+//su3_mat SU3_field::clover_avg1(int internal_index, int mu,int nu) {
+//	su3_mat out;
+//	int displacedIdx;
+//
+//	//displacedIdx = m_lattice->m_fwd[internal_index][nu];
+//	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
+//	//
+//	//displacedIdx = m_lattice->m_back[internal_index][nu];
+//	//out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+//	//
+//	//displacedIdx = m_lattice->m_back[internal_index][mu];
+//	//out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+//
+//	//displacedIdx = m_lattice->m_back[displacedIdx][nu];
+//	//out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+//
+//	//By exploiting the property that A.dagger()*B.dagger() = (B*A).dagger(), we can reduce the number of evaluations needed here
+//	displacedIdx = m_lattice->m_fwd[internal_index][nu];
+//	out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * ((*this)(internal_index, mu)*this->fwd_fieldVal(internal_index, mu, nu)).dagger();
+//
+//	displacedIdx = m_lattice->m_back[internal_index][nu];
+//	out = out + (*this)(internal_index, mu) * ((*this)(displacedIdx, mu)*this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
+//
+//	displacedIdx = m_lattice->m_back[internal_index][mu];
+//	out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+//
+//	displacedIdx = m_lattice->m_back[displacedIdx][nu];
+//	out = out + ((*this)(displacedIdx, mu)*this->back_fieldVal(internal_index, nu, nu)).dagger()  * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+//
+//	out = 0.25 * out;
+//	//for (int i = 0; i < 9; i++) {
+//	//	out[i].Re = 0;
+//	//}
+//	
+//	
+//	su3_mat identity;
+//	identity.setToIdentity();
+//	double trace = 1.0 / 3.0 * out.Tr().I();
+//	out = out - out.dagger();
+//	out = (1.0 / 2.0)*out + trace * identity;
+//
+//	return out;
+//}
 
 su3_mat SU3_field::clover_avg(int internal_index, int mu, int nu) {
 	su3_mat out;
@@ -391,9 +441,6 @@ su3_mat SU3_field::clover_avg(int internal_index, int mu, int nu) {
 	out[8].Im -= trace;
 	return out;
 }
-
-
-
 
 
 inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){

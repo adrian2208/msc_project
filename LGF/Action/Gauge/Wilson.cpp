@@ -53,32 +53,17 @@ void Wilson::calculate_Force(SU3_field& field, SU3_field& F){
 }
 
 void Wilson::calculate_FlowGradient(SU3_field& field, SU3_field& F) {
-	su3_mat identity;
-	identity.setToIdentity();
 	su3_mat temp;
 	double trace;
-	//RIPE FOR MULTI-THREADING
 	for (int mu = 0; mu < field.getNrExtDOF(); mu++) {
 		for (int i = field.Responsible_Start(); i < field.Responsible_Stop(); i++) {
-		
-			//Equation (8.42) in QCD on the lattice by Lang and Gattringer
-			//Staple = field.staple(i, mu);
-
-			//https://arxiv.org/pdf/1808.02281.pdf
-			//temp = field(i, mu) * field.staple(i, mu);
 			temp = field(i, mu) * field.staple(i, mu);
 			temp = temp - temp.dagger();
 			trace = temp.ImTr() / 3.0;
-			//F(i, mu) =  0.5*(temp-temp.dagger()) -(1.0 / 6.0) * (temp-temp.dagger()).Tr() * identity;
 			temp[0].Im -= trace;
 			temp[4].Im -= trace;
 			temp[8].Im -= trace;
 			F(i, mu) = 0.5 * temp;
-//#ifdef _DEBUG
-			if (!IsAntiHermTrLess(F(i, mu))) {
-				std::cout << "This F is not Hermitian and traceless!\n";
-			}
-//#endif // DEBUG
 		}
 	}
 }

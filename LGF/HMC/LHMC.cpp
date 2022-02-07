@@ -85,12 +85,9 @@ void LHMC::leapfrog(SU3_field& U, su3_mat& P, su3_mat& F, Wilson& action, int pa
 }
 void LHMC::sweep() {
 	update(0);
+	MPI_Barrier(mpiWrapper::comm());
 	update(1);
-	avg_Plaquette = (*m_U).Avg_Plaquette();
-	if (mpiWrapper::id() == 0) {
-		std::cout << "exp_val_Plaquette: " << avg_Plaquette << "\n\n";
-		std::cout.flush();
-	}
+	MPI_Barrier(mpiWrapper::comm());
 }
 void LHMC::update(int parity) {
 	su3_mat P;

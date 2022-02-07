@@ -6,7 +6,7 @@ public:
 	TopologicalCharge(SU3_field& U);
 	void calculate(double flowTime);
 	int calculate_AutoCorrTime();
-	void saveTopologicalChargeToFile(double beta, const std::filesystem::path& identifier = "");
+	void saveTopologicalChargeToFile(double beta, const std::string& identifier="", const std::string& dataFolder = "C:/Users/adria/Documents/msc_project/data/");
 private:
 	SU3_field* m_U;
 	int m_AutoCorrTime;

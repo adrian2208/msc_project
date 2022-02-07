@@ -17,14 +17,23 @@ Lattice::Lattice(int Ndims, int shape[]) {
 	m_totalVolume = 1;
 	m_thisProc_Volume = 0;
 	m_responsible_Volume = 0;
+
 	for (int i = 0; i < Ndims; i++) {
 		m_shape[i] = shape[i];
+		if (shape[i] % 2 != 0) {
+			if (mpiWrapper::id() == 0) {
+				std::cout << "Check that shape matches the number of dimensions!\n";
+				std::cout << "Even- Odd scheme requires an even number of lattice points in each direction with the torus topology!\n";
+			}
+			mpiWrapper::end_parallelSession();
+			exit(EXIT_FAILURE);
+		}
 		m_totalVolume *= shape[i];
 		m_coordinate[i] = 0;
 	}
-
+	CheckPartitioning();
 	partition_lattice();
-
+	Print_Partitioning();
 }
 
 //iterates through an N- dimensional array of arbitrary shape
@@ -215,15 +224,110 @@ void Lattice::DistributeBuffers() {
 	}
 }
 
+void Lattice::CheckPartitioning() {
+	STFF_Flag = false;
+	Trivial_Flag = false;
+	TPancake_Flag = false;
+	int NrProcs_MAX = 1024;
+	int NrProcs = mpiWrapper::nProcs();
+	if (NrProcs == 1) {
+		if (mpiWrapper::id() == 0) {
+			std::cout << "Single process -> Trivial Partitioning" << std::endl;
+		}
+		Trivial_Flag = true;
+		return;
+	}
+	if (mpiWrapper::nProcs() <= m_shape[0] && m_shape[0] % mpiWrapper::nProcs() == 0) {
+		if (mpiWrapper::id() == 0) std::cout << "Processes evenly divide the first dimension -> Temporal Pancake partitioning\n";
+		TPancake_Flag = true;
+		return; 
+	}
+	int NumberOfPartitions = 1;
+	int Divisions = 0;
+	int xDivisions;
+	int yDivisions;
+	
+	if (mpiWrapper::id() == 0) {
+		std::cout << "The following are numbers of processes suitable for this lattice upto " << NrProcs_MAX << std::endl;
+	}
+	while (NumberOfPartitions <= NrProcs_MAX) {
+		NumberOfPartitions = (int)floor((double)((Divisions + 2) * (Divisions + 2)) / 4.0);
+
+		if (Divisions % 2 != 0) {
+			yDivisions = (Divisions - 1) / 2;
+			xDivisions = (Divisions - 1) / 2 + 1;
+		}
+		else {
+			yDivisions = Divisions / 2;
+			xDivisions = Divisions / 2;
+		}
+		if (m_shape[0] % (xDivisions + 1) != 0) {
+			Divisions++;
+			continue;
+		}
+		if (m_shape[1] % (yDivisions + 1) != 0) {
+			Divisions++;
+			continue;
+		}
+		if (mpiWrapper::id() == 0) { 
+			std::cout << NumberOfPartitions << " ";
+		}
+		if (mpiWrapper::nProcs() == NumberOfPartitions) {
+			STFF_Flag = true;
+		}
+		Divisions++;
+	}
+	if (mpiWrapper::id() == 0) {
+		std::cout << std::endl;
+	}
+	if (STFF_Flag) {
+		if (mpiWrapper::id() == 0) {
+			std::cout << "Success! "<< NrProcs << " processes utilized in Space-time French Fries partitioning." << std::endl;
+		}
+		return;
+	}
+	if (mpiWrapper::id() == 0) {
+		std::cout << "Failure! " << NrProcs << " processes could not be distributed on the lattice" << std::endl;
+	}
+	mpiWrapper::end_parallelSession();
+	exit(EXIT_FAILURE);
+}
+
 
 int Lattice::Coordinate_ProcID(int* coordinate){
-	int NrProcs = mpiWrapper::nProcs();
-	assert(m_shape[0] % NrProcs == 0);
-	int remainder = (int)m_shape[0] % NrProcs;
-	if (remainder == 0 && NrProcs>1) {
-		return coordinate[0] / (m_shape[0] / NrProcs);
+	if (Trivial_Flag) {
+		return 0;
 	}
-	return 0;
+	if (TPancake_Flag) {
+		int NrProcs = mpiWrapper::nProcs();
+		assert(m_shape[0] % NrProcs == 0);
+		int remainder = m_shape[0] % NrProcs;
+		if (remainder == 0 && NrProcs > 1) {
+			return coordinate[0] / (m_shape[0] / NrProcs);
+		}
+	}
+	if (STFF_Flag) {
+		int NrProcs = mpiWrapper::nProcs();
+		int NumberOfPartitions = 1;
+		int Divisions = 0;
+		int xDivisions;
+		int yDivisions;
+		while (NumberOfPartitions <= NrProcs) {
+			NumberOfPartitions = (int)floor((double)((Divisions + 2) * (Divisions + 2)) / 4.0);
+			Divisions++;
+		}
+		Divisions -= 2;
+		NumberOfPartitions = (int)floor((double)((Divisions + 2) * (Divisions + 2)) / 4.0);
+		if (Divisions % 2 != 0) {
+			yDivisions = (Divisions - 1) / 2;
+			xDivisions = (Divisions - 1) / 2 + 1;
+		}
+		else {
+			yDivisions = Divisions / 2;
+			xDivisions = Divisions / 2;
+		}
+		return coordinate[0] / (m_shape[0] / (xDivisions + 1)) + (coordinate[1] / (m_shape[1] / (yDivisions + 1))) + xDivisions * (coordinate[0] / (m_shape[0] / (xDivisions + 1)));
+	}
 }
 
 
@@ -274,18 +378,18 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 		if (mpiWrapper::id() == id_fwd || mpiWrapper::id() == id_back) {
 			return true;
 		}
-		//////////////////////////////////////////////////////////
-		//for (int j = 0; j < m_Ndims; j++) {
-		//	NearestNeighbour(coorFwd, j, m_coorFwdFwd, m_coorFwdBack);
-		//	NearestNeighbour(coorBack, j, m_coorBackFwd, m_coorBackBack);
-		//	if (Coordinate_ProcID(m_coorFwdFwd) == mpiWrapper::id() ||
-		//		Coordinate_ProcID(m_coorBackBack) == mpiWrapper::id() ||
-		//		Coordinate_ProcID(m_coorFwdBack) == mpiWrapper::id() ||
-		//		Coordinate_ProcID(m_coorBackFwd) == mpiWrapper::id()) {
-		//		return true;
-		//	}
-		//}
-		//////////////////////////////////////////////////////////
+		for (int j = 0; j < m_Ndims; j++) {
+			if (j != i) {
+				NearestNeighbour(coorFwd, j, m_coorFwdFwd, m_coorFwdBack);
+				NearestNeighbour(coorBack, j, m_coorBackFwd, m_coorBackBack);
+				if (Coordinate_ProcID(m_coorFwdFwd) == mpiWrapper::id() ||
+					Coordinate_ProcID(m_coorBackBack) == mpiWrapper::id() ||
+					Coordinate_ProcID(m_coorFwdBack) == mpiWrapper::id() ||
+					Coordinate_ProcID(m_coorBackFwd) == mpiWrapper::id()) {
+					return true;
+				}
+			}
+		}
 	}
 	return false;
 }
@@ -305,4 +409,20 @@ int Lattice::getNdims() const{
 
 std::string Lattice::getType() const{
 	return type;
+}
+
+void Lattice::Print_Partitioning() {
+	if (mpiWrapper::id() == 0) {
+		int* coordinate = new int[2];
+		for (int i = 0; i < m_shape[0]; i++) {
+			for (int j = 0; j < m_shape[1]; j++) {
+				coordinate[0] = i;
+				coordinate[1] = j;
+				std::cout << Coordinate_ProcID(coordinate) << " ";
+			}
+			std::cout << "\n";
+		}
+		delete[] coordinate;
+	}
+	MPI_Barrier(mpiWrapper::comm());
 }

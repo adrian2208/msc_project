@@ -4,6 +4,7 @@
 EnergyDensity::EnergyDensity(SU3_field& U) {
 	m_AutoCorrTime = calculate_AutoCorrTime();
 	m_U = &U;
+	calculate(0);
 }
 
 void EnergyDensity::calculate(double flowTime) {
@@ -36,13 +37,13 @@ int EnergyDensity::calculate_AutoCorrTime() {
 	return 0;
 }
 
-void EnergyDensity::saveEnergyDensityToFile(double beta, const std::filesystem::path& identifier) {
+void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& identifier, const std::string& dataFolder) {
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');
 		std::filesystem::path fieldType("/EnergyDensity/beta" + beta_str + "/");
 		//move to the ensembles directory
-		std::filesystem::path outPath("../../../../data/Observables");
+		std::filesystem::path outPath(dataFolder+ "Observables");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
 		int i;

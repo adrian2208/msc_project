@@ -10,11 +10,8 @@ void mpiWrapper::begin_parallelSession(int argc, char** argv) {
 	MPI_Comm_size(Comm, &(Nprocs));
 	MPI_Comm_rank(Comm, &(proc_id));
 	
-	for (int i = 0; i < Nprocs; i++) {
-		if (i == proc_id) {
-			std::cout << "Process ID: " << i << "\n" << "Nr. Processes: " << Nprocs << "\n";
-			MPI_Barrier(Comm);
-		}
+	if (proc_id == 0) {
+		std::cout << "Started Parallel Session with " << Nprocs << " processes...\n";
 	}
 }
 

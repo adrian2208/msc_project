@@ -23,7 +23,7 @@ public:
 	//This virtual method sets the size of the overlap stored by neighbouring processes
 	// defaulting to 1 vertex overlap
 	virtual bool is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack);
-
+	void Print_Partitioning();
 	int* getShape() const;
 	int getNdims() const;
 	//int getthisProc_Volume() const;
@@ -66,6 +66,11 @@ public:
 
 
 protected:
+	bool Trivial_Flag;
+	bool TPancake_Flag;
+	bool STFF_Flag;
+	void CheckPartitioning();
+
 	int* m_shape;//The size of the lattice for each dimension
 	int m_Ndims;//The number of lattice dimensions
 

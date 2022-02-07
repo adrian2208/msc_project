@@ -1,5 +1,7 @@
 import os.path
+import module1
 import pandas as pd
+from pathlib import Path
 import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')
@@ -9,17 +11,22 @@ matplotlib.style.use('ggplot')
 #directory = '.\\data\\Observables\\Topological_Charge\\beta6_450000\\8X8X8X8\\'
 directory = '.\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\'
 
+def getPlotDirectory(dataDirectory):
+    plotDir = '.\\Plots\\'+dataDirectory[dataDirectory.find('data'):]
+    Path(plotDir).mkdir(parents=True, exist_ok=True)
+    return plotDir
+
 def ObservableDirectory(observable,beta,lattice_shape):
     betaStr = str(beta).split('.')[0]+'_'+str(beta).split('.')[1]
     while len(betaStr)< 8:
         betaStr += '0'
-    directory = '.\\data\\Observables\\'+observable + '\\beta' +betaStr+'\\'+ lattice_shape +'\\'
+    directory = 'C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\'+observable + '\\beta' +betaStr+'\\'+ lattice_shape +'\\'
     if not os.path.isdir(directory):
         print("No such directory exists:")
         print(directory)
     return directory
 
-ObservableDirectory('Topological_Charge',6.0,'12X12X12X12')
+
 def DirectoryToDataframe(directory):
     frames = []
     name_list = []
@@ -44,6 +51,21 @@ def HistogramFromDataFrameRow(dataframe,row,x_min,x_max,Nr_bins):
     fig = sns.histplot(0.25*dataframe.iloc[row],binwidth=bin_width,bins = Nr_bins,binrange = (x_min,x_max))
     fig.set_xticks(range(x_min,x_max,1))
     plt.xticks(rotation = 45)
-    plt.savefig('Hist_zero_flowTIme.pdf')
+    plt.savefig('Hist_fin_flowTIme.pdf')
 
-HistogramFromDataFrameRow(DirectoryToDataframe(ObservableDirectory('Topological_Charge',6.0,'12X12X12X12')),599,-15,15,61)
+
+#HistogramFromDataFrameRow(DirectoryToDataframe(ObservableDirectory('Topological_Charge',6.0,'12X12X12X12')),599,-15,15,61)
+
+
+
+#df1 = pd.read_csv("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\beta6_000000\\8X8X8X8\\torus_extdof4ensemble_0LHMC.csv",names = [0], sep="\n", header=None)
+#fig = sns.lineplot(data=df1)
+#plt.savefig('EDvLHMCstep.pdf')
+#plt.close()
+
+dataPath = ObservableDirectory('Topological_Charge',6.0,'24X24X24X24')
+outDir = getPlotDirectory(dataPath)
+fileName = "torus_extdof4ensemble_27flowed.csv"
+df1 = pd.read_csv(dataPath+fileName,names = [0], sep="\n", header=None)
+fig = sns.lineplot(data=df1)
+plt.savefig(outDir+'Qvflowstep.pdf')

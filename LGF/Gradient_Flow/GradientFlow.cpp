@@ -17,50 +17,27 @@ void GradientFlow::flow(){
 
 	su3_mat temp;
 	for (int mu = 0; mu < (*m_U).getNrExtDOF(); mu++) {
-	for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
-		
+		for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
 			temp = -0.25 * m_epsilon * (*m_Z0)(i, mu);
-#ifdef _DEBUG
-			if (!isSpecialUnitary((*m_U)(i, mu))) {
-				std::cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS ^ \n";
-			}
-#endif//debug
 			(*m_U)(i, mu) = HermTrLessExp(temp) * (*m_U)(i, mu);
-			#ifdef _DEBUG
-			if (!isSpecialUnitary((*m_U)(i, mu))) {
-				std::cout << "W_1 ^ \n";
-			}
-			#endif//debug
 		}
 	}
 	
 	(*m_U).transfer_FieldValues();
 	(*m_GaugeAction).calculate_FlowGradient((*m_U), (*m_Z1));
 	for (int mu = 0; mu < (*m_U).getNrExtDOF(); mu++) {
-	for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
-		
+		for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
 			temp = -m_epsilon *(8.0/9.0* (*m_Z1)(i, mu) -17.0/36.0*(*m_Z0)(i, mu));
 			(*m_U)(i, mu) = HermTrLessExp(temp) * (*m_U)(i, mu);
-			#ifdef _DEBUG
-			if (!isSpecialUnitary((*m_U)(i, mu))) {
-				std::cout << "W_2 ^ \n";
-			}
-			#endif//debug
 		}
 	}
 	
 	(*m_U).transfer_FieldValues();
 	(*m_GaugeAction).calculate_FlowGradient((*m_U), (*m_Z2));
 	for (int mu = 0; mu < (*m_U).getNrExtDOF(); mu++) {
-	for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
-		
+		for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
 			temp = -m_epsilon * (3.0 / 4.0 * (*m_Z2)(i, mu) - 8.0 / 9.0 * (*m_Z1)(i, mu)+ 17.0 / 36.0 * (*m_Z0)(i, mu));
 			(*m_U)(i, mu) = HermTrLessExp(temp) * (*m_U)(i, mu);
-			//#ifdef _DEBUG
-			if (!isSpecialUnitary((*m_U)(i, mu))) {
-				std::cout << "W_3 ^ \n";
-			}
-			//#endif//debug
 		}
 	}
 

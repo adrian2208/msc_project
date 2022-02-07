@@ -1,0 +1,1407 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{graphicx}
+
+% Variable enumeration
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage[perpage]{footmisc}
+\usepackage{float}
+\usepackage[compat=1.0.0]{tikz-feynman}
+\usepackage{bbold}
+\usepackage{braket}
+\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
+\def\CC{{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\algrenewcommand\algorithmicensure{\textbf{Initialize:}}
+
+\usepackage{xcolor}
+\usepackage{hyperref}
+\newtheorem{theorem}{Theorem}
+\newcommand{\xdownarrow}[1]{%
+  {\left\downarrow\vbox to #1{}\right.\kern-\nulldelimiterspace}
+}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+\tikzstyle{question} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered,text width=3cm, draw=black, fill=red!30]
+
+\tikzstyle{answer} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=3cm, draw=black, fill=orange!30]
+
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+
+% Use all allowed space
+\addtolength{\hoffset}{-0.5cm}
+\addtolength{\textwidth}{1.0cm}
+\addtolength{\voffset}{-1.5cm}
+\addtolength{\textheight}{3cm}
+\setlength{\columnsep}{0.5cm}
+
+% Remove Abstract titile for abstract
+\renewcommand{\abstractname}{}
+
+\author{A.\ M.\ Kleven}
+
+\title{Lattice Quantum Chromo Dynamics review}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the strong interaction of quarks and gluons. The theory has a running coupling that decreases with increasing energy, meaning that at high energy scales, it's solvable using perturbation theory. At low energies however, the coupling expansion converges extremely slowly or not at all. This is where non- perturbative methods become necessary. Lattice QCD has been used for this purpose with astounding success, placing high precision constraints on standard model parameters and demonstrating crucial low- energy QCD phenomenology such as color confinement and spontaneous chiral symmetry breaking.
+\end{abstract}
+\vspace{5mm}
+
+
+
+\section{Gradient Flow}
+
+\section{Generating Gauge Configurations}
+\subsection{Ensembles}
+\subsubsection{Lattice Constant}
+
+\subsection{Local Hybrid Monte Carlo}
+
+
+\section{Observables}
+
+\section{Error Analysis}
+
+\section{•}
+
+\newpage
+\newpage
+
+
+
+
+
+
+
+
+
+
+\section{Lattice field theory}
+To lay the theoretical ground work for lattice field theories, we start with the continuum field theory, then discretize it while justifying the transformation and finally, cover the novel issues that arise in lattice field theories.\\\\Starting with the central equations that are the origin of the main mathematical tool used to evaluate observables:\\
+The Euclidean correlation function is given by
+\begin{equation}\label{eq:first}
+\left\langle O_{2}(t) O_{1}(0)\right\rangle_{T}=\frac{1}{Z_{T}} \operatorname{tr}\left[\mathrm{e}^{-(T-t) \hat{H}} \widehat{O}_{2} \mathrm{e}^{-t \hat{H}} \widehat{O}_{1}\right]
+\end{equation}
+where $Z_T$ is the partition function for the canonical ensemble
+\begin{equation}
+Z_{T}=\operatorname{tr}\left[\mathrm{e}^{-T \widehat{H}}\right]
+\end{equation}
+and the trace $\operatorname{tr}\left[\mathcal{O}\right]$ is evaluated in the normalized eigenbasis of $\mathcal{O}$ acting in Hilbert space, giving
+\begin{equation}
+\operatorname{tr}\left[\mathcal{O}\right] = \sum\limits_n \braket{n|\mathcal{O}|n} = \sum\limits_n O_n
+\end{equation}
+where $O_n$ is the eigenvalue of $\ket{n}$, although this result is independent of the orthonormal basis. Here, T and t are real parameters corresponding to euclidean time.\\It can be shown that as $T\rightarrow \infty$, the euclidean correlator becomes 
+\begin{equation}
+\lim _{T \rightarrow \infty}\left\langle O_{2}(t) O_{1}(0)\right\rangle_{T}=\sum_{n}\left\langle 0\left|\widehat{O}_{2}\right| n\right\rangle\left\langle n\left|\widehat{O}_{1}\right| 0\right\rangle \mathrm{e}^{-t E_{n}}
+\end{equation}
+where $E_{n}$ are the energy eigenvalues of the Hamiltonian such that $E_0 < E_1 <\ldots$. Here $\ket{0}$ denotes the vacuum, meaning only operators that act on the vacuum to produce states with a non- vanishing inner- product with the energy eigenstates of the Hamiltonian, will have non- vanishing correlation functions.\\ We see that contributions from states other than the ground state are supressed exponentially in $t$. This will become crucial later when calculating the mass spectrum of QCD.
+\subsection{Path integral formulation}
+In the continuum, the partition function can be calculated using the Trotter formula with time- step $\epsilon = \frac{T}{N_T}$, and the Hamiltonian now acting on field eigenstates.  
+\begin{equation}\label{eq:partitionFunction_Trotter}
+Z_{T}=\int \mathcal{D} \Phi_{0}\left\langle\Phi\left|e^{-T \widehat{H}}\right| \Phi\right\rangle=\lim _{N_{T} \rightarrow \infty} \int \mathcal{D} \Phi\left\langle\Phi\left|\widehat{W}_{\varepsilon}^{N_{T}}\right| \Phi\right\rangle
+\end{equation}
+with
+\begin{equation}\label{eq:W_trotter}
+\widehat{W}_{\varepsilon}=\mathrm{e}^{-\varepsilon \hat{U} / 2} \mathrm{e}^{-\varepsilon \widehat{H}_{0}} \mathrm{e}^{-\varepsilon \widehat{U} / 2}.
+\end{equation}
+where the Hamiltonian now has been decomposed into the potential $\hat{U}$ and the free Hamiltonian $\widehat{H}_{0}$. \\It is not however, feasible to take the limit in equation \eqref{eq:partitionFunction_Trotter} on a computer. Thus we're limited to a finite time step $\epsilon = a$ and so the above identity is now only approximate.\\In recognition of this fact we discretize the field onto a 4- dimensional lattice $\Lambda$ specified by
+\begin{equation}
+\begin{aligned}
+\Lambda=&\left\{n=\left(n_{1}, n_{2}, n_{3}, n_{4}\right) \mid\right.\\
+&\left.n_{1}, n_{2}, n_{3}=0,1, \ldots, N-1 ; n_{4}=0,1, \ldots, N_{T}-1\right\}
+\end{aligned}
+\end{equation}
+where the Euclidean space- time location of each point is specified by $an$ where $a$ is the separation of each point. This also serves the purpose as a UV- regulator for the theory.\\ The product measure is instead now given by
+\begin{equation}
+\mathcal{D} \Phi=\prod_{n \in \Lambda} \mathrm{~d} \Phi(\boldsymbol{n})
+\end{equation}
+and the fields exist solely on the lattice.\\ By using the identity 
+\begin{equation}
+\mathbb{1}=\int_{-\infty}^{\infty} \mathcal{D} \Phi|\Phi\rangle\langle\Phi|
+\end{equation}
+we can expand the RHS. of \eqref{eq:partitionFunction_Trotter} (now with finite $N_T$) into 
+\begin{equation}\label{eq:trotter_expansion}
+\begin{aligned}
+&\int \mathcal{D} \Phi \left\langle\Phi_0\left|\widehat{W}_{\varepsilon}\right| \Phi_{N_{T}-1}\right\rangle\left\langle\Phi_{N_{T}-1}\left|\widehat{W}_{\varepsilon}\right| \Phi_{N_{T}-2}\right\rangle \ldots\left\langle\Phi_{1}\left|\widehat{W}_{\varepsilon}\right| \Phi_{0}\right\rangle \\
+&Z_T=C^{N^{3} N_{T}} \int \mathcal{D} \Phi  \mathrm{e}^{-S_{E}[\Phi]}
+\end{aligned}
+\end{equation}
+where in the second step, we have used \eqref{eq:W_trotter} and the forward finite difference formula for the derivative to identify the exponent with the Euclidean action
+\begin{equation}\label{eq:Euclidean_action}
+\begin{aligned}
+&S_{E}[\Phi]= a^{4} \sum_{\left(n, n_{4}\right) \in \Lambda}\left(\frac{1}{2}\left(\frac{\Phi\left(\boldsymbol{n}, n_{4}+1\right)-\Phi\left(\boldsymbol{n}, n_{4}\right)}{a}\right)^{2}+\right. \\
+&\left.\frac{1}{2} \sum_{j=1}^{3}\left(\frac{\Phi\left(\boldsymbol{n}+\hat{j}, n_{4}\right)-\Phi\left(\boldsymbol{n}-\hat{j}, n_{4}\right)}{2 a}\right)^{2}+\frac{m^{2}}{2} \Phi\left(\boldsymbol{n}, n_{4}\right)^{2}+V\left(\Phi\left(\boldsymbol{n}, n_{4}\right)\right)\right).
+\end{aligned}
+\end{equation}
+Where because the lattice is finite, we impose periodic boundary conditions in all space- time directions.\\\\ In much the same way, the RHS. of \eqref{eq:first} can be evaluated to
+\begin{equation}
+\frac{1}{Z_{T}} \operatorname{tr}\left[\mathrm{e}^{-(T-t) \hat{H}} \widehat{O}_{2} \mathrm{e}^{-t \hat{H}} \widehat{O}_{1}\right]=\frac{C^{N^{3} N_{T}}}{Z_{T}} \int \mathcal{D}[\Phi] \mathrm{e}^{-S_{E}[\Phi]} O_{2}\left[\Phi\left(., n_{t}\right)\right] O_{1}[\Phi(., 0)]
+\end{equation}
+where $O_{i}[\Phi(., n_4)]$ is now a functional of the field evaluated at all spatial points on the lattice in the time slice $n_4$.\\\\The temporal derivative in \eqref{eq:Euclidean_action} is expressed as a forward difference derivative (from the stepwise euclidean time transport in \eqref{eq:trotter_expansion}), which has $\mathcal{O}(a)$ discretization errors. Here we abandon first principles and simply exchange this for a central difference discretization with $\mathcal{O}(a^2)$ errors. This gives us the equations 
+\begin{equation}\label{eq:pathintegral_correlationfunction}
+\left\langle O_{2}(t) O_{1}(0)\right\rangle_{T}=\frac{1}{Z_{T}} \int \mathcal{D}[\Phi] \mathrm{e}^{-S_{E}[\Phi]} O_{2}\left[\Phi\left(., n_{t}\right)\right] O_{1}[\Phi(., 0)]
+\end{equation}
+\begin{equation}\label{eq:pathintegral_Z}
+Z_{T}=\int \mathcal{D}[\Phi] \mathrm{e}^{-S_{E}[\Phi]}
+\end{equation}
+\begin{equation}
+S_{E}[\Phi]=a^{4} \sum_{n \in \Lambda}\left(\frac{1}{2} \sum_{\mu=1}^{4}\left(\frac{\Phi(n+\hat{\mu})-\Phi(n-\hat{\mu})}{2 a}\right)^{2}+\frac{m^{2}}{2} \Phi(n)^{2}+V(\Phi(n))\right)
+\end{equation}
+The fact that we can do this i.e. change the discretization, is due to the Osterwalder- Schrader reconstruction \cite{glimm2012quantum} and its subsequent generalization to lattice QCD by Wilson \cite{seiler1978lect}. It states that Euclidean correlators, restricted by a set of axioms (known as the Osterwalder–Schrader axioms) can be reconstructed to yield a Hilbert space with a Minkowskian metric. Thus we can relate the path integral formulation of the correlation function in \eqref{eq:pathintegral_correlationfunction} to the operator valued equation 
+\begin{equation}\label{operator_correlationfunction}
+\lim _{T \rightarrow \infty}\left\langle O_{2}(t) O_{1}(0)\right\rangle_{T}=\sum_{n}\left\langle 0\left|\widehat{O}_{2}\right| n\right\rangle\left\langle n\left|\widehat{O}_{1}\right| 0\right\rangle \mathrm{e}^{-t E_{n}}.
+\end{equation}
+This will allow us to later extract valuable information about eigenvalues and matrix elements from \eqref{operator_correlationfunction} using computational methods applied to \eqref{eq:pathintegral_correlationfunction}
+and \eqref{eq:pathintegral_Z}.
+
+\subsection{Wick rotation}
+It's important to note that lattice gauge theories use the Euclidean metric as opposed to the Minkowski metric. Faithful Lorentz transformation in Minkowski spacetime on a lattice do not preserve locality or the lattice notion of distance.\\In order to work on the lattice the time dimension is rotated in the complex plane such that the Minkowski and Euclidean metric are related by 
+\begin{equation}
+d s^{2}=-\left(d t^{2}\right)+d x^{2}+d y^{2}+d z^{2} = d \tau^{2}+d x^{2}+d y^{2}+d z^{2} 
+\end{equation}
+where $\tau = it$. The generators of the corresponding Euclidean Clifford algebra in the chiral representation are now given by 
+\begin{equation}
+\left\{\gamma^{\mu}, \gamma^{\nu}\right\}=2 \delta^{\mu \nu} I_{4}.
+\end{equation}
+or 
+\begin{equation}
+\gamma_{1}=-\mathrm{i} \gamma_{1}^{M}, \gamma_{2}=-\mathrm{i} \gamma_{2}^{M}, \gamma_{3}=-\mathrm{i} \gamma_{3}^{M}, \gamma_{4}=\gamma_{0}^{M}
+\end{equation}
+with $\gamma_{\mu}^{M}$ being the Minkowski gamma matrices.
+
+\subsection{Continuum gauge theory}
+QCD is the theory of quarks, gluons and their interactions. Quarks are Dirac 4- spinors 
+\begin{equation}
+\psi^{(f)}(x)_{\alpha, c}, \quad \bar{\psi}^{(f)}(x)_{\alpha, c}
+\end{equation}
+with Dirac indices $\alpha \in \{ 1,2,3,4\}$ transforming under the spinor representation of the Clifford algebra. In addition they have a color index $c \in \{ 1,2,3\}$ which transform under the gauge group $SU(3)$ and a flavour index $f \in \{ 1,2,\ldots ,6\}$. The flavours in QCD have identical interactions in the Lagrangian of the theory, but different masses. The masses for the Up, Down and Strange quarks are much smaller than the QCD scale $\Lambda_{qcd}$, and so allowing multiplets of these flavours to transform under $SU(2)$ (for Up and Down) or $SU(3)$ (for Up, Down and Strange) is a good approximation for QCD. This topic is closely related to both isospin and chiral symmetry breaking which is covered later in section \ref{Chiral_symmetry_breaking}.\\\\Taking a hint from QED, we define the fermion action as
+\begin{equation}
+\begin{aligned}
+S_{F}[\psi, \bar{\psi}, A]=& \sum_{f=1}^{N_{f}} \int \mathrm{d}^{4} x \bar{\psi}^{(f)}(x)_{\alpha}^cD_{\alpha \beta}^{c d} \psi^{(f)}(x)_{\beta}^d +
+\bar{\psi}^{(f)}(x)_{\alpha}^c m^{(f)} \psi^{(f)}(x)_{\alpha}^c
+\end{aligned}
+\end{equation}
+We then impose invariance on the action under a simultaneous $SU(3)$ transformation of the fermion fields
+\begin{equation}
+\psi(x) \rightarrow \psi^{\prime}(x)=\Omega(x) \psi(x), \bar{\psi}(x) \rightarrow \bar{\psi}^{\prime}(x)=\bar{\psi}(x) \Omega(x)^{\dagger}
+\end{equation}
+The mass term transforms in the trivial representation in color- and dirac- space as well as $SU(3)$. Otherwise, we get the requirement that $D_{\alpha \beta}^{c d}$ transforms as
+\begin{equation}\label{eq:covariant_derivative_transformation}
+D_{\mu}(x) \rightarrow \Omega(x) D_{\mu}(x) \Omega(x)^{\dagger}.
+\end{equation}
+The $D_{\mu}(x)$ for which this holds is given by 
+\begin{equation}\label{eq:covariantDerivative_on_0_form}
+D_{\mu}(x) = \partial_{\mu}+\mathrm{i}g A_{\mu}(x)
+\end{equation}
+where $g$ is the coupling strength (with sign convention $g=-|g|$)and $A_{\mu}(x)$ transforms as 
+\begin{equation}
+A_{\mu}(x) \rightarrow \Omega(x) A_{\mu}(x) \Omega(x)^{\dagger}+\mathrm{i}\left(\partial_{\mu} \Omega(x)\right) \Omega(x)^{\dagger}.
+\end{equation}
+$A_{\mu}(x)$ is what is known as a connection on a fiber bundle, of which gauge fields in gauge theory is one example. Space- time is the underlying manifold $M$ on which for each space- time point, we associate an element $\omega(x)$ of the gauge group. The connection $A_{\mu}(x)$ defines the parallel transporter of $\omega(x)$ in the space- time direction $\mu$. In this context, $D_{\mu}(x)$ is known as the covariant derivative and the example in \eqref{eq:covariantDerivative_on_0_form} is just the special case of the covariant derivative acting on a $\mathbb{C}^n$ valued 0-form on $M$ i.e. $\psi(x)$.\\The covariant derivative currently couples only to the fermion fields, but as a rule we should include every term allowable by the symmetries of the theory. This would mean a term in the Lagrangian which is both Lorentz- and gauge- invariant (upto a total derivative, but let's not go there). To this end, we can explore a couple of different avenues.\\We mentioned that \eqref{eq:covariantDerivative_on_0_form} is just a special case. In fact the generalization to $\mathbb{C}^n$ valued k-form $\vec{\Phi}$ on $M$ is given by
+\begin{equation}
+D \vec{\Phi}=\mathrm{d} \vec{\Phi}+i g A \wedge \vec{\Phi}
+\end{equation}
+where $\mathrm{d} \vec{\Phi}$ is the exterior derivative and $\cdot \wedge\cdot$ is the exterior(wedge)-product.
+As it happens, we just introduced the 1-form $A_{\mu}(x)$, and so applying the covariant to it, doesn't seem like such a big leap. We get that
+\begin{equation}\label{eq:covariantDerivative_on_1_form}
+D_\mu A_{\nu}= d_\mu A_{\nu} + igA_{\mu} \wedge A_{\nu} =F_{\mu \nu}(x)=\partial_{\mu} A_{\nu}(x)-\partial_{\nu} A_{\mu}(x)+\mathrm{i}g\left[A_{\mu}(x), A_{\nu}(x)\right].
+\end{equation}
+$F_{\mu \nu}(x)$ is known as the field strength tensor and it transforms as
+\begin{equation}
+F_{\mu \nu}(x) \rightarrow \Omega(x) F_{\mu \nu}(x) \Omega(x)^{\dagger}.
+\end{equation}
+It's explicitly not a Lorentz invariant object and so we must at the very least contract it with itself, in which case it transforms as 
+\begin{equation}
+\begin{aligned}
+F_{\mu \nu}F_{\mu \nu} \rightarrow& \Omega(x) F_{\mu \nu}(x) \Omega(x)^{\dagger}\Omega(x) F_{\mu \nu}(x) \Omega(x)^{\dagger}\\
+=&\Omega(x) F_{\mu \nu}(x) F_{\mu \nu}(x) \Omega(x)^{\dagger}
+\end{aligned}
+\end{equation}
+where the Lorentz indices are summed over (in Euclidean metric, we don't distinguish between covariant and contravariant indices). We can construct a gauge invariant object by exploiting the cyclicity of the trace, i.e. take the trace over the color indices.
+\begin{equation}
+\begin{aligned}
+Tr\left[F_{\mu \nu}F_{\mu \nu}\right] \rightarrow& Tr\left[\Omega(x) F_{\mu \nu}(x) F_{\mu \nu}(x) \Omega(x)^{\dagger}\right]\\
+=&Tr\left[\Omega(x)^{\dagger}\Omega(x) F_{\mu \nu}(x) F_{\mu \nu}(x) \right]\\
+=&Tr\left[F_{\mu \nu}(x) F_{\mu \nu}(x) \right]
+\end{aligned}
+\end{equation}
+This object has all the symmetry properties we require and so it goes in the Lagrangian.\\To compute the trace, we express the algebra valued objects as the sum over their generators ($n^2-1$ in the case of SU(n) which is what we will treat from here on)
+
+\begin{equation}
+\begin{aligned}
+&F_{\mu \nu}(x)=\sum_{i=1}^{n^2-1} F_{\mu \nu}^{(i)}(x) T_{i} \\
+&F_{\mu \nu}^{(i)}(x)=\partial_{\mu} A_{\nu}^{(i)}(x)-\partial_{\nu} A_{\mu}^{(i)}(x)-gf_{i j k} A_{\mu}^{(j)}(x) A_{\nu}^{(k)}(x)\\
+&A_{\mu}(x)=\sum_{i=1}^{n^2-1} A_{\mu}^{(i)}(x) T_{i}
+\end{aligned}
+\end{equation}
+where $T_i \in su(n)$ are the generators of the $su(n)$ algebra and $f_{ijk}$ is the structure constant of that algebra, arising from the commutator of the gauge fields in \eqref{eq:covariantDerivative_on_1_form}. The trace can then be evaluated as
+\begin{equation}
+Tr\left[ \left( \sum_{i=1}^{n^2-1} F_{\mu \nu}^{(i)}(x) T_{i} \right)\left( \sum_{j=1}^{n^2-1} F_{\mu \nu}^{(j)}(x) T_{j} \right) \right]
+\end{equation}
+where due to the property of the generators in the fundamental representation, $\operatorname{tr}\left[T_{i} T_{i}\right]=\frac{1}{2} \delta_{i j}$. Such that only the terms with $i=j$ survive while also introducing a factor of $\frac{1}{2}$. We get that the gauge action must be given by 
+\begin{equation}\label{eq:continuum_gaugeAction}
+S_{G}[A]=\frac{1}{4} \sum_{i=1}^{n^2-1} \int \mathrm{d}^{4} x F_{\mu \nu}^{(i)}(x) F_{\mu \nu}^{(i)}(x)
+\end{equation}
+where the extra factor of $\frac{1}{2}$ is simply a manner of convention.
+\subsection{Lattice gauge theory}
+In the continuum, we introduced the connection $A_\mu(x)$ as the algebra valued objects living in the tangent space of the space- time manifold $M$. From these, we can construct the parallel transporter
+\begin{equation}\label{eq:gauge_transporter}
+G(x, y)=P \exp \left(\mathrm{i} \int_{\mathcal{C}_{x y}} A \cdot \mathrm{d} s\right)
+\end{equation}
+where the integral is the path ordered integral along the curve $\mathcal{C}_{x y}$ in $M$.\\On the lattice
+\begin{equation}
+\begin{aligned}
+\Lambda=&\{n=\left(n_{1}, n_{2}, n_{3}, n_{4}\right) \mid \\
+&\quad n_{1}, n_{2}, n_{3}=0,1, \ldots, N-1 ; n_{4}=0,1, \ldots, N_{T}-1\}
+\end{aligned}
+\end{equation}
+there is no such notion of a tangent space. The fermion field are situated entirely on the lattice sites
+\begin{equation}
+\psi^{(f)}(n)_{\alpha, c}, \quad \bar{\psi}^{(f)}(n)_{\alpha, c}
+\end{equation}
+and so in order to retain the property of gauge invariance, we have to define a notion of parallel transport on the lattice. This is done by approximating the integral in \eqref{eq:gauge_transporter} by
+\begin{equation}\label{eq:linkVariable_exponential}
+G(n,n+\hat{\mu}) = U_{\mu}(n)=\exp \left(\mathrm{i} a A_{\mu}(n)\right)
+\end{equation}
+where $U_{\mu}(n)$ is now a group valued object. We can see this by noting that the gauge transporter should obey the property
+\begin{equation}
+G(x,y)G(y,z) = G(x,z)
+\end{equation}
+and that therefore 
+\begin{equation}
+G(n,n+\hat{\mu})G(n+\hat{\mu},n) = \mathbb{1}
+\end{equation}
+and so
+\begin{equation}
+\begin{aligned}
+&G(n+\hat{\mu},n) = U_{-\mu}(n+\hat{\mu})=\exp \left(\mathrm{i} a A_{-\mu}(n+\hat{\mu})\right) = \exp \left(-\mathrm{i} a A_{\mu}(n)\right)=\\ &G(n,n+\hat{\mu})^\dagger = U_{\mu}(n)^\dagger
+\end{aligned}
+\end{equation}
+where we have used that the generators of SU(N) are hermitian.\\With this, it's clear that $U_{\mu}(n)U_{\mu}(n)^\dagger = \mathbb{1}$.\\\\
+These new objects are known as link variables, due to fact that they are constituents of the links connecting lattice sites. They transform under gauge transformations as 
+\begin{equation}\label{eq:linkVariables_transforming}
+\begin{aligned}
+&U_{\mu}(n) \rightarrow \Omega(n) U_{\mu}(n) \Omega(n+\hat{\mu})^{\dagger}\\
+&U_{-\mu}(n) \rightarrow \Omega(n) U_{-\mu}(n) \Omega(n-\hat{\mu})^{\dagger}.
+\end{aligned}
+\end{equation}
+The lattice fermion fields transform as 
+\begin{equation}
+\begin{aligned}
+&\psi(n) \rightarrow \Omega(n) \psi(n)\\ &\bar{\psi}(n) \rightarrow \bar{\psi}(n) \Omega(n)^{\dagger}
+\end{aligned}
+\end{equation}
+and so, we naively (see Theorem \ref{theorem:asas} and section \ref{Chiral_fermions}) make the corresponding lattice construction for the fermion action:
+
+\begin{equation}\label{eq:naiveFermionAction}
+S_{F}[\psi, \bar{\psi}, U]=a^{4} \sum_{n \in \Lambda} \bar{\psi}(n)\left(\sum_{\mu=1}^{4} \gamma_{\mu} \frac{U_{\mu}(n) \psi(n+\hat{\mu})-U_{-\mu}(n) \psi(n-\hat{\mu})}{2 a}+m \psi(n)\right)
+\end{equation}
+where the familiar space- time integral is replaced with a sum over the lattice sites and the derivative is replaced with a central difference.\\\\Constructing gauge invariant objects from link variables follows almost exactly in the conceptual footsteps laid down in the continuum case. From the transformation properties in \eqref{eq:linkVariables_transforming} it's immediately apparent that any path ordered product of link variables, transform as 
+\begin{equation}
+\prod_{(n, \mu) \in \mathcal{P}} U_{\mu}(n) \rightarrow \Omega(n_0)\left( \prod_{(n, \mu) \in \mathcal{P}} U_{\mu}(n) \right)\Omega(n_N)^\dagger
+\end{equation}
+where $n_0$ and $n_N$ are the beginning and endpoints of the path $\mathcal{P}$. Clearly, if the beginning and endpoints are the same, we can construct gauge invariant objects by again exploiting the cyclicity of the trace. The trivial example of this, we have already discussed. It's the equivalent of taking one step forward then one step back ($U_{\mu}(n)U_{-\mu}(n+\hat{\mu}) = \mathbb{1}$). The first non- trivial example is the smallest closed loop of link variables, known as a plaquette
+\begin{equation}
+\begin{aligned}
+U_{\mu \nu}(n) &=U_{\mu}(n) U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu}) \\
+&=U_{\mu}(n) U_{\nu}(n+\hat{\mu}) U_{\mu}(n+\hat{\nu})^{\dagger} U_{\nu}(n)^{\dagger}.
+\end{aligned}
+\end{equation}
+We would like the lattice gauge action to approach \eqref{eq:continuum_gaugeAction} in the limit $a\rightarrow 0$. By expressing the plaquette as a product of the exponentials defined in \eqref{eq:linkVariable_exponential} we can apply the Baker-Campbell-Hausdorff formula, e.g.
+\begin{equation}
+\begin{aligned}
+&\exp \left(\mathrm{i} a A_{\mu}(n)\right)\exp \left(\mathrm{i} a A_{\nu}(n+\hat{\mu})\right) =\\ &\exp \left(\mathrm{i} a A_{\mu}(n)+\mathrm{i} a A_{\nu}(n+\hat{\mu})-\frac{a^{2}}{2}\left[A_{\mu}(n), A_{\nu}(n+\hat{\mu})\right]+\cdots\right) 
+\end{aligned}
+\end{equation}
+then Taylor expand the non- local gauge fields in terms of the local gauge fields and their derivatives 
+\begin{equation}
+A_{\nu}(n+\hat{\mu})=A_{\nu}(n)+a \partial_{\mu} A_{\nu}(n)+\mathcal{O}\left(a^{2}\right)
+\end{equation}
+to get
+\begin{equation}
+\begin{aligned}
+U_{\mu \nu}(n) &=\exp \left(\mathrm{i} a^{2}\left(\partial_{\mu} A_{\nu}(n)-\partial_{\nu} A_{\mu}(n)+\mathrm{i}\left[A_{\mu}(n), A_{\nu}(n)\right]\right)+\mathcal{O}\left(a^{3}\right)\right) \\
+&=\exp \left(\mathrm{i} a^{2} F_{\mu \nu}(n)+\mathcal{O}\left(a^{3}\right)\right)\\
+&=\mathbb{1} + \mathrm{i} a^{2} F_{\mu \nu}(n) - \frac{a^4}{2}F_{\mu \nu}(n)^2+i\mathcal{O}\left(a^{3}\right)+i\mathcal{O}\left(a^{5}\right)+\mathcal{O}\left(a^{6}\right).
+\end{aligned}
+\end{equation}
+So in order to recoup the continuum gauge action, we need to subtract the identity and take the real part. Doing this leads to what is known as the Wilson action
+\begin{equation}\label{eq:Wilson_gauge_action}
+S_{G}[U]=\frac{2}{g^{2}} \sum_{n \in \Lambda} \sum_{\mu<\nu} \operatorname{Re} \operatorname{tr}\left[\mathbb{1}-U_{\mu \nu}(n)\right]=\frac{a^{4}}{2 g^{2}} \sum_{n \in \Lambda} \sum_{\mu, \nu} \operatorname{tr}\left[F_{\mu \nu}(n)^{2}\right]+\mathcal{O}\left(a^{2}\right)
+\end{equation}
+\paragraph{In summary} we have introduced a fermion action \eqref{eq:naiveFermionAction} and the Wilson gauge action \eqref{eq:Wilson_gauge_action}. So all that's left really, is to calculate expectation values of observables, right? Well, this task turns out to be highly non- trivial.\\The equation for the expectation value of observables can be decomposed in terms of its fermionic and gauge field parts
+
+\begin{equation}
+\braket{O} = \braket{\braket{O}_F}_G
+\end{equation}
+where
+\begin{equation}\label{eq:fermionic_expectationValue}
+\braket{O}_{F}=\frac{1}{Z_{F}[U]} \int \mathcal{D}[\psi, \bar{\psi}] \mathrm{e}^{-S_{F}[\psi, \bar{\psi}, U]} O[\psi, \bar{\psi}, U]
+\end{equation}
+with the fermionic partition function given by
+\begin{equation}
+Z_{F}[U]=\int \mathcal{D}[\psi, \bar{\psi}] \mathrm{e}^{-S_{F}[\psi, \bar{\psi}, U]}
+\end{equation}
+and
+\begin{equation}\label{eq:gluonic_On_fermionic_E_val}
+\braket{\braket{O}_{F}}_G=\frac{1}{Z} \int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} Z_{F}[U] \braket{O}_{F}
+\end{equation}
+
+ To get a grip on the issues at hand, I summarize some of the conceptual challenges here
+
+\begin{itemize}
+\item $\int \mathcal{D}[U]$ is an integral over a group manifold, and we have to define what that means.
+\item The fermions need to have the right statistics, which we will get by restating the integral in \eqref{eq:fermionic_expectationValue} in terms of Grassmann numbers.
+\item The fermion action introduced in \eqref{eq:naiveFermionAction} has several flaws and needs to be restated in more careful terms.
+\item We need to find observables corresponding to physical states i.e. Hadrons or purely gluonic states e.g. Wilson- or Polyakov loops.
+\item The integral in \eqref{eq:gluonic_On_fermionic_E_val} is not solvable in closed form, and needs to be evaluated numerically.
+\item The numerical results have to be renormalized to relate them to physical experiments.
+\end{itemize}
+
+\subsection{Group integration}
+The integration measure $\int \mathcal{D}[U]$ is the product measure of every link variable on the lattice
+\begin{equation}
+\prod\limits_{n\in \Lambda}\prod\limits_{\mu}\int dU_\mu(n)
+\end{equation}
+the individual integrals
+\begin{equation}
+\int dU_\mu(n)
+\end{equation}
+are over every element on the closed (meaning compact and without boundary), differentiable group manifold of $SU(3)$. The properties we require of this integration measure, namely normalization $\int dU \mathbb{1} = 1$, linearity and invariance under the left and right group operation with any element in $SU(3)$, is exactly captured by the Haar measure.\\\\To construct the measure, we first need a notion of distance between points on the group manifold. There is a theorem which states that every compact simple Lie group (e.g. $SU(3)$) has a bi- invariant Riemannian metric which is unique upto scaling \cite{Gallier2020}. So all we have to do, is find the Riemannian metric and it will immediately have the properties we need.\\ As we mentioned, $SU(N)$ has $N^2-1$ generators, meaning we can parameterize the set of points on the $SU(3)$ group manifold using just $8$ real numbers $\omega^{(k)}$. To construct the metric on the group manifold, we need an inner product defined on the tangent space of that manifold. The obvious choice is to use the Killing form, which is to matrices what the dot product is to vectors. It's given by 
+\begin{equation}
+g_{\alpha\beta} = \operatorname{tr}\left[ T_n T_m \right]
+\end{equation}
+where $T_\alpha$ and  $T_\beta$ are generators of the algebra (i.e. elements in the tangent space of the group manifold at $\omega$ ) in the adjoint representation e.g. 
+\begin{equation}
+ T_n = \frac{\partial U(\omega)}{\partial \omega^{(n)}} U(\omega)^{-1},\hspace{3mm} T_m = \left(\frac{\partial U(\omega)}{\partial \omega^{(m)}} U(\omega)^{-1}\right)^{\dagger}
+\end{equation}
+so we can now define the metric as
+\begin{equation}
+\mathrm{d} s^{2} \equiv \operatorname{tr}\left[\frac{\partial U(\omega)}{\partial \omega^{(n)}} U(\omega)^{-1}\left(\frac{\partial U(\omega)}{\partial \omega^{(m)}} U(\omega)^{-1}\right)^{\dagger}\right] \mathrm{d} \omega^{(n)} \mathrm{d} \omega^{(m)}=g(\omega)_{n m} \mathrm{~d} \omega^{(n)} \mathrm{d} \omega^{(m)}
+\end{equation}
+where the metric tensor is,
+$$
+g(\omega)_{n m}=\operatorname{tr}\left[\frac{\partial U(\omega)}{\partial \omega^{(n)}} \frac{\partial U(\omega)^{\dagger}}{\partial \omega^{(m)}}\right]
+$$
+from the hermicity of the group elements.\\
+The integration measure can then be defined as
+\begin{equation}
+\mathrm{d} U=c \sqrt{\operatorname{det}[g(\omega)]} \prod_{k} \mathrm{~d} \omega^{(k)}
+\end{equation}
+where $c$ comes from the scaling factor mentioned for the Riemannian metric, and is used to enforce the normalization condition.
+Because the bi- invariant metric is unique, we can conclude that this measure has all of the properties we want.\\\\A few integral identities for $SU(3)$ arise from the properties of the Haar measure, namely
+\begin{equation}
+\begin{aligned}
+&\int_{\mathrm{SU}(3)} \mathrm{d} U U_{a b}=0, \quad
+\int_{\mathrm{SU}(3)} \mathrm{d} U U_{a b} U_{c d}=0 \\
+&\int_{\mathrm{SU}(3)} \mathrm{d} U U_{a b}\left(U^{\dagger}\right)_{c d}=\frac{1}{3} \delta_{a d} \delta_{b c},\quad
+\int_{\mathrm{SU}(3)} \mathrm{d} U U_{a b} U_{c d} U_{e f}=\frac{1}{6} \epsilon_{a c e} \epsilon_{b d f}.
+\end{aligned}
+\end{equation}
+The first of which, together with the gauge invariance of the action can be used to prove a statement known as Elitzurs theorem, which states that the expectation value of an observable is zero if that observable is not gauge invariant, or as it was originally phrased\cite{1975PhRvD}
+\begin{theorem}
+A spontaneous breaking of local symmetry for a symmetrical gauge theory without gauge fixing is impossible
+\end{theorem}
+\section{Lattice fermions}
+\subsection{Grassmann numbers and Wick's theorem}
+In this section, we deal entirely with the fermionic part of the expectation value i.e. \eqref{eq:fermionic_expectationValue}.\\The Fermi statistics we require of our quark fields are captured by their anti- commutativity. This notion leads inexorably to considering the Grassmann algebra, also known as the exterior algebra over the complex numbers. The generators of this algebra, so- called Grassmann numbers, anti- commute under the exterior product $\eta_i\wedge\eta_j$ which we simply denote $\eta_i\eta_j$. This property naturally leads to other properties
+\begin{equation}\label{eq:grassmannNumbers}
+\eta_i\eta_j = -\eta_j\eta_i \longrightarrow \eta_i^2 = 0 \longrightarrow \mathit{Finite  }\hspace{1mm}\mathit{multivectors} \rightarrow \exp\left( \eta_i \right) = 1+\eta_i
+\end{equation}
+where by multivector, we mean a linear combination of $k$-blades (i.e. scalars, vectors, bivectors, etc.).\\We similarly get the properties of derivatives:
+\begin{equation}
+\frac{\partial}{\partial \eta_{i}} 1=0, \quad \frac{\partial}{\partial \eta_{i}} \eta_{i}=1, \quad \frac{\partial}{\partial \eta_{i}} \frac{\partial}{\partial \eta_{j}}=-\frac{\partial}{\partial \eta_{j}} \frac{\partial}{\partial \eta_{i}}, \quad \frac{\partial}{\partial \eta_{i}} \eta_{j}=-\eta_{j} \frac{\partial}{\partial \eta_{i}}(\text { for } i \neq j)
+\end{equation}
+and integrals:
+\begin{equation}\label{eq:grassmann_integrals}
+\int d^N\eta\frac{\partial}{\partial \eta_i}A = 0, \quad \int d^N\eta \prod\limits_{i}^N\eta_i = 1 \longrightarrow \int d^N\eta \prod\limits_{i}^N\eta_i = \operatorname{det}\left[ M \right]\int d^N\eta' \prod\limits_{i}^N\eta_i
+\end{equation}
+Where the product is from smallest to largest $i$ and $\eta' = M\eta$ is a complex, linear change of variables. We can use the properties in \eqref{eq:grassmannNumbers} and \eqref{eq:grassmann_integrals} to derive what is known as the Matthews- Salam formula \cite{AIHPA_1979__30_3_193_0}
+\begin{equation}\label{eq:Matthews_salam}
+\int \prod\limits_{i=1}^Nd\eta_id\bar{\eta}_i \exp\left( \sum\limits_{i,j=1}^N \bar{\eta}_iM_{ij}\eta_j\right) = \operatorname{det}\left[ M \right]
+\end{equation}
+where we emphasize that $\bar{\eta}$ and $\eta$ are not adjoints or complex conjugates of each other, but two completely separate degrees of freedom. We will revisit this formula shortly, as it is essential to the interpretation of the fermionic partition function $Z_F$ in \eqref{eq:fermionic_expectationValue}.
+This result can be generalized to give the generating functional for fermions
+\begin{equation}
+\begin{aligned}
+W[\theta, \bar{\theta}] &=\int \prod_{i=1}^{N} \mathrm{~d} \eta_{i} \mathrm{~d} \bar{\eta}_{i} \exp \left(\sum_{k, l=1}^{N} \bar{\eta}_{k} M_{k l} \eta_{l}+\sum_{k=1}^{N} \bar{\theta}_{k} \eta_{k}+\sum_{k=1}^{N} \bar{\eta}_{k} \theta_{k}\right) \\
+&=\operatorname{det}[M] \exp \left(-\sum_{n, m=1}^{N} \bar{\theta}_{n}\left(M^{-1}\right)_{n m} \theta_{m}\right)
+\end{aligned}
+\end{equation}
+where $\theta$ and $\bar{\theta}$ are now external Grassmann valued fields. We see that by differentiating the first equality of the generating functional with respect to the external fields $\theta_k$ and $\bar{\theta}_k$, we can bring any factors of $\eta_k$ and $\bar{\eta}_k$ down from the exponent. If we then evaluate this expression at $\theta = \bar{\theta}=0$ we get
+\begin{equation}\label{eq:f_exp_val_from_generatingFunctional}
+\frac{\partial}{\partial \theta_{j_1}}\frac{\partial}{\partial \bar{\theta}_{i_1}}\cdots\frac{\partial}{\partial \theta_{j_n}}\frac{\partial}{\partial \bar{\theta}_{i_n}}W\left[ \theta,\bar{\theta} \right]=\int \prod_{i=1}^{N} d\eta_{i} d\bar{\eta}_{i} \,\, \eta_{i_1}\bar{\eta}_{j_1}\cdots\eta_{i_n}\bar{\eta}_{j_n}\exp \left(\sum_{k, l=1}^{N} \bar{\eta}_{k} M_{k l} \eta_{l}\right)
+\end{equation}
+doing the same for the second equality of the generating functional gives
+\begin{equation}\label{eq:F_exp_val_as_permutations_of_propagators}
+\frac{\partial}{\partial \theta_{j_1}}\frac{\partial}{\partial \bar{\theta}_{i_1}}\cdots\frac{\partial}{\partial \theta_{j_n}}\frac{\partial}{\partial \bar{\theta}_{i_n}}W\left[ \theta,\bar{\theta} \right]=\operatorname{det}\left[ M \right](-1)^n \mkern-18mu\sum\limits_{P(1,\ldots,n)}\mkern-18mu\operatorname{sign}\left( P \right)\left( M^{-1} \right)_{i_1j_{P_1}}\mkern-18mu\mkern-18mu\cdots\left( M^{-1} \right)_{i_nj_{P_n}}
+\end{equation}
+where the sum is over every permutation $n$ numbers.
+This equality is known as Wick's theorem, and it's the final puzzle piece to understanding the fermionic expectation value in \eqref{eq:fermionic_expectationValue}.
+\subsection{The fermionic expectation value}
+We take a short interlude to revisit the equations for the fermionic expectation value
+\begin{equation}\label{eq:fermion_exp_diracOperator}
+\braket{O}_{F}=\frac{1}{Z_{F}[U]} \int \mathcal{D}[\psi, \bar{\psi}] \exp\left( -a^4\mkern-18mu \,\,\sum\limits_{n,m\in\Lambda}\mkern-18mu\sum\limits^{a,b,\alpha,\beta} \bar{\psi}(n)_{\alpha,a}D(n\mkern-4mu\mid \mkern-4mu m)_{\beta,b}^{\alpha,a} \bar{\psi}(m)^{\beta,b}\right) O[\psi, \bar{\psi}, U]
+\end{equation}
+and
+\begin{equation}\label{eq:fermion_parti_diracOperator}
+Z_{F}[U]=\int \mathcal{D}[\psi, \bar{\psi}] \exp\left( -a^4\mkern-18mu \,\,\sum\limits_{n,m\in\Lambda}\mkern-18mu\sum\limits^{a,b,\alpha,\beta} \bar{\psi}(n)_{\alpha,a}D(n\mkern-4mu\mid \mkern-4mu m)_{\beta,b}^{\alpha,a} \bar{\psi}(m)^{\beta,b}\right).
+\end{equation}
+where we have written the lattice fermion action in terms of the Dirac lattice operator. We see that there is a direct correspondence between \eqref{eq:fermion_parti_diracOperator} and \eqref{eq:Matthews_salam} and between the enumerator in \eqref{eq:fermion_exp_diracOperator} and \eqref{eq:f_exp_val_from_generatingFunctional} for $O$ being products of Grassmann numbers.\\In fact, we can now identify the fermionic partition function as
+\begin{equation}\label{eq:Z_F_As_determinant}
+Z_{F}[U] = \operatorname{det}\mkern-5mu\left[ -a^4D(n\mkern-4mu\mid \mkern-4mu m)\left[ U \right] \right]
+\end{equation}
+where we have suppressed color and Dirac indices and made the dependence of the Dirac operator on the gauge fields explicit.\\We can also identify the expectation value of products of fields (using \eqref{eq:F_exp_val_as_permutations_of_propagators} and \eqref{eq:Z_F_As_determinant}) as
+\begin{equation}\label{eq:fermion_exp_val_Wick}
+\begin{aligned}
+&\braket{\eta_{\alpha_1,a_1}(n)\bar{\eta}^{\beta_1,b_1}(m)\cdots\eta_{\alpha_N,a_N}(n)\bar{\eta}^{\beta_N,b_N}(m)}_F = \\&(-1)^N \mkern-18mu\sum\limits_{P(1,\ldots,N)}\mkern-18mu\operatorname{sign}\left( P \right)\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{P_1},b_{P_1}}^{\alpha_1,a_1}\cdots\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{P_N},b_{P_n}}^{\alpha_N,a_N}
+\end{aligned}
+\end{equation}
+where a factor of $-a^{-4}$ has been absorbed into the definition of $D^{-1}$. Here, every index except the flavour index has been made explicit to avoid any ambiguity. The object $\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{j},b_{j}}^{\alpha_i,a_i}$ is what's known as a propagator and can be interpreted as propagating a fermion at space- time point $n$ with Dirac and color indices $\alpha_i$ and $a_i$ to the space-time -Dirac - color point $m,\,\beta_j,\,b_j$.
+\subsection{Chiral fermions and the problem of doublers}\label{Chiral_symmetry_breaking}
+To understand what is wrong about the naive fermion action introduced in \eqref{eq:naiveFermionAction}, we first have to understand some phenomenology in continuum QCD.\\\\In the continuum, the massless action for $N_f$ flavours has the global continous symmetry group
+
+\begin{equation}\label{eq:SU_SU_U_U}
+\begin{aligned} 
+SU&(N_f)_L\times SU (N_f)_R\times U(1)_V \times U(1)_{PV}\\ &\downarrow \quad\quad\quad\quad\quad \downarrow\quad\quad\quad\quad \downarrow\quad\quad\quad \,\,\downarrow\\
+e^{i\alpha\gamma_5T_i}&\psi_L\quad \quad e^{i\alpha\gamma_5T_i}\psi_R\quad \quad e^{i\alpha\mathbb{1}}\psi\quad e^{i\alpha\gamma_5\mathbb{1}}\psi
+\end{aligned}
+\end{equation}
+where $\psi_L$ and $\psi_R$ are left and right handed flavour multiplets respectively. While $U(1)_{PV}$\footnote{PV stands for pseudovector, from the language of geometric algebra. Often called an Axial vector} is a symmetry of the QCD action, it is broken explicitly by the topological charge arising from the non- invariance of the fermion measure. Of course actual quarks are not massless or even mass degenerate. It's only due to the very small masses of the up- and down- quarks, that we can talk about $SU(2)$ flavour symmetry.\par However, the small perturbation to this symmetry, caused by the light quark masses, does not account for the discrepancy seen in experiments. There should still be observable remnants of the approximate symmetry, so we conclude that the $SU(2)$ symmetry must be spontaneously broken (on top of the explicit small breaking) in the ground state of the theory. This corresponds to bilinear expression of quarks obtaining a non- zero vacuum expectation value(VeV)\footnote{Known as a chiral condensate} in the ground state of the theory. This would explain the Pion as being Goldstone bosons corresponding to the broken, approximate $N_f=2$ flavour symmetry, which explains its small mass.\\\\Because spontaneous chiral symmetry breaking is a non- perturbative phenomenon, it's crucial to capture it in lattice calculations. However, introducing chiral symmetry to lattice QCD is highly non-trivial. The core of this issue lies in what's known as the Nielsen-Ninomiya theorem \cite{NielsenH.B1981Antf}. This is a no- go theorem which states quite generally that
+
+
+\begin{theorem}\label{theorem:asas}
+It is not possible to construct a regularized theory of chiral fermions that satisfies the following properties
+\begin{enumerate}
+\item There is invariance at least under the global
+part of the gauge group. \textbf{(i.e. $\mathbf{D(p)\gamma_5 = -\gamma_5D(p)}$)}
+\item The numbers of right- and left-handed species
+of Weyl fermions are different for a given combination of charges. Here by charges we mean generators of the global subgroup of the local gauge group. \textbf{(i.e. $\mathbf{D(p)}$ only has poles at $\mathbf{p=0}$. )}
+\item The theory has the (correct) Adler-Bell-Jackiw
+anomaly. \textbf{Better known (I think) as the chiral anomaly. On the lattice, this assumption follows from the other assumptions, and so is not needed.}
+\item The action is bilinear in the Weyl field. 
+
+\end{enumerate}
+\end{theorem}
+Where the bold text was not in the original theorem, but are clarifying statements intended to narrow the scope to lattice QCD in four dimensions. It should be noted that the lattice no- go theorem makes additional assumptions on the details of the theory, namely locality, and by inference from the general assumptions; continuity of the dispersion relation and therefore periodic boundary conditions i.e. the Brilluin zone forming a $3- torus$\cite{NielsenH.B1981Antf}.
+\subsubsection{Working around the Nielsen-Ninomiya theorem}\label{Chiral_fermions}
+The  consequence of this theorem, is that a lattice QCD theory, must violate one of the assumptions laid out in theorem \ref{theorem:asas}. Several models have been proposed and tested along these lines
+\paragraph{Wilson Fermions} were introduced by Wilson to resolve an issue of the naive fermion action, it violates the second assumption of the Nielsen-Ninomiya theorem.\\To see this, we simply have to look at the momentum- space propagator for massless fermions and trivial gauge fields (i.e. gauge fields gauged to the identity)
+\begin{equation}
+\left.\widetilde{D}(p)^{-1}\right|_{m=0}=\frac{-\mathrm{i} a^{-1} \sum_{\mu} \gamma_{\mu} \sin \left(p_{\mu} a\right)}{a^{-2} \sum_{\mu} \sin \left(p_{\mu} a\right)^{2}}
+\end{equation}
+which due to the nature of lattice Fourier transforms, now has additional, unphysical poles at momenta 
+\begin{equation}
+p=(\pi / a, 0,0,0),(0, \pi / a, 0,0), \ldots,(\pi / a, \pi / a, \pi / a, \pi / a).
+\end{equation}
+The culprit, as it turns out are the toroidal boundary conditions of the Brilluin zone used in the definition of the Fourier transform
+\begin{equation}
+\widetilde{\Lambda}=\left\{p=\left(p_{1}, p_{2}, p_{3}, p_{4}\right) \mid p_{\mu}=\frac{2 \pi}{a N_{\mu}}\left(k_{\mu}+\theta_{\mu}\right), k_{\mu}=-\frac{N_{\mu}}{2}+1, \ldots, \frac{N_{\mu}}{2}\right\}
+\end{equation}
+which associates each momenta $p_\mu$ with an oppositely oriented mode $k_\mu$, e.g. in the case of $\theta_\mu = 0$ such that $p_\mu=-\frac{\pi}{a}k_\mu$ aso. These are known as fermion doublers, as they double the number of poles in the propagator for each dimension.\\\\ Wilson's proposal was to add an additional term, known as the Wilson term
+\begin{equation}
+-a \sum_{\mu=1}^{4} \frac{U_{\mu}(n)_{a b} \delta_{n+\hat{\mu}, m}-2 \delta_{a b} \delta_{n, m}+U_{-\mu}(n)_{a b} \delta_{n-\hat{\mu}, m}}{2 a^{2}}
+\end{equation}
+to the action. This term removes the doublers from the theory but breaks chiral symmetry explicitly, thereby violating the first assumption of the Nielsen-Ninomiya theorem.
+
+\paragraph{Staggered Fermions} are based on applying a space- time dependent field transformation 
+\begin{equation}\label{eq:staggered_transformation}
+\psi(n)=\gamma_{1}^{n_{1}} \gamma_{2}^{n_{2}} \gamma_{3}^{n_{3}} \gamma_{4}^{n_{4}} \psi(n)^{\prime}, \quad \bar{\psi}(n)=\bar{\psi}(n)^{\prime} \gamma_{4}^{n_{4}} \gamma_{3}^{n_{3}} \gamma_{2}^{n_{2}} \gamma_{1}^{n_{1}}
+\end{equation}
+to the free, naive fermion action
+\begin{equation}
+S_{F}[\psi, \bar{\psi}]=a^{4} \sum_{n \in \Lambda} \bar{\psi}(n)\left(\sum_{\mu=1}^{4} \gamma_{\mu} \frac{\psi(n+\hat{\mu})-\psi(n-\hat{\mu})}{2 a}+m \psi(n)\right)
+\end{equation}
+where $n_1,\ldots,n_4$ are exponents (not indices) based on lattice sites. This transformation leaves the action trivial in Dirac space. This means that the four degrees of freedom associated with the Dirac space on each lattice site, is reduced to just one degree of freedom. This corresponds to 16 degrees of freedom (1+15 for the origin and vertices) in the Brilluin zone. The residual degrees of freedom are then combined into 4 Dirac spinors called staggered fermion tastes. This new theory is invariant under a $U(1)\times U(1)$ taste rotation 
+\begin{equation}
+\begin{aligned}
+\psi^{\prime}=\mathrm{e}^{\mathrm{i} \alpha} \psi &, \quad \bar{\psi}^{\prime}=\bar{\psi} \mathrm{e}^{-\mathrm{i} \alpha} \\
+\psi^{\prime}=\mathrm{e}^{\mathrm{i} \beta \Gamma_{5}} \psi &, \quad \bar{\psi}^{\prime}=\bar{\psi} \mathrm{e}^{\mathrm{i} \beta \Gamma_{5}}
+\end{aligned}
+\end{equation}
+for $\Gamma_{5}=\gamma_{5} \otimes \tau_{5}$.\\There are major conceptual hurdles in doing this. The transformation in \eqref{eq:staggered_transformation} already mixes space- time and Dirac indices, and now taste indices as well. In fact under Lorentz transformations in the spinor representation $\Pi$ (which in Euclidean space corresponds to $SO(4)$), the taste multiplets transform as bi- spinors
+\begin{equation}
+\psi_{\alpha i} \rightarrow \Pi_{\alpha}^{\beta} \Pi_{i}^{j} \psi_{\beta j}
+\end{equation}
+and therefore integer spin. Needless to say, this is no longer the same theory, but despite the conceptual challenges there have been several staggered fermion simulations in agreement with experiment \cite{PhysRevLett.92.022001}\cite{Follana:2006rc}.
+\paragraph{Domain Wall Fermions}
+The conceptual base of this method, proposed by Kaplan \cite{KaplanDavidB1992Amfs}, is to start with a $(2N+1)$- dimensional theory possessing neither chiral symmetry nor anomalies, but which in the low energy regime, describes a theory of massless, chiral fermions in $2N$ dimensions.\\We start with the naive, free fermion action in $(2N+1)$- dimensions, for which the Dirac operator is given by
+\begin{equation}
+D\psi(z)=\sum_{\mu=1}^{2N+1} \gamma_{\mu} \frac{\psi(z+\hat{\mu})- \psi(z-\hat{\mu})}{2 a}+m(s) \psi(z)
+\end{equation}
+and the new lattice index is $z = \{n,s\}\mid |n| =2n, |s|=1$. The mass term is now a function of the positional argument in the extra dimension with the constraint of being monotonic, $m(0)=0$ and $\lim\limits_{s \to \pm \infty}m(s)\rightarrow \pm m_\pm,\,m_\pm > 0$. One such function is given by
+\begin{equation}
+\begin{aligned}
+m(s) &=m_{0} \theta(s) \equiv \frac{\sinh \left(a \mu_{0}\right)}{a} \theta(s) \\
+\theta(s) &=-1, \quad s \leq-a \\
+&=0, \quad s=0 \\
+&=+1, \quad s \geq+a
+\end{aligned}
+\end{equation}
+for which the Dirac operator has two chiral zero mode solutions
+\begin{equation}
+\psi_{0}^{\pm}(p, z)=\exp (\mathrm{i} \boldsymbol{p} \cdot n) \phi_{\pm}(s, \boldsymbol{p}) u_{\pm}
+\end{equation}
+with
+\begin{equation}
+\begin{aligned}
+&\phi_{+}(s, \boldsymbol{p})=\exp \left(-\mu_{0}|s|\right) \\
+&\phi_{-}(s, \boldsymbol{p})=(-1)^{s} \phi_{+}(s, \boldsymbol{p})
+\end{aligned}
+\end{equation}
+where $u_\pm$ are constant $2^n$ component chiral Dirac spinors.\\We see that the two solutions are exponentially suppressed in $|s|$ and therefore localized to the $2^n$- dimensional subspace of the lattice. The eigenvalue equations are given by
+\begin{equation}
+D\psi_{0}^{\pm}(p, z)=\frac{\mathrm{i}}{a} \gamma \cdot \sin (p a)\psi_{0}^{+}(p, z)
+\end{equation}
+\begin{equation}
+\gamma_{5} \Psi_{0}^{\pm}=\pm \Psi_{0}^{\pm}
+\end{equation}
+Implying that the modes are chiral.
+We have $|\mathbf{p}a|\ll 1 \longrightarrow \frac{\mathrm{i}}{a} \gamma \cdot \sin (p a)\rightarrow i\gamma_\mu p_\mu$ which corresponds to a massless mode propagating in $2n$ dimensions. But we once again see that the theory has doublers. To fix this, Kaplan added the Wilson term which removed every superfluous positive chirality mode. This also made every negative chirality term non- normalizable, causing them to decouple from the theory. This becomes more intuitive if we consider a compactified auxiliary dimension. The positive chirality modes which live on the domain wall, still have negative chirality partners, but now they are separated by half the width $L$ of the compactified dimension and their interaction is suppressed exponentially in $-L/a$.\\There are technical and conceptual difficulties that arise when coupling the fermion field to a gauge field, which we won't go into, however good sources are to be found in \cite{KaplanDavidB1992Amfs} and \cite{TONG_LN}.
+\paragraph{Ginsparg- Wilson fermions}
+Completely counter to intuition, one of the key insights to introducing chiral symmetry to the lattice, was to break the first assumption of the Nielsen-Ninomiya theorem. To do this, we replace the anti- commutation relation
+\begin{equation}
+D \gamma_{5}+\gamma_{5} D=0
+\end{equation}
+which enforces the chiral symmetry of the action, with the Ginsparg- Wilson equation
+\begin{equation}
+D \gamma_{5}+\gamma_{5} D=a D \gamma_{5} D.
+\end{equation}
+To motivate this we first need to see how continuum symmetry groups can be mapped onto the lattice, using the renormalization group.\\\\Following the construction in \cite{GinspargPaulH1982Aroc}, we start by considering a fermion action\footnote{This could be a continuum action, although the following construction does not rely on this.}
+\begin{equation}
+S_{F}[\phi, \bar{\phi}] \rightarrow S_{F}\left[e^{i \epsilon \gamma^{5}} \phi, \bar{\phi} e^{i \epsilon \gamma^{5}}\right]=S_{F}\left[ \phi, \bar{\phi} \right]
+\end{equation}
+where for specificity, we focus on the case of chiral symmetry, although this argument extends to other symmetries. We then define a new action using the block-spin transformation
+\begin{equation}
+e^{-S_F[\psi,\bar{\psi}]}=\int \mathcal{D}[\phi, \bar{\phi}] \mathrm{e}^{-\left(\bar{\psi}-\bar{\phi}^{B}\right) B\left(\psi-\phi^{B}\right)-S_{F}[\phi, \bar{\phi}]}
+\end{equation}
+where $\bar{\phi}^{B}$ and $\phi^{B}$ are block variables which have been appropriately constructed from the degrees of freedom of the continuum fields in the vicinity of the lattice sites. Here $B$ is a linear operator which by construction, must break every symmetry which is anomalous in the final theory.\\What then, has happened to the chiral symmetry of the original action? We can see this if we transform the new action
+\begin{equation}
+\begin{aligned} 
+&\exp \left(-S_F\left[e^{-i \epsilon \gamma^{5}} \psi, \bar{\psi} e^{-i \epsilon \gamma^{5}}\right]\right)=\\&\int \mathcal{D}[\phi, \bar{\phi}] \exp \left[-(\bar{\psi}-\bar{\phi}^B) e^{-i \epsilon \gamma^{5}} B e^{-i \epsilon \gamma^{5}}(\psi-\phi^B)-S_F[\phi, \bar{\phi}]\right]
+\end{aligned}
+\end{equation}
+and then expand the result in $\mathcal{O}(\epsilon)$, we get 
+\begin{equation}
+\begin{aligned} 
+&e^{-S_F[\psi, \bar{\psi}]}\left(1+i \epsilon \bar{\psi}\left\{\gamma^{5}, D\right\} \psi\right)\\&=\int_{\mathcal{D}[\phi, \bar{\phi}]} \mkern-30mu\left(1+i \epsilon(\bar{\psi}-\bar{\phi}^B)\left\{\gamma^{5}, B\right\}(\psi-\phi^B)\right) \exp \left[-(\bar{\psi}-\bar{\phi}^B) B(\psi-\phi^B)-S_F(\phi, \bar{\phi})\right]\\
+&=\left(1-i \epsilon \frac{\partial}{\partial\psi}\left\{\gamma^{5}, B^{-1}\right\} \frac{\partial}{\partial\bar{\psi}}\right)e^{-S_F[\psi, \bar{\psi}]}
+\end{aligned}
+\end{equation}
+where we have have assumed a fermion action of the form $S_F=\bar{\psi} D \psi$ such that 
+\begin{equation}
+i \epsilon \bar{\psi}\left\{\gamma^{5}, D\right\} \psi e^{-\bar{\psi} D \psi}=i \epsilon \bar{\psi} D\left\{\gamma^{5}, B^{-1}\right\} D \psi e^{-\bar{\psi}D \psi}
+\end{equation}
+which means that the original chiral symmetry, through the block-spin transformation, has become 
+\begin{equation}
+\left\{\gamma^{5}, D\right\} = D\left\{\gamma^{5}, B^{-1}\right\}D.
+\end{equation}
+Now, we're finally equipped to understand where the Ginsparg- Wilson equation 
+\begin{equation*}
+D \gamma_{5}+\gamma_{5} D=\left\{\gamma^{5}, D\right\} =a D \gamma_{5} D
+\end{equation*}
+comes from. It's the remnant chiral symmetry left after a block-spin transformation where the linear operator $B=\frac{2}{a}\mathbb{1}$, breaks the only anomalous symmetry in the continuum theory, $U(1)_{PV}$.\\\\"That's all well and good" you say, "but what is D?" you continue, and you're right to ask. In their seminal 1982 paper\cite{GinspargPaulH1982Aroc}, Ginsparg and Wilson say the following "We have unfortunately not yet found either $\left\{\gamma^{5}, D\right\}=D\left\{\gamma^{5}, B^{-1}\right\} D=2D\gamma^5B^{-1}D$ or $\left\{\gamma^{5}, D^{-1}\right\}=2 \gamma^{5} B^{-1}$ to yield any tractable gauge- invariant solutions." and it would stay that way for about 15 years until two independent solutions were found in rapid succession, The fixed point Dirac operator\cite{HASENFRATZ199853} and the Overlap operator\cite{PhysRevLett.81.4060}.
+\paragraph{Fixed point Action}
+Following the previous derivation, we could start integrating out continuum degrees of freedom above the lattice cut-off to get ourselves a working lattice theory, and for free fermions, this is indeed what we would do. However, when we impose gauge symmetry and introduce the gauge field, the integral is no longer solvable in closed form. The solution was to not remove the lattice entirely, but to consider an extremely fine lattice with some lattice spacing $a$ such that the continuum is well approximated. We then construct another coarse lattice from the fine lattice by using only a subset of the fine lattice points such that the two lattices can be related by a scaling of the lattice spacing, e.g. constructing a coarse lattice using only fine lattice points with even numbered indices (i.e. the scaling $a\rightarrow 2a$). We denote the resulting fields, couplings and actions of the coarse lattice theory by an apostrophe. The RG- equation relating the coarse- and fine- lattice field theories is given by
+\begin{equation}\label{eq:RGE}
+\begin{aligned} 
+\mathrm{e}^{-S_{F}^{\prime}\left[\psi^{\prime}, \bar{\psi}^{\prime}, U^{\prime}\right]-\beta^{\prime} S_{G}^{\prime}\left[U^{\prime}\right]}=&\int \mathcal{D}[\psi, \bar{\psi}] \mathcal{D}[U] \mathrm{e}^{-S_{F}[\psi, \bar{\psi}, U]-\beta S_{G}[U]}\\&\times \mathrm{e}^{-T_{F}\left[\psi^{\prime}, \bar{\psi}^{\prime}, \psi^{B}, \bar{\psi}^{B}, U\right]-\beta T_{G}\left[U^{\prime}, U^{B}\right]}
+\end{aligned}
+\end{equation}
+where $T_F$ and $T_G$ are suitable blocking functions which combine the fine degrees of freedom into coarse degrees of freedom with the constraint of preserving gauge covariance and the discrete rotational and reflection symmetries of the lattice.\\\\The QCD action is a functional of the gauge- and fermion- fields, parametrized by a set of couplings: $S^{\prime}\left[ \psi^{\prime}, \bar{\psi}^{\prime}, U^{\prime}, (\beta^{\prime},c_1^{\prime},c_2^{\prime},\ldots) \right]$ and $S\left[ \psi, \bar{\psi}, U, (\beta,c_1,c_2,\ldots) \right]$. Enforcing \eqref{eq:RGE} where the lattice spacings are related by a scale factor $k_a$, drives the couplings of the fine lattice QCD action into values that fulfil the equality. Of course, we don't particularly care about this action, we want $S^\prime_f$, the action we can actually implement in computations. What we need, is to find the set of parameters that make the action functional invariant under the coarse graining process. With such parameters, we would have
+
+\begin{equation}
+S^{\prime}\left[ \psi^{\prime}, \bar{\psi}^{\prime}, U^{\prime}, (\beta^{\star},c_1^{\star},c_2^{\star},\ldots) \right] = S\left[ \psi, \bar{\psi}, U, (\beta^{\star},c_1^{\star},c_2^{\star},\ldots) \right].
+\end{equation}
+Because the lattice spacing has to be mapped to itself, we conclude that it must either be $a^\star = 0$ or $a^\star = \infty$. Since only $a^\star = 0$ is of interest to us, we can analyse \eqref{eq:RGE} in the saddle point corresponding to $\beta\rightarrow \infty = \beta^\star$ where $\beta = \frac{6}{g^2}$ and $g$ is the running gauge coupling, which goes to zero for vanishing lattice spacing. In this saddle point, the RHS. of \eqref{eq:RGE} is dominated by the gauge configuration which minimizes the exponents proportional to $\beta^\star$. The fact that $\beta$ couples to the gauge action and gauge blocking functions exclusively, means that the fermion- and gauge- parts of the exponent effectively decouple and can be treated independently. We get that the fixed point gauge action is given by
+\begin{equation}
+S_{G}^{\star}\left[U^{\prime}\right]=\min _{U}\left(S_{G}^{\star}[U]+T_{G}^{\beta\rightarrow\infty}\left[U^{\prime}, U^{B}\right]\right).
+\end{equation}
+To compute the fixed point gauge action, we parametrize it as a linear combination of terms involving Wilson loops, which we identified as gauge invariant in equation \eqref{eq:Wilson_gauge_action}. The parametrization is given by
+\begin{equation}\label{eq:Wilson_parametrized}
+S_{G}[U]=\sum_{l \in \mathcal{L}} \sum_{m} c_{m}(l)\left(\frac{1}{3} \operatorname{Re} \operatorname{tr}\left[\mathbb{1}-U_{l}\right]\right)^{m}
+\end{equation}
+where $\mathcal{L}$ denotes the set of closed loops symmetric under discrete translations and rotations, and $U_l$ denotes the path ordered product of link variables along a loop $l\in\mathcal{L}$. The set of real numbers $c_m^{\star(l)}$ which parametrize the fixed point action, is then the set which minimizes the difference function 
+\begin{equation}
+C(c_m^{\star(l)})= \mid S_{G}^{\star}\left[U^{\prime}\right]-\min _{U}\left(S_{G}^{\star}[U]+T_{G}^{\beta\rightarrow\infty}\left[U^{\prime}, U^{B}\right]\right)\mid.
+\end{equation}
+The remaining fermionic integral is Gaussian and can be solved in closed form to yield the expression 
+\begin{equation}\label{eq:RG_fermion}
+\begin{aligned}
+&D^{\prime}\left[U^{\prime}\right]_{n^{\prime} m^{\prime}}=\kappa_{F} \delta_{n^{\prime} m^{\prime}} \\
+&-\kappa_{F}^{2} b^{2}\left(\omega\left[U^{\min }\right]\left(D\left[U^{\min }\right]+\kappa_{F} b^{2} \omega\left[U^{\min }\right]^{\dagger} \omega\left[U^{\min }\right]\right)^{-1} \omega\left[U^{\min }\right]\right)_{n^{\prime} m^{\prime}}
+\end{aligned}
+\end{equation}
+where the blocking function has been expressed as 
+\begin{equation}
+\begin{aligned}
+T_{F}\left[\psi^{\prime}, \bar{\psi}^{\prime}, \psi^{B}, \bar{\psi}^{B}, U\right]=& \kappa_{F} \sum_{n^{\prime}}\left(\bar{\psi}_{n^{\prime}}^{\prime}-b \bar{\psi}_{n^{\prime}}^{B}\right)\left(\psi_{n^{\prime}}^{\prime}-b \psi_{n^{\prime}}^{B}\right) \\
+=& \kappa_{F} \sum_{n^{\prime}}\left(\bar{\psi}_{n^{\prime}}^{\prime}-b \sum_{n} \bar{\psi}_{n} \omega[U]_{n n^{\prime}}^{\dagger}\right) \\
+& \times\left(\psi_{n^{\prime}}^{\prime}-b \sum_{n} \omega[U]_{n^{\prime} n} \psi_{n}\right)
+\end{aligned}
+\end{equation}
+where $b$ and $\kappa_F$ are real- valued parameters and $\omega$ is a gauge invariant averaging function. The coarse lattice Dirac operator $D^{\prime}\left[U^{\prime}\right]_{n^{\prime} m^{\prime}}$ can be parametrized as 
+\begin{equation}\label{eq:Dirac_parametrized}
+D[U]_{n m}=\sum_{k=1}^{16} \Gamma_{k} \sum_{p \in \mathcal{P}_{n, m}^{(k)}} c_{n, m}^{(k, p)}[U] U_{p} \quad\big|\quad \Gamma_k\in \left\{\mathbb{1}, \gamma_{\mu}, \sigma_{\mu \nu}, \gamma_{\mu} \gamma_{5}, \gamma_{5}\right\}
+\end{equation}
+and its parameters determined by constructing a difference operator from \eqref{eq:RG_fermion}, and minimizing it's norm acting on a normally distributed test vector.\\\\As we previously showed, the QCD action that arises from the block- spin transformation, obeys the Ginsparg- Wilson equation. In addition, the fixed point Dirac operator and gauge action have other, very desirable properties that are inherited from the fine lattice, such as very small discretization errors and cutoff effects \cite{HASENFRATZ199853}. They do come with significant cost however, as the parametrizations   in \eqref{eq:Wilson_parametrized} and \eqref{eq:Dirac_parametrized} have to be truncated at some point to reduce the number of parameters required for computation, and the computation of the minimization procedure is time consuming.
+\paragraph{The overlap operator}
+The overlap operator
+\begin{equation}
+D_{\mathrm{ov}}=\frac{1}{a}\left(\mathbb{1}+\gamma_{5} \operatorname{sign}[H]\right), \quad H=\gamma_{5} A
+\end{equation}
+for some $\gamma^5$-hermitian Dirac operator $A$, is also a solution to the Ginsparg- Wilson equation \cite{PhysRevLett.81.4060}. The sign function can be defined as 
+\begin{equation}
+\operatorname{sign}[H] = H\left( H^2 \right)^{-\frac{1}{2}}
+\end{equation}
+although it can also be defined through the spectral decomposition.\\$A$ can be chosen so as to produce a theory without doublers as well as easing computation of the sign function and improving locality.\\\\The issue of locality turns out to be abundant in chiral lattice fermions, and it comes up here as well as for the fixed point Dirac operator. In fact it arises as a consequence of any Ginsparg- Wilson fermions \cite{horvath1998ginsparg}. Ultralocality, meaning as strict dependence on nearest neighbour terms in the Dirac operator, would be ideal. However, for Ginsparg-Wilson fermions, we have to settle for Dirac operators which decay exponentially in lattice displacement:
+ \begin{equation}
+\left|D(n \mid m)_{\alpha \beta}\right| \leq C \exp (-\gamma\|n-m\|)
+\end{equation}
+By this criteria, we can recover locality in the continuum limit.\\\\The primary computational cost of the overlap operator is calculating the sign function, for which two main techniques have been explored, approximation with Chebyshev polynomials and with Zolotarev polynomials, which differ only slightly conceptually.
+\subsubsection{Phenomenology of chiral fermions}
+If a Dirac operator is $\gamma_5$-hermitian i.e.
+\begin{equation}
+\gamma_{5} D \gamma_{5}=D^{\dagger}
+\end{equation}
+(which is not a strong condition in zero- temperature QFT), we can derive a few interesting properties of that operator.\\The eigenvalues are given by the zeros of the characteristic polynomial, we get that
+\begin{equation}
+\begin{aligned}
+P(\lambda) &=\operatorname{det}[D-\lambda \mathbb{1}]=\operatorname{det}\left[\gamma_{5}^{2}(D-\lambda \mathbb{1})\right]=\operatorname{det}\left[\gamma_{5}(D-\lambda \mathbb{1}) \gamma_{5}\right] \\
+&=\operatorname{det}\left[D^{\dagger}-\lambda \mathbb{1}\right]=\operatorname{det}\left[D-\lambda^{*} \mathbb{1}\right]^{\dagger}=\operatorname{det}\left[D^T-\lambda^{*} \mathbb{1}\right]^{*}\\&=\operatorname{det}\left[D-\lambda^{*} \mathbb{1}\right]^{*}=P\left(\lambda^{*}\right)^{*}
+\end{aligned}
+\end{equation}
+where we have used the identity for square matrices $\operatorname{det}\left[ A^T \right] = \operatorname{det}\left[ A \right]$, and the fact that the determinant is cyclic under $\gamma_5$-permutation. This means that $D$ has either real or complex conjugate pairs of eigenvalues. This implies that the fermion determinant is real which will prove to be a crucial property for simulating dynamical fermions.\\In addition we also have the property
+\begin{equation}
+\begin{aligned} 
+v^\dagger \gamma_5Dv &= (Dv)^\dagger\gamma_5v\\\lambda v^\dagger \gamma_5v &=\lambda^*v^\dagger \gamma_5v 
+\end{aligned}
+\end{equation}
+which means that either, $\gamma_5v $ and $v$ are orthogonal under the inner-product $u^\dagger v$ or $\lambda$ is real. This in turn means that only eigenvectors with real eigenvalues can be chiral.\\\\
+If we again consider the Ginsparg- Wilson equation and now also assume $\gamma_5$-hermicity, we get
+\begin{equation*}
+\begin{aligned} 
+D \gamma_{5}+\gamma_{5} D&=a D \gamma_{5} D\\
+\gamma_5D\gamma_5 + \gamma_5\gamma_5D &= a \gamma_5D\gamma_5D\\D^\dagger +D &= aD^\dagger D\\D +D^\dagger &= aD D^\dagger
+\end{aligned}
+\end{equation*}
+which makes $D$ a normal operator. Furthermore, we see that for a normalized eigenvector $v$, we have
+\begin{equation}
+\begin{aligned} 
+v^\dagger D^\dagger v +v^\dagger Dv &= av^\dagger D^\dagger D v\\\lambda^*v^\dagger v +\lambda^*v^\dagger v &= a \lambda^*\lambda v^\dagger v\\ \lambda^* + \lambda &= a\lambda^*\lambda\\re^{-\alpha i} +re^{\alpha i} &= ar^2\\\frac{2}{a}\cos(\alpha) &= r,\quad\alpha \in \left[-\frac{\pi}{2}, \frac{\pi}{2} \right)
+\end{aligned}
+\end{equation}
+which means the eigenvalues of $D$ must be of the form
+\begin{equation}\label{eq:Ginsparg_wilson_circle}
+\frac{2}{a}\cos(\alpha)e^{\alpha i},\quad\alpha \in \left[-\frac{\pi}{2}, \frac{\pi}{2} \right)
+\end{equation}
+which is the parametrization of a circle in the complex plane, centred at $\frac{1}{a}$ with radius $\frac{1}{a}$. This is known as a Ginsparg-Wilson circle. This circle includes the possibility for zero modes\footnote{Zero modes can refer to many different things in physics, but here it simply refers to eigenfunctions of the Dirac operator with an eigenvalue of zero.}, which have interesting properties:
+\begin{equation}
+Dv_0 = 0 \rightarrow \gamma_5Dv_0 = 0 \rightarrow \left( aD\gamma_5D - D\gamma_5 \right)v_0 = 0 \rightarrow D\gamma_5v_0 = 0
+\end{equation}
+evidently, the kernel of $D$ is an invariant subspace of $\gamma_5$ and since the the restriction $\gamma_5\mid_{\operatorname{ker}(D)}$ and $D$ are simultaneously diagonalizable, $\operatorname{ker}(D)$ must be spanned exclusively by the eigenspace of $\gamma_5$, i.e. $\operatorname{ker}(D) = \operatorname{ker}\left( \gamma_5\mid_{\operatorname{ker}(D)} -1 \right) \bigoplus\operatorname{ker}\left( \gamma_5\mid_{\operatorname{ker}(D)} +1 \right)$ where we've used that since $\gamma_5$ is an involution, its only possible eigenvalues are $\pm1$\footnote{This is quite easy to see as $\gamma_5 u = \lambda u\rightarrow \mathbb{1} u = \lambda^2 u\rightarrow \lambda=\pm1$}. We refer to the eigenfunctions of $\gamma_5$ as right- or left- handed corresponding to whether they have $+1$ or $-1$ eigenvalue.\paragraph{The Atiyah-Singer index theorem} relates the analytical index of an elliptic differential operator\footnote{Such as the Dirac operator} on a smooth compact manifold, to certain topological invariants. The analytical index is simply defined as
+\begin{equation}
+\begin{aligned} 
+\operatorname{Idx_A}(D) &= \operatorname{dim}(\operatorname{ker}(D))-\operatorname{dim}(\operatorname{CoKer}(D))\\&= \operatorname{dim}(\operatorname{ker}(D))-\operatorname{dim}(\operatorname{ker}(D^\dagger))
+\end{aligned} 
+\end{equation}
+where the co-kernel of $D$ is the quotient space of the co- domain of $D$ by its image.\\On the lattice, the topological invariant in question is called the topological charge, and is expressed as 
+\begin{equation}
+Q_{\mathrm{top}}=a^{4} \sum_{n \in \Lambda} \frac{1}{2 a^{3}} \operatorname{tr}_{C D}\left[\gamma_{5} D(n\mkern-5mu\mid\mkern-5mu n)\right]=\operatorname{Idx_A}(D)=n_{-}-n_{+}
+\end{equation}
+Where the trace is over the color- and Dirac- indices, and $n_-$ and $n_+$ denote the number of left- and right-handed zero modes of the Dirac operator.\\\\In the continuum, the existence of a non-vanishing topological charge
+\begin{equation}\label{eq:topological_charge}
+Q_{\mathrm{top}}^{\mathrm{cont}}=\int \mathrm{d}^{4} x q(x)^{\mathrm{cont}}, \quad q(x)^{\mathrm{cont}}=\frac{1}{32 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} \operatorname{tr}_{C}\left[F_{\mu \nu}(x) F_{\rho \sigma}(x)\right]
+\end{equation}
+signals the existance of instantons, which are local minima of the Gauge action and thus  solutions to the classical equations of motion. These are of fundamental importance in the phenomenology QFTs including the axial anomaly which we mentioned briefly earlier. So we want the lattice expression to approach the continuum expression in the $a\rightarrow 0$ limit in the RG-flow. In fact, this was shown to hold for the fixed point Dirac operator, even for a finite cut-off \cite{Hasenfratz_1998}.\par In actual calculations of course, we deal in expectation values. However this can't tell us whether the topological charge is zero or not since the path integral is invariant to gauge configurations with opposite topological charges. Instead, we can examine the topological susceptibility
+\begin{equation}\label{eq:topological_susc}
+\chi_{\mathrm{top}}=\frac{1}{V}\left\langle Q_{\mathrm{top}}^{2}\right\rangle=\frac{1}{a^{4}|\Lambda|} a^{8} \sum_{m, n}\langle q(m) q(n)\rangle=a^{4} \sum_{n}\langle q(0) q(n)\rangle.
+\end{equation}
+\paragraph{The axial anomaly}
+The topological charge is directly related to the  non- invariance (variance?) of the integration measure under $U(1)_{PV}$ rotations, which gives rise to the axial anomaly. To see this, we again consider the residual chiral symmetry of the Ginsparg-Wilson equation. The chiral rotation of the fermion fields that preserve this symmetry is given by
+\begin{equation}
+\psi^{\prime}=\exp \left(\mathrm{i} \alpha M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right) \psi, \quad \bar{\psi}^{\prime}=\bar{\psi} \exp \left(\mathrm{i} \alpha M\left(\mathbb{1}-\frac{a}{2} D\right) \gamma_{5}\right)
+\end{equation}
+where the notation slightly obfuscates the action of the Dirac operator, but is meant as 
+\begin{equation}\label{eq:GW_chiral_field_rotation}
+\begin{aligned} 
+(D \psi)(n)_{\alpha,a}&=\sum_{m, \beta, b} D(n \mkern-5mu\mid \mkern-5mu m)_{\alpha ,a}^{\beta,b} \psi(m)_{\beta,b}\\(\bar{\psi} D)(m)_{\beta,b}&=\sum_{n, \alpha, a} \bar{\psi}(n)_{\alpha,a} D(n\mkern-5mu \mid\mkern-5mu m)_{\alpha,a}^{ \beta,b}.
+\end{aligned}
+\end{equation}
+The matrix $M$ can be one of the generators of $SU(N_f)$ or the identity.\\We recall that under a linear, complex change of variables under $M$, the measure for Grassmann integration transforms as
+\begin{equation}
+\mathrm{d}^{N} \eta=\operatorname{det}[M] \mathrm{d}^{N} \eta^{\prime}.
+\end{equation}
+Expanding the field transformation \eqref{eq:GW_chiral_field_rotation} for an infinitesimal $\alpha$\footnote{This is fine, as the measure is constructed from the algebra, not the group} we get that the integration measure transforms as\footnote{a quick aside that I found interesting, is that the determinant term looks a little bit like the characteristic polynomial of a matrix with eigenvalue $\pm 1$. However I don't even know what that would mean in this context and leave this only as a curiosity.}
+\begin{equation}
+\mathcal{D}[\psi, \bar{\psi}]= \operatorname{det}\left[\mathbb{1}+\mathrm{i} \alpha M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right]^{2}\mathcal{D}\left[\psi^{\prime}, \bar{\psi}^{\prime}\right].
+\end{equation}
+We can use the following result
+\begin{equation}
+\operatorname{det}[A]=\exp (\operatorname{tr}[\ln A])
+\end{equation}
+to re-express the determinant as 
+\begin{equation*}
+\exp \left(2 \operatorname{tr}\left[\ln \left(\mathbb{1}+\mathrm{i} \varepsilon M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right)\right]\right).
+\end{equation*}
+The natural log can then be expanded in terms of its Mercator series
+\begin{equation}
+\ln (1+x)=-\sum_{k=1}^{\infty} \frac{(-1)^{k}}{k} x^{k}
+\end{equation}
+to give 
+\begin{equation*}
+\exp \left(-2 \sum_{k=1}^{\infty} \frac{(-\mathrm{i} \alpha)^{k}}{k} \operatorname{tr}\left[\left(M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right)^{k}\right]\right)
+\end{equation*}
+where we have exploited the linearity of the trace to place the sum and factors outside. We then separate the exponent into terms linear in $\alpha$ and otherwise and expand the exponents
+\begin{equation}
+\begin{aligned} 
+ &\exp \left(2\mathrm{i} \alpha \operatorname{tr}\left[M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right]\right)
+\exp \left(-2 \sum_{k=2}^{\infty} \frac{(-\mathrm{i} \alpha)^{k}}{k} \operatorname{tr}\left[\left(M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right)^{k}\right]\right)\\ &=\exp \left(2\mathrm{i} \alpha \operatorname{tr}\left[M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right]\right)\left( \mathbb{1}+\mathcal{O}(\alpha^2) \right)\\&=1+2 \mathrm{i} \alpha \operatorname{tr}\left[M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right]+\mathcal{O}\left(\alpha^{2}\right).
+\end{aligned}
+\end{equation}
+We can determine the trace as follows
+\begin{equation}
+\begin{aligned} 
+\operatorname{tr}_{FCD}^n\left[M \gamma_{5}\left(\mathbb{1}-\frac{a}{2} D\right)\right] &= \operatorname{tr}_{FCD}^n\left[M \gamma_{5}\right]-\frac{a}{2}\operatorname{tr}_{FCD}^n\left[ M \gamma_{5}D \right]\\&=\sum_{n \in \Lambda}\operatorname{tr}_{F}\left[M\right]\left( 3\operatorname{tr}_{D}\left[\gamma_{5}\right]-\frac{a}{2}\operatorname{tr}_{CD}\left[\gamma_{5}D(n\mkern-5mu\mid\mkern-5mu n) \right] \right)\\&=-\frac{a}{2}\sum_{n \in \Lambda}\operatorname{tr}_{F}\left[M\right]\left( \operatorname{tr}_{CD}\left[\gamma_{5}D(n\mkern-5mu\mid\mkern-5mu n) \right] \right)\\&=-\operatorname{tr}_{F}\left[M\right]Q_{\mathrm{top}}
+\end{aligned}
+\end{equation}
+where we have decomposed the trace into space-time $n$, flavour, color and Dirac indices using the property of the trace of tensor products, exploited the triviality of $M$ and $\gamma_5$ in color space to get the factor of three. Then finally evaluated the Dirac trace of $\gamma_5$ to zero and identified the topological charge.\\We get that the measure transforms as 
+\begin{equation}
+\mathcal{D}\left[\psi, \bar{\psi}\right]=\left( 1-2i\alpha\operatorname{tr}_{F}\left[M\right]Q_{\mathrm{top}} \right) \mathcal{D}\left[\psi^{\prime}, \bar{\psi}^{\prime}\right]
+\end{equation}
+meaning the anomaly- inducing term is due to the existence of the topological charge and whether or not the flavour mixing matrix $M$ is a generator of $SU(N_F)$ (which is traceless i.e. no anomaly) or trivial (the trace evaluates to $N_F$).\\\\For the approximate flavour symmetry $SU(2)$ we have three pseudo- Goldstone bosons corresponding to the three broken generators under SSB, the pions:\\
+$\pi^+ : u\bar{d}$, $\pi^- : d\bar{u}$ and $\pi^0 : \frac{u\bar{u}-d\bar{d}}{\sqrt{2}}$ with masses of around $135 \,MeV/c^2$. In addition to these, we also have the Omega meson corresponding to the trivial representation $\omega : \frac{u\bar{u}+d\bar{d}}{\sqrt{2}}$ with a mass of around $782 \,MeV/c^2$ \cite{Zyla:2020zbs}. We're now able to explain this discrepancy as the chiral symmetry corresponding to the trivial representation is explicitly broken due to the existence of the topological charge, and therefore has no corresponding pseudo- Goldstone boson.\\We see the same thing for $SU(3)$ flavour symmetry, where the $\eta^\prime$- meson : $\frac{u\bar{u}+d\bar{d}+s\bar{s}}{\sqrt{3}}$ with a mass of around $957 \,MeV/c^2$ corresponds to the trivial flavour mixing matrix, and the $\eta$- meson : $\frac{u\bar{u}+d\bar{d}-2s\bar{s}}{\sqrt{6}}$ with a mass of around $547 \,MeV/c^2$\cite{Zyla:2020zbs} corresponds to the eighth Gell- Mann matrix, a generator of $SU(3)$. 
+\paragraph{SSB of chiral symmetry} is signalled by the mass term (which breaks chiral symmetry) acquiring a non- zero VeV. The corresponding term on the lattice can be identified by generalizing the chiral projection operators using the Ginsparg-Wilson equation, given by
+\begin{equation}
+\widehat{P}_{R}=\frac{\mathbb{1}+\widehat{\gamma}_{5}}{2}, \quad \widehat{P}_{L}=\frac{\mathbb{1}-\widehat{\gamma}_{5}}{2}, \quad \widehat{\gamma}_{5}=\gamma_{5}(\mathbb{1}-a D)
+\end{equation}
+and
+\begin{equation}
+\psi_{R}=\widehat{P}_{R} \psi, \quad \psi_{L}=\widehat{P}_{L} \psi, \quad \bar{\psi}_{R}=\bar{\psi} P_{L}, \quad \bar{\psi}_{L}=\bar{\psi} P_{R}.
+\end{equation}
+The term in the Lagrangian density which maximally mixes the left- and right-handed components is given by
+\begin{equation}
+m \bar{\psi}\left(\mathbb{1}-\frac{a}{2} D\right) \psi.
+\end{equation}
+Thus the order parameter for chiral symmetry breaking on the lattice can be expressed as the expectation value 
+\begin{equation}
+\Sigma^{\mathrm{lat}}(a, m,|\Lambda|) \equiv-\left\langle\bar{u}(n)\left(\mathbb{1}-\frac{a}{2} D\right) u(n)\right\rangle
+\end{equation}
+now using degenerate masses for all $N_F$ flavours, which as we mentioned is only a good approximation for $N_F =2$ and slightly poorer for $N_F=3$.\\Using \eqref{eq:fermion_exp_val_Wick}, we can evaluate the fermionic expectation value to
+\begin{equation}
+\left\langle\bar{u}(n)\left(\mathbb{1}-\frac{a}{2} D\right) u(n)\right\rangle_F = a^{-4}\left(\mathbb{1}-\frac{a}{2} D(n\mkern-5mu \mid\mkern-5mu n)_{\alpha,a}^{ \beta,b}\right)D_m^{-1}(n\mkern-5mu \mid\mkern-5mu n)_{\alpha,a}^{ \beta,b}
+\end{equation}
+where $D_m$ is now the massive Dirac operator 
+\begin{equation}
+ D_m = D+m\left(\mathbb{1}-\frac{a}{2} D\right)
+\end{equation} 
+summing over repeated indices and averaging over every lattice site $n$ we get 
+\begin{equation}\label{eq:chiral_condensate_exp_val}
+\Sigma^{\operatorname{lat}}(a, m,|\Lambda|)=\frac{1}{a^{4}|\Lambda|}\left\langle\operatorname{tr}\left[\left(\mathbb{1}-\frac{a}{2} D\right) D_{m}^{-1}\right]\right\rangle_{G}
+\end{equation}
+which can be evaluated numerically.\\\\While this computation can prove the existence of a non- vanishing Vev. It does not reveal the dynamics of the symmetry breaking mechanism. This can be realized, however through the Banks-Casher relation \cite{BanksT1980Csbi}
+\begin{equation}
+\Sigma^{\mathrm{lat}}(a) \equiv \lim _{m \rightarrow 0} \lim _{|\Lambda| \rightarrow \infty} \Sigma^{\text {lat }}(a, m,|\Lambda|)=\frac{\pi}{a^{3}} \rho_{A}(0)
+\end{equation}
+where $\rho_{A}(\alpha)$ is the angular density of eigenvalues on the Ginsparg-Wilson circle parametrized by 
+\begin{equation}
+\lambda=\frac{1}{a}\left(1-\mathrm{e}^{\mathrm{i} \varphi}\right), \quad \varphi \in(-\pi, \pi].
+\end{equation}
+This angular density can in turn be related to gauge field configurations carrying topological charge through the index theorem, allowing us to relate them to symmetry breaking VeV. of the mass term.
+\section{Observables}
+In the previous section, we covered different observables such as the topological charge and topological susceptibility given by equations \eqref{eq:topological_charge} and \eqref{eq:topological_susc}. We also covered the observable in \eqref{eq:chiral_condensate_exp_val}, which is known as the chiral condensate, although we've referred to it as the VeV. of the mass term.\\The purpose of this section is to cover, in somewhat rapid succession, some other observables of relevance.\\\\For convenience, I restate the relevant expressions here. The expectation value of an observable $O$ is given by
+\begin{equation}\label{eq:exp_val_collection}
+\begin{aligned}
+\braket{O}&=\braket{\braket{O}_{F}}_G=\frac{1}{Z} \int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} Z_{F}[U] \braket{O}_{F}\\
+\braket{O}_{F}&=\frac{1}{Z_{F}[U]} \int \mathcal{D}[\psi, \bar{\psi}] \mathrm{e}^{-S_{F}[\psi, \bar{\psi}, U]} O[\psi, \bar{\psi}, U]\\
+Z_{F}[U]&=\int \mathcal{D}[\psi, \bar{\psi}] \mathrm{e}^{-S_{F}[\psi, \bar{\psi}, U]}=\operatorname{det}\mkern-5mu\left[ -a^4D(n\mkern-4mu\mid \mkern-4mu m)\left[ U \right] \right].
+\end{aligned}
+\end{equation}
+If the observable can be expressed as a product of Grassmann valued fields, we also have the expression
+\begin{equation}\label{eq:new_Wick_Theorem}
+\begin{aligned}
+&\braket{\eta_{\alpha_1,a_1}(n)\bar{\eta}^{\beta_1,b_1}(m)\cdots\eta_{\alpha_N,a_N}(n)\bar{\eta}^{\beta_N,b_N}(m)}_F = \\&a^{-4N} \mkern-18mu\sum\limits_{P(1,\ldots,N)}\mkern-18mu\operatorname{sign}\left( P \right)\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{P_1},b_{P_1}}^{\alpha_1,a_1}\cdots\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{P_N},b_{P_n}}^{\alpha_N,a_N}.
+\end{aligned}
+\end{equation}
+We will also need the spectral decomposition of the correlation function, which on the lattice takes the form
+\begin{equation}\label{eq:corr_function_for_hadron_masses}
+\begin{aligned} 
+\left\langle\widetilde{O}\left(\mathbf{0}, an_{t}\right) \bar{O}(\mathbf{0}, 0)\right\rangle&=\sum_{p}\braket{0|\widehat{O}| p}\braket{p|\widehat{O}^{\dagger}| 0} \mathrm{e}^{-an_{t} E_{p}}\\
+&=A \mathrm{e}^{-a n_{t} E_p}\left(1+\mathcal{O}\left(\mathrm{e}^{-a n_{t} \Delta E}\right)\right)
+\end{aligned}
+\end{equation}
+where $\bar{O}$ is the operator in real space and $\widetilde{O}$ is the momentum space operator given by
+\begin{equation}
+\widetilde{O}\left(\boldsymbol{p}, n_{t}\right)=\frac{1}{\sqrt{\left|\Lambda_{3}\right|}} \sum_{\boldsymbol{n} \in \Lambda_{3}} O\left(\boldsymbol{n}, n_{t}\right) \mathrm{e}^{-\mathrm{i} a \boldsymbol{n} \boldsymbol{p}}
+\end{equation}
+and $\widehat{O}$ and $\widehat{O}^{\dagger}$ are annihilation and creation operators acting in Hilbert space, corresponding to the physical states in the correlation function.
+\subsection{Hadron masses}\label{hadron_masses}
+The methodology for extracting hadron masses revolves entirely around equation \eqref{eq:corr_function_for_hadron_masses}. The correlation function on the LHS. can be evaluated on a computer, and exploiting the exponential decay wrt. $n_t$ on the second line, we can isolate all but the lowest lying energy state $E_p=E_0$ \footnote{This is, among other reasons, why the temporal extent of most lattices are much larger than their spatial extent.}. This energy is related to the hadron mass through the dispersion relation $E_0 = m_H$.\\ To do this, we need to construct interpolators\footnote{Operators in the context of euclidean correlation functions} with the correct symmetries and quantum numbers of the physical states they represent. For mesons, a general local interpolator is given by
+\begin{equation}
+\begin{aligned} 
+O_{M}(n)&=\bar{\psi}^{\left(f_{1}\right)}(n) \Gamma \psi^{\left(f_{2}\right)}(n)\\ \bar{O}_{M}(m)&=\bar{\psi}^{\left(f_{2}\right)}(m) \Gamma \psi^{\left(f_{1}\right)}(m)
+\end{aligned}
+\end{equation}
+where common choices for $\Gamma$ for a given set of quantum numbers $J^{P C}$\footnote{Common notation for Spin, parity, charge} is given in table \ref{table:Interpolator_gammas}
+
+\begin{table}[H]
+\centering
+\caption{Commonly used $\Gamma$ for meson interpolators with quantum numbers $J^{PC}$ \cite{Gattringer:2010zz}}
+\begin{tabular}{lcll}
+\hline State & $J^{P C}$ & $\Gamma$ & Particles \\
+\hline Scalar & $0^{++}$ & $\mathbb{1}, \gamma_{4}$ & $f_{0}, a_{0}, K_{0}^{*}, \ldots$ \\
+Pseudoscalar & $0^{-+}$ & $\gamma_{5}, \gamma_{4} \gamma_{5}$ & $\pi^{\pm}, \pi^{0}, \eta, K^{\pm}, K^{0}, \ldots$ \\
+Vector & $1^{--}$ & $\gamma_{i}, \gamma_{4} \gamma_{i}$ & $\rho^{\pm}, \rho^{0}, \omega, K^{*}, \phi, \ldots$ \\
+Pseudo vector & $1^{++}$ & $\gamma_{i} \gamma_{5}$ & $a_{1}, f_{1}, \ldots$ \\
+Tensor & $1^{+-}$ & $\gamma_{i} \gamma_{j}$ & $h_{1}, b_{1}, \ldots$ \\
+\hline
+\end{tabular}\label{table:Interpolator_gammas}
+\end{table}
+with mesons such as $\pi^0$ and $\eta$, we assume exact isospin- symmetry and take linear combinations of the other interpolators to acheive the correct quantum numbers.\\For baryons, the interpolators become more involved, but follow exactly in the conceptual footsteps for mesons. A review of baryon spectroscopy can be found in \cite{leinweber2005baryon}.\\\\
+The fermionic expectation value of mesons
+\begin{equation}
+\braket{O_{M}(n) \bar{O}_{M}(m)}_{F} = \braket{\bar{\psi}^{\left(f_{1}\right)}(n) \Gamma \psi^{\left(f_{2}\right)}(n)\\ \bar{O}_{M}(m)\bar{\psi}^{\left(f_{2}\right)}(m) \Gamma \psi^{\left(f_{1}\right)}(m)}_{F}
+\end{equation}
+can be evaluated using Wick's theorem (see \eqref{eq:new_Wick_Theorem}).\\To get the form seen in \eqref{eq:corr_function_for_hadron_masses}, we first need to project the sink to definite momentum using the lattice Fourier transform and place the source at the origin
+\begin{equation}
+\frac{1}{\sqrt{\left|\Lambda_{3}\right|}} \sum_{\mathbf{n} \in \Lambda_{3}} \mathrm{e}^{-\mathrm{i} a \boldsymbol{n} p}\braket{O_{M}(\mathbf{n},n_t) \bar{O}_{M}(\mathbf{0},0)}_{F} = \left\langle\widetilde{O}_M\left(\boldsymbol{p}, n_{t}\right) \bar{O}_M(\mathbf{0}, 0)\right\rangle.
+\end{equation}
+Then evaluate at zero momentum. Baryons follow the same procedure.\\We can now define an effective mass term
+\begin{equation}
+\begin{aligned} 
+m_{eff}(n_t+\frac{1}{2}) &= \operatorname{ln}\frac{\left\langle\widetilde{O}\left(\mathbf{0}, an_{t}\right) \bar{O}(\mathbf{0}, 0)\right\rangle}{\left\langle\widetilde{O}\left(\mathbf{0}, a(n_{t}+1)\right) \bar{O}(\mathbf{0}, 0)\right\rangle}\\ &= \operatorname{ln}\frac{A \mathrm{e}^{-a n_{t} E_p}\left(1+\mathcal{O}\left(\mathrm{e}^{-a n_{t} \Delta E}\right)\right)}{A \mathrm{e}^{-aE_p}\mathrm{e}^{-a n_{t} E_p}\left(1+\mathcal{O}\left(\mathrm{e}^{-a (n_{t}+1) \Delta E}\right)\right)}\\&=aE_p+\operatorname{ln} \left(1+\mathcal{O}\left(\mathrm{e}^{-a n_{t} \Delta E}\right)\right)- \operatorname{ln}\left(1+\mathcal{O}\left(\mathrm{e}^{-a (n_{t}+1) \Delta E}\right)\right)
+\end{aligned}
+\end{equation}
+which as we see, should plateau at $aE_p = am$, the hadron mass.\\\\There is still, however the matter of the lattice constant which appears alongside the hadron mass. We do not know what the lattice constant is and we won't know until we tackle the issue of renormalization and scale setting in section \ref{Renormalization}. In the meanwhile, we can still compare numerical results with experiments by comparing ratios of hadron masses, for which the lattice constant cancels.
+\subsection{The Wilson loop}
+Other than quark bilinears, another gauge invariant object that can serve as an observable is the trace of a path ordered product of link variables along a closed curve, which we discussed in the construction of the Wilson action. Computing the expectation values of Wilson loops is an interesting exercise on its own, however we can take certain steps to glean a physical interpretation of this value.\\\\For large quark masses, Wilson's Dirac operator can be expanded, upto an irrelevant constant, into 
+\begin{equation}
+\begin{aligned} 
+D&=\mathbb{1}-\kappa H\\H(n\mkern-5mu \mid\mkern-5mu  m)_{\alpha \beta \atop a b}&=\sum_{\mu=\pm 1}^{\pm 4}\left(\mathbb{1}-\gamma_{\mu}\right)_{\alpha \beta} U_{\mu}(n)_{a b} \delta_{n+\hat{\mu}, m}
+\end{aligned}
+\end{equation}
+where $\kappa=\frac{1}{2(a m+4)}$. For sufficiently small $\kappa$, we can express the corresponding propagator as the convergent geometric series
+\begin{equation}
+D^{-1}(n\mkern-5mu  \mid\mkern-5mu  m)_{\alpha \beta}=\sum_{j=0}^{\infty} \kappa^{j} H^j(n\mkern-5mu \mid\mkern-5mu  m)_{\alpha \beta \atop a b}
+\end{equation}
+where
+\begin{equation}\label{eq:hopping_term}
+H^{j}(n\mkern-5mu \mid\mkern-5mu m)_{\alpha \beta \atop a b}=\mkern-10mu\sum_{\mu_{i}=\pm 1}^{\pm 4}\left(\prod_{i=1}^{j}\left(\mathbb{1}-\gamma_{\mu_{i}}\right)\right)_{\alpha \beta}\mkern-16mu P_{\mu_{1} \ldots \mu_{j}}(n)_{a b} \delta_{n+\hat{\mu}_{1}+\ldots+\hat{\mu}_{j}, m}
+\end{equation}
+and
+\begin{equation}
+P_{\mu_{1} \ldots \mu_{j}}(n)_{a b}=\left(U_{\mu_{1}}(n) U_{\mu_{2}}\left(n+\hat{\mu}_{1}\right) \ldots U_{\mu_{j}}\left(n+\hat{\mu}_{1}+\hat{\mu}_{2} \ldots \hat{\mu}_{j-1}\right)\right)_{a b}
+\end{equation}
+\cite{Gattringer:2010zz}. Because of the Kroncker- delta in \eqref{eq:hopping_term}, the leading contributing term will be $H^{||m-n||}(n\mkern-5mu \mid\mkern-5mu m)$ where we denote by $||m-n||$ the smallest separation between lattice sites $m$ and $n$ in units of $a$. $P_{\mu_{1} \ldots \mu_{j}}(n)_{a b}$ is then the shortest (not necessarily unique) path ordered product of link variables connecting the two sites.\\\\To restate this, the leading contribution to the quark propagator in the large quark mass limit is a straight Wilson line. The connection to Wilson loops becomes immediately apparent if we gauge the temporal link variables to the identity. This turns the Wilson loop into a product of two straight, strictly spatial and oppositely oriented Wilson lines with a temporal separation commensurate with the temporal range of the original Wilson loop. We can therefore interpret the Wilson loop as a static quark-antiquark pair.
+
+\subsection{Pion decay constant}
+The Pion decay constant can be determined from examining correlation functions of operators between the Pion state and the vacuum. Before seeing this however, we need to look at Ward identities.\\ The expectation values of observables 
+\begin{equation}
+\langle 0|O| 0\rangle=\frac{1}{Z} \int \mathcal{D}[\psi, \bar{\psi}, U] O[\psi, \bar{\psi}, U] \mathrm{e}^{-S[\psi, \bar{\psi}, U]}
+\end{equation}
+are invariant under local symmetry transformations of the fields, which to first order gives the identity
+\begin{equation}
+0=\langle 0|\delta O| 0\rangle-\langle 0|O \delta S| 0\rangle
+\end{equation}
+where $\delta O$ is a linear change in the operator and $\delta S$ is the linear change in the action, expanded for a small field variation.\\For the special case of the identity operator, the action
+\begin{equation}
+\int \mathrm{d}^{4} x \bar{\psi}\left(\gamma_{\mu} D_{\mu}+\mathcal{M}\right) \psi, \quad D_{\mu}=\partial_{\mu}+\mathrm{i} A_{\mu}
+\end{equation}
+and field transformations
+\begin{equation}
+\begin{array}{rlr}
+\psi(x) & \rightarrow & \psi^{\prime}(x)=(\mathbb{1}+\mathrm{i} \varepsilon(x) \lambda) \psi(x) \\
+\bar{\psi}(x) & \rightarrow & \bar{\psi}^{\prime}(x)=\bar{\psi}(x)(\mathbb{1}+\mathrm{i} \varepsilon(x) \hat{\lambda})
+\end{array}
+\end{equation}
+where $\lambda$ and $\hat{\lambda}$ are the familiar matrices from the exponents in \eqref{eq:SU_SU_U_U}:\\ $\{\lambda,\hat{\lambda}\} \in \{\{1,-1 \} ,\{\tau^a,-\tau^a \}, \{\gamma_5,\gamma_5 \},\{\gamma_5\tau^a,\gamma_5\tau^a \} \}$, we get the following Ward-Takahashi identities\footnote{These identities strictly hold as expectation values, but as the operator $O$ can be chosen to be any arbitrary function, such as $O = \begin{cases} 
+      c & x\leq \epsilon \\
+      0 & x > \epsilon
+   \end{cases}$, they can be shown to hold locally as well.}
+\begin{equation}\label{eq:Ward_identities}
+\begin{aligned}
+\partial_{\mu}\left(\bar{\psi} \gamma_{\mu} \psi\right) &=\partial_{\mu}j_\mu=0, \\
+\partial_{\mu}\left(\bar{\psi} \gamma_{\mu} \tau^{a} \psi\right) &=2\partial_{\mu}j_\mu^a=\bar{\psi}\left[\mathcal{M}, \tau^{a}\right] \psi, \\
+\partial_{\mu}\left(\bar{\psi} \gamma_{\mu} \gamma_{5} \psi\right) &=2\partial_{\mu}j_{5\mu}=2 \bar{\psi} \mathcal{M} \gamma_{5} \psi(+\text { anomaly) },\\
+\partial_{\mu}\left(\bar{\psi} \gamma_{\mu} \gamma_{5} \tau^{a} \psi\right) &=2\partial_{\mu}j_{5\mu}^a=\bar{\psi}\left\{\mathcal{M}, \tau^{a}\right\} \gamma_{5} \psi.
+\end{aligned}
+\end{equation}
+For the purpose of Pion decay, we need only look at $\partial_{\mu}j_{5\mu}^a$. For degenerate masses, we have $\partial_{\mu}j_{5\mu}^{a(r)} = 2m^{(r)}\bar{\psi}\tau^{a}\gamma_{5} \psi$, with $(r)$ now denoting renormalized quantities. We recognize the RHS of this equation as being proportional to the pseudoscalar interpolator with the quantum numbers $o^{-+}$ of the pion. Specifically we have (by looking at the flavour mixing matrices $\tau^a$)
+\begin{equation}
+\begin{aligned}
+\pi^{\pm}&: \partial_\mu \left( j_{5\mu}^{1(r)} \mp ij_{5\mu}^{2(r)}\right) = m^{(r)}\bar{\psi}^{(r)} \gamma_5\left(\tau^1 \mp i\tau^2 \right)\psi^{(r)} = \begin{cases} 
+      2m^{(r)}\bar{d}\gamma_5u & :- \\
+      2m^{(r)}\bar{u}\gamma_5d & :+
+   \end{cases}\\ \pi^{0}&: \partial_\mu j_{5\mu}^{3(r)} = m^{(r)}\bar{\psi}^{(r)} \gamma_5\tau^3\psi^{(r)} =m^{(r)}\left( \bar{u}\gamma_5u-\bar{d}\gamma_5d \right).
+\end{aligned}
+\end{equation}
+The decay of a charged pion into leptons is mediated by the comparatively very heavy $W$--boson. e.g. $\pi^{+} \rightarrow e^{+}+v_{e}$, whose leading order contribution is given by the interaction on the LHS. in figure \ref{fig:feynman_weak_decay}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{feynman}
+\vertex (a) {\(u\)};
+\vertex [right=of a] (b);
+\vertex [above right=of b] (f1) {\(\bar{d}\)};
+\vertex [below right=of b] (c);
+\vertex [above right=of c] (f2) {\(e^+\)};
+\vertex [below right=of c] (f3) {\( \nu_{e}\)};
+\diagram* {
+(a) -- [fermion] (b) -- [fermion] (f1),
+(b) -- [boson, edge label'=\(W^{+}\)] (c),
+(c) -- [anti fermion] (f2),
+(c) -- [fermion] (f3),
+};
+\end{feynman}
+\end{tikzpicture}
+\quad
+\begin{tikzpicture}
+\begin{feynman}
+\vertex (a) {\(u\)};
+\vertex [right=of a] (b);
+\vertex [above =of b] (f1) {\(\bar{d}\)};
+\vertex [above right=of b] (f2) {\(e^+\)};
+\vertex [below right=of b] (f3) {\( \nu_{e}\)};
+\diagram* {
+(a) -- [fermion] (b) -- [fermion] (f1),
+(b) -- [anti fermion] (f2),
+(b) -- [fermion] (f3),
+};
+\end{feynman}
+\end{tikzpicture}
+\caption{On the LHS. is the weak decay process $\pi^{+} \rightarrow e^{+}+v_{e}$. On the RHS. is the corresponding local (composite) operator arising from the operator product expansion in the effective weak Lagrangian. Generated using the TikZ- extension by Joshua P.Ellis \cite{ELLIS2017103}}
+\label{fig:feynman_weak_decay}
+\end{figure}
+The associated mass scales of the heavy vector bosons are far in excess of the energy scales of hadrons, and so the Green's function for $p^2 \ll m_W^2, m_Z^2$ can be reduced to an effective interaction vertex as seen on the RHS. of figure \ref{fig:feynman_weak_decay}. Its corresponding Lagrangian term is given by
+
+\begin{equation}
+\mathcal{L} \supset \frac{G_{F}}{\sqrt{2}} \cos \theta_{c}\left(\bar{u} \gamma_{\mu}\left(1-\gamma_{5}\right) d\right)\left(\bar{e} \gamma_{\mu}\left(1-\gamma_{5}\right) \nu_{e}\right).
+\end{equation}
+An example of Wilsons operator product expansion,
+where $G_F$ is the Fermi constant and $\theta_c$ is the Cabibbo angle which parametrizes the strength of  the flavour changing weak interaction for u- and d- quarks. \par From chiral perturbation theory, we can identify the Pion decay constant by the matrix element 
+\begin{equation}
+\partial_{\mu}\left\langle 0\left|j_{5\mu}^{a(r)}(x)\right| \pi^{b}(\boldsymbol{p}=0)\right\rangle=\delta_{a b} M_{\pi}^{2} F_{\pi} \mathrm{e}^{-M_{\pi} t}
+\end{equation}
+where $M_\pi$ is the physical pion mass\cite{WeinbergSteven1979PL}\cite{gasser1985chiral}. Asymptotically, for $\pi^+$ this gives the correlation function
+\begin{equation}\label{eq:decay_constant}
+\left\langle j_{54}^{\pi^+(r)}(\boldsymbol{p}=\mathbf{0}, t) j_{54}^{\pi^-(r)}(0)\right\rangle \sim \frac{M_{\pi} F_{\pi}^{2}}{(2\pi)^{3/2}} \mathrm{e}^{-M_{\pi} t}.
+\end{equation}
+Corresponding currents can be constructed on the lattice for Dirac operators obeying the Ginsparg- Wilson equation. Constructions using the overlap operator can be found in \cite{hasenfratz1998lattice}\cite{kikukawa1999axial}. 
+
+\section{Renormalization}\label{Renormalization}
+The lattice enforces a cut- off scale which regularizes lattice field theories. In lattice QCD, the scale is set by the inverse lattice spacing $\Lambda = \frac{1}{a}$, and the gauge coupling $g(\Lambda) = g\left( \frac{1}{a} \right)$ vanishes for vanishing $a$ in what's called asymptotic freedom. In the Wilsonian renormalization group, the cut-off $\Lambda$ should be much larger than the energy scale associated with the physical processes of interest. The remaining step to renormalizing the theory, is to associate measurable quantities to those calculated in the theory. For dimensionless quantities such as the hadron masses discussed in section \ref{hadron_masses}, one need only associate a single computed hadron mass e.g. $am_\rho$ or $am_{nucleon}$ to their measured physical mass to set the lattice constant $a$. This same constant can then be used to calculate any other hadron mass. Of course, this is at the cost of losing one physical prediction, namely the mass of the hadron which you used to set the scale.\\\\Many of the quantities that are precisely calculable in lattice QCD involve the hadronic matrix elements from operators in the electroweak Hamiltonian. A useful procedure for obtaining such matrix elements is to replace a product of two operators with an effective vertex in an effective Lagrangian. This procedure is known as the operator product expansion (OPE). We saw one such example in figure \ref{fig:feynman_weak_decay} where the two operators were the associated leptonic and quark currents separated by a distance $l \propto \frac{1}{m_W}$. The product of operators can be expanded in a basis of local operators with the same quantum numbers of the original operator product:
+\begin{equation}
+\mathcal{O}_{1}(x) \mathcal{O}_{2}(0) \rightarrow \sum_{n} C_{12}^{n}(x) \mathcal{O}_{n}(0)
+\end{equation}
+where the complex valued coefficients (known as Wilson coefficients) are now subject to renormalization just as other operators. Examples of such quantities from the electroweak Hamiltonian include the pion decay constant, which we saw earlier as well as semileptonic form factors and more.
+
+In a quantum theory containing several operators with the same quantum numbers, we can have what is known as operator mixing which occurs in the quantum corrections to the theory. In massless QFTs, this mixing is constrained to operators of the same mass dimension, but in QFTs with a definite mass scale, such as those with a cut-off e.g. lattice regularized theories, this mixing is less constrained. Given such operators, we express the renormalization of operators as
+\begin{equation}
+\mathcal{O}_{0}^{i}=Z_{\mathcal{O}}^{i j}(\Lambda) \mathcal{O}_{\Lambda}^{j}.
+\end{equation}
+The anomalous dimension $\gamma_\mathcal{O}$\footnote{The anomalous dimension measures the deviation of the mass dimension of an operator from the canonical mass dimension gotten from dimensional analysis of terms in the Lagrangian.} of this operator then has to be expressed as a matrix, rather than a scalar. This influences the scaling characteristic of the operators under scaling transformations, a subset of conformal transformations. For any conserved current such as the first row in \eqref{eq:Ward_identities}, we have $Z_{j} = 1, \,\, \gamma_j=0$.
+
+ The coefficients of the operators in the OPE are defined in the lattice regularization scheme and need to be matched to the Wilson coefficients calculated in the continuum regularization scheme. This same kind of matching is necessary to convert the bare lattice quark mass parameter to the corresponding parameter in the continuum $\overline{MS}$ scheme.
+
+Different methods have been proposed for matching these operators:
+\begin{itemize}
+\item Lattice perturbation theory, often to first or second loop order expansion in the lattice constant. With the associated truncation error and the moderately small lattice constant at which LQCD usually operates (i.e. large expansion parameter), this method is usually discarded in favour of other methods.
+\item Non-perturbative renormalization has many advantages over perturbative methods, namely the exchange of truncation errors with systematic and statistical errors which are more easily managed and estimated. Of these, there are several variants
+\subitem Based on external gluon states and Quarks gauge fixed to the Landau gauge\cite{Martinelli_1995}. This method suffers from the problem of Gribov copies, however lattice models have suggested negligible impact from these \cite{giusti2001problems},
+\subitem Using the Schrödinger functional, which preserves gauge invariance and removes the necessity for additional counter terms\cite{L_scher_1992},
+\subitem Using short- ranged correlation functions of improved lattice correlators\cite{MARTINELLI1997141}.
+\end{itemize}
+
+
+
+\section{Computation}
+As of yet, we've neglected to mention how LQCD computations are solved. This section will cover the most general basis of LQCD computation but it will not go into detail on any specific method. It will instead attempt to cover the most popular and pedagogically clear examples while directing the reader to the relevant source material for some other methods.\\\\Recall, once again the expression for the expectation value of an observable from \eqref{eq:exp_val_collection} for a given choice of lattice action. If the observable is a function of the quark- and anti- quark fields, then performing the Grassmann integration will yield, in addition to the fermion determinant, any quark propagators arising from Wick's theorem \eqref{eq:new_Wick_Theorem}. \par The computation of gauge configurations including the quarks is conceptually difficult and would for the time being, distract from the relatively simple formalism. We therefore start by considering the case of a pure gauge action which has observables such as the Wilson loop expectation value, which is only dependent on the link variables.
+\subsection{Pure gauge theory}
+The expression we need to evaluate 
+\begin{equation}
+\langle O\rangle=\frac{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} O[U]}{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]}}  ,
+\end{equation}
+is a multi- dimensional integral of $N^3\times N_t \times 4 \times 9$ integration variables (4 Dirac indices and 9 complex entries of the 3- dimensional representation of $SU(3)$). The computational effort of e.g. quadrature integration methods, scale with the dimensionality of the integral. For 4-dimensional integrals and above we therefore use Monte Carlo integration, which has an estimated error which is independent of the dimensionality of the integral.
+
+This integral can be restated as 
+\begin{equation}\label{eq:MC_gauge_sum}
+\langle O\rangle=\lim _{N \rightarrow \infty} \frac{1}{N} \sum_{n=1}^{N} O\left[U_{n}\right]
+\end{equation}
+where $U_{n}$ is sampled from the probability measure
+\begin{equation}\label{eq:prob_measure}
+\mathrm{d} P(U)=\frac{\mathrm{e}^{-S_g[U]} \mathcal{D}[U]}{\int \mathcal{D}[U] \mathrm{e}^{-S_g[U]}}.
+\end{equation}
+This sum must obviously terminate at some finite number of Monte Carlo samples $N$ at which the estimated error is proportional to $\frac{1}{\sqrt{N}}$.
+\subsubsection{Generating gauge configurations}
+Constructing the set of distributed gauge configurations\footnote{By gauge configuration we mean a choice of $U$ for every link variable on the lattice} and performing the measurement on an observable can be regarded as completely separate problems. In fact, large databases of ensembles of gauge configurations\footnote{Each with differing lattice size, lattice constant and quark masses} have been aggregated and publicized in what's known as the International Lattice Data Grid \cite{Beckett_2011}. In order to make a measurement with the operator $O$, one need only compute the sum \eqref{eq:MC_gauge_sum} using gauge configurations from this database or your own for an appropriate amount of samples $N$.\\\\Ensembles of gauge configurations are constructed using a Markov chain, which for our purposes is a sequence of configurations initialized with some arbitrary configuration and updated with a conditional transition amplitude $T\left( U_{n+1} \mid U_{n} \right)$ such that $\sum\limits_{U_{n+1} \in \Lambda}\mkern-10mu T\left( U_{n+1} \mid U_{n} \right) = 1 \,\,\forall\,\, U_{n} \in \Lambda $. We also require that the Markov process, once it has reached equilibrium, fulfils 
+\begin{equation}
+\sum_{U} T\left(U^{\prime} \mid U\right) P(U) \stackrel{!}{=} \sum_{U} T\left(U \mid U^{\prime}\right) P\left(U^{\prime}\right)
+\end{equation}
+where $P(U)$ is the probability of the system being in the configuration $U$. Although, every algorithm we will encounter uses the much simpler detailed balance condition
+\begin{equation}
+T\left(U^{\prime} \mid U\right) P(U) =  T\left(U \mid U^{\prime}\right) P\left(U^{\prime}\right)
+\end{equation}
+The Markov chain must have access to the full space of gauge configurations within a finite number of steps, or the resultant equilibrium distribution may be false. This problem may arise in practice if the configuration space is especially large, necessitates very small step sizes or has nearly disjoint sectors.
+\paragraph{The Metropolis-Hastings algorithm} solves the detailed balance condition by decomposing the transition probability $T\left(U^{\prime} \mid U\right)$ into the product of a selection probability $T_0\left(U^{\prime} \mid U\right)$ and an transition- acceptance probability
+\begin{equation}
+T_{A}\left(U^{\prime} \mid U\right)=\min \left(1, \frac{T_{0}\left(U \mid U^{\prime}\right) \exp \left(-S\left[U^{\prime}\right]\right)}{T_{0}\left(U^{\prime} \mid U\right) \exp (-S[U])}\right)
+\end{equation}
+where we've used the Boltzmann distribution in place of the more general probability distribution. Which, as we can see, fulfils the detailed balance equation
+\begin{equation*}
+T_0\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right)\min\mkern-6mu \left(\mkern-4mu 1, \frac{T_0\mkern-4mu\left(U\mkern-6mu \mid\mkern-5mu U^{\prime}\right) P(U^\prime)}{T_0\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right) P(U)}\right)P(U) = T_0\mkern-4mu\left(U\mkern-6mu \mid\mkern-5mu U^{\prime}\right)\min\mkern-6mu \left(\frac{T_0\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right) P(U)}{T_0\mkern-4mu\left(U\mkern-6mu \mid\mkern-5mu U^{\prime}\right) P(U^{\prime})},\mkern-4mu 1\right)P(U^{\prime}).
+\end{equation*}
+If we limit our scope to symmetric selection probabilities, we get the Metropolis algorithm and the transition probability is then given by 
+\begin{equation}
+T\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right) = T_0\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right)\min (1, \exp (S[U]-S\left[U^{\prime}\right])).
+\end{equation}
+If we chose simply to update one link variable from the lattice at a time, and the lattice action was suitably local, we would only need to calculate the local change in the action for each update. Applying this, we arrive at a very simple algorithm:\\\\Choose $n\in\Lambda,\,\,\mu \in\{1,2,3,4\}$ $\rightarrow$ generate a group element $U_\mu(n)_{new}$ with symmetric selection probability $T_0\left( U_\mu(n)_{new} \mid U_\mu(n)_{old} \right)$ to replace $U_\mu(n)_{old}$ $\rightarrow$ compute the local change in action. If $\exp (-\Delta S_{local})\geq r\,\,\mid\,\,r\in[0,1)$ where $r$ is uniformly distributed, accept the transition $U_\mu(n)_{old} \rightarrow U_\mu(n)_{new}$, otherwise reject the transition and start over.\\It's often more computationally efficient to update the same link variable multiple times until the acceptance rate of the updates fall below some threshold.
+\paragraph{Generating candidate group elements} for updating a link variable is non- trivial when we consider the requirement that the acceptance rate and step size should be high. SU(3) group elements are parametrizable using $3^2-1 = 8$ real numbers, however computer storage is not at a premium, computer time is. For this reason it's much more desirable to work with one of the redundant representations of $SU(3)$.\\\\Group matrix representations are by definition closed under matrix multiplication. We can therefore generate a new group element close to the old one by multiplying it with a group element $X$ close to the identity. There are many ways of generating $X$, one way is to first generate 3 $SU(2)$ group element close the identity through the prescription
+\begin{equation}
+U=\boldsymbol{x} \cdot \boldsymbol{\Sigma}, \,\,\boldsymbol{\Sigma} = \{\mathbb{1},\mathrm{i}\boldsymbol{\sigma} \},\,\,\boldsymbol{x} = \left\{\operatorname{sign}(r_0)\sqrt{1-\epsilon^2},\epsilon \frac{\boldsymbol{r}}{|\boldsymbol{r}|}  \right\},\,\,r_0,\boldsymbol{r} \sim \left( -\frac{1}{2},\frac{1}{2} \right)
+\end{equation}
+where $\boldsymbol{\sigma}$ are the Pauli matrices, $\epsilon$ is a small, real parameter that adjusts the deviation from the identity (note that $U=\mathbb{1}$ for vanishing $\epsilon$) and $r_0$ and $\boldsymbol{r}\in \mathbb{R}^3$ are uniformly distributed. The $SU(3)$ matrix is then
+\begin{equation}
+\begin{aligned} 
+X&=\left(\begin{array}{ccc}
+r_{11} & r_{12} & 0 \\
+r_{21} & r_{22} & 0 \\
+0 & 0 & 1
+\end{array}\right)\left(\begin{array}{ccc}
+s_{11} & 0 & s_{12} \\
+0 & 1 & 0 \\
+s_{21} & 0 & s_{22}
+\end{array}\right)\left(\begin{array}{lcc}
+1 & 0 & 0 \\
+0 & t_{11} & t_{12} \\
+0 & t_{21} & t_{22}
+\end{array}\right)\\
+&=\left(\begin{array}{ccc}
+r_{11} s_{11} & r_{11} s_{12} t_{21}+r_{12} t_{11} & r_{11} s_{12} t_{22}+r_{12} t_{12} \\
+r_{21} s_{11} & r_{21} s_{12} t_{21}+r_{22} t_{11} & r_{21} s_{12} t_{22}+r_{22} t_{12} \\
+s_{21} & s_{22} t_{21} & s_{22} t_{22}
+\end{array}\right)
+\end{aligned}
+\end{equation}
+where $r_{ij}$, $s_{ij}$ and $t_{ij}$ denote the matrix elements of the three $SU(2)$ matrices. To preserve the symmetry of the selection probability, we also need to store $X^\dagger$ alongside $X$ and choose between them with equal probability.\\To update a link variable, we simply have
+\begin{equation}
+U_\mu(n)_{new}= XU_\mu(n)_{old}.
+\end{equation}
+Because this operation is so frequent, the link variables will eventually deviate from the set of group elements due to the accumulation of rounding errors. Therefore, with some regularity, $U_\mu(n)$ has to be projected back onto the set of group elements using the Gram-Schmidt orthogonalization procedure, $\boldsymbol{u}$, $\boldsymbol{v}$ and $\boldsymbol{w}$ denoting the first, second and third rows of $U_\mu(n)$ respectively:
+\begin{equation}
+\begin{aligned}
+\boldsymbol{u}^\prime &=\frac{\boldsymbol{u}}{|\boldsymbol{u}| }\\
+\boldsymbol{v}^\prime &=\frac{\boldsymbol{v}-\boldsymbol{u}^\prime\left(\boldsymbol{v} \cdot (\boldsymbol{u}^\prime)^{*}\right)}{\left|\boldsymbol{v}-\boldsymbol{u}^\prime\left(\boldsymbol{v} \cdot (\boldsymbol{u}^\prime)^{*}\right)\right|}\\ w^\prime &=(\boldsymbol{u}^\prime)^{*}\times(\boldsymbol{v}^\prime)^{*}
+\end{aligned}
+\end{equation}
+\paragraph{Different algorithms} such as Heat bath and Overrelaxation algorithms leverage the ultralocality of the pure gauge action to speed up the progress made by each step in the Markov chain. Ultimately, we're describing a theory with dynamical fermions and the fermion determinant \eqref{eq:Z_F_As_determinant} is by no means a local quantity. We therefore leave the subject of these to the book by Gattringer and Lang\cite{Gattringer:2010zz}, except to mention that for the case of pure gauge theory, these are invaluable tools, often used in conjunction.
+\subsubsection{Simulating pure SU(3) gauge theory}
+With all this in mind, we can outline the very most basic program structure for simulating pure $SU(3)$ lattice gauge theory.
+\begin{algorithm}[H]
+\caption{Monte Carlo program for pure gauge theory}\label{alg:cap}
+\begin{algorithmic}
+
+\Ensure 
+\State $\beta \propto \frac{1}{g^2}$ and all hyper- parameters
+\State Dirac- and lattice indices
+\State Random number generator 
+\State Gauge field configuration to elements of $SU(3)$, $\mathbb{1}$ or otherwise
+
+\While{Equilibrating}\Comment{See autocorrelation time}
+\Function{Update step}{$n_\Lambda$,$\mu$}
+\State Choose $U_\mu(n)$
+\State Propose $U_\mu(n)_{new}$ or $(U_\mu(n)_{new})^\dagger$ with equal probability
+\State Calculate $\exp (-\Delta S_{local})$
+\State Generate a random, uniformly distributed number $r \in [0,1) $
+\If{$\exp (-\Delta S_{local})\geq r$}
+    \State $U_\mu(n) \gets U_\mu(n)_{new}$
+\Else
+    \State $U_\mu(n) \gets U_\mu(n)_{old}$
+\EndIf
+\EndFunction
+\State Choose new values $n_\Lambda$ and $\mu$
+\EndWhile
+
+
+\While{Measuring}
+
+\While{Autocorrelation is greater than cut-off}\Comment{See autocorrelation}
+\State Choose new values $n_\Lambda$ and $\mu$
+\Function{Update step}{$n_\Lambda$,$\mu$}
+\EndFunction
+\EndWhile\\
+
+\Function{Measure}{$O(U)$}
+\State Calculate $O(U)$ for the latest gauge configuration
+\State Write output to file \Comment{Opt: current gauge configuration and RNG status}
+
+\EndFunction
+\State Choose new values $n_\Lambda$ and $\mu$
+\EndWhile
+\State Write all information relevant to restarting the program at a later time to file 
+\end{algorithmic}
+\end{algorithm}
+\paragraph{Pseudo- random number generators} (RNGs) are crucial in Monte Carlo calculations as these are at the very core of the program and therefore make up a sizable proportion of all clock cycles. A typical lattice size for a LQCD calculation with light flavours might be $64^3\times 128$ \cite{tanabashi2018review}, meaning a single sweep through the lattice with a single update requires at least $\mathcal{O}(10^8)$ random numbers, counting only the acceptance step in the Metropolis algorithm. Many different engines are available through e.g. \CC standard libraries such as the Mersenne twister engine. Any RNG can be used as long as it has a guaranteed period far in excess of the number of random numbers required by the program. Computational efficiency is high on the list of requirements, but autocorrelation will ultimately extend the duration of the program, meaning quality \footnote{Quality meaning as close to uncorrelated as possible} of random numbers is often the deciding factor.
+\subsubsection{Post analysis}
+Following your simulation, you should now have a file containing every measurement value. Because they originate from a Markov chain, they will be correlated to some extent. This is known as autocorrelation, and its presence means that a naive implementation of an error estimate will give an underestimate of the actual error. This actual error is a function of the correlation time and the estimated standard deviation  $\sigma$ of the sample mean $\braket{O}$ is given by
+\begin{equation}
+\sigma=\sqrt{\frac{1}{N} 2 \tau_{O, \text { int }} \widehat{\sigma}_{O}^{2}}
+\end{equation}
+where $\widehat{\sigma}_{O}^{2}$ is the sample variance from $N$ uncorrelated measurements and 
+\begin{equation}\label{eq:integrated_autocorrTime}
+\tau_{O, \text { int }} = \frac{1}{2}+\sum_{t=1}^{N} \Gamma_{O}(t)
+\end{equation}
+is the integrated autocorrelation time where 
+\begin{equation}
+\Gamma_{O}(t) \equiv \frac{C_{O}(t)}{C_{O}(0)} = \frac{\left\langle O_{i} O_{i+t}\right\rangle-\left\langle O_{i}\right\rangle\left\langle O_{i+t}\right\rangle}{\left\langle O_{i} O_{i}\right\rangle-\left\langle O_{i}\right\rangle\left\langle O_{i}\right\rangle}.
+\end{equation}
+\cite{L_scher_2003}
+In practice, we only calculate the sum over $\Gamma_{O}(t)$ in \eqref{eq:integrated_autocorrTime} upto some value $W < N$ at which $\Gamma_{O}(t)\,\mid\,t>W$ is consistent with zero within the error bars, for example the PACS-CS Collaboration terminated the sum beyond $W=119.5$ with $\tau_{O, \text { int }}$ saturating for $W=200$ at a value of $\tau_{O, \text { int }}\approx 25$ in \cite{Aoki_2009}.\\\\Near critical points, where the correlation length $\xi_{O}$ of an observable from
+\begin{equation}
+\langle O(x) O(y)\rangle \sim \mathrm{e}^{-|x-y| / \xi_{O}}
+\end{equation}
+diverges, the integrated autocorrelation time similarly increases approximately as $\left(\xi_{O}\right)^{z}$ with the dynamical critical exponent $z$ depending on the observable and the type of updating algorithm. This effect, known as critical slowing down, has been shown to be especially bad for the case of the squared topological charge, with $z\approx 5$ in the case of Hybrid Monte Carlo (HMC) \cite{2011}.\\\\If the autocorrelation time is not known and is too costly to calculate, we can still estimate it by using a procedure known as Blocking:\\We split our dataset into blocks of equal size $x$ and calculate the mean value of each subset $\braket{\bar{O}_i}$. We then calculate the standard deviation between these mean values, plotting them against the block size $x$. Once the chunks are large enough so as to be uncorrelated, we find that the standard deviation plateaus for increasing $x$. This corresponds to our intuition that the autocorrelation time corresponds to the largest separation between uncorrelated samples.\\\\Whether the independent data comes from blocking or from selective sampling using autocorrelation time\footnote{Depending on the expense associated with calculating the observable in question, these may be used in conjunction, discarding configurations between measurements, then doing the blocking analysis}, we are now ready to do the necessary data analysis. This is often done using tools such as Bootstrapping or Jackknife, which assume an uncorrelated data set. These both work by considering slight alterations on the original data set to construct many "new" data sets on which analysis can be performed. Because LQCD data is so computationally demanding, this kind of re-sampling is often necessary to improve estimates.
+
+\subsection{Fermions}
+With some working knowledge of the programmatic structure for simulating pure gauge theory, we're now ready to introduce fermion fields. We begin their introduction by considering once again, the expectation value of an observable $O$
+\begin{equation}\label{eq:compute_fermion_exp_val}
+\begin{aligned}
+\braket{O}&=\braket{\braket{O}_{F}}_G=\frac{1}{Z} \int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} Z_{F}[U] \braket{O}_{F}\\
+Z_{F}[U]&=\int \mathcal{D}[\psi, \bar{\psi}] \mathrm{e}^{-S_{F}[\psi, \bar{\psi}, U]}=\operatorname{det}\mkern-5mu\left[ -a^4D(n\mkern-4mu\mid \mkern-4mu m)\left[ U \right] \right].
+\end{aligned}
+\end{equation}
+The form of $\braket{O}_{F}$ is known to us. It is the Grassmann integral over products of field interpolators, examples of which we covered in section \ref{hadron_masses}. Thanks to Wick's theorem
+\begin{equation}
+\begin{aligned}
+&\braket{\eta_{\alpha_1,a_1}(n)\bar{\eta}^{\beta_1,b_1}(m)\cdots\eta_{\alpha_N,a_N}(n)\bar{\eta}^{\beta_N,b_N}(m)}_F = \\&a^{-4N} \mkern-18mu\sum\limits_{P(1,\ldots,N)}\mkern-18mu\operatorname{sign}\left( P \right)\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{P_1},b_{P_1}}^{\alpha_1,a_1}\cdots\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{P_N},b_{P_n}}^{\alpha_N,a_N},
+\end{aligned}
+\end{equation}
+these are solvable in closed form and amount essentially to a collection of propagators, along with some comparatively (computationally) trivial factors. We have for example the correlators for iso-triplet and iso- singlet operators of the form $O_{T}=\bar{d} \Gamma u$ and $O_{S}=(\bar{u} \Gamma u+\bar{d} \Gamma d) / \sqrt{2}$ respectively:
+\begin{equation}
+\left\langle O_{T}(n) \bar{O}_{T}(m)\right\rangle_{F}=-\operatorname{tr}\left[\Gamma a^{-4}D_{u}^{-1}(n \mid m) \Gamma a^{-4}D_{d}^{-1}(m \mid n)\right]
+\end{equation}
+and
+\begin{equation}
+\begin{aligned}
+\left\langle O_{S}(n) \bar{O}_{S}(m)\right\rangle_{F}=&-\frac{1}{2} \operatorname{tr}\left[\Gamma a^{-4}D_{u}^{-1}(n \mid m) \Gamma a^{-4}D_{u}^{-1}(m \mid n)\right] \\
+&+\frac{1}{2} \operatorname{tr}\left[\Gamma a^{-4}D_{u}^{-1}(n \mid n)\right] \operatorname{tr}\left[\Gamma a^{-4}D_{u}^{-1}(m \mid m)\right] \\
+&+\frac{1}{2} \operatorname{tr}\left[\Gamma a^{-4}D_{u}^{-1}(n \mid n)\right] \operatorname{tr}\left[\Gamma a^{-4}D_{d}^{-1}(m \mid m)\right]+u \leftrightarrow d.
+\end{aligned}
+\end{equation}
+\cite{Gattringer:2010zz}, where $D_u$ and $D_d$ are the Dirac operators of the up- and down- quark, differing only by their mass parameter. We have now identified the objects necessitating numerical computation, as the quark propagators. We note that the iso- singlet correlator contain what is known as disconnected graphs, i.e. propagators which transport a quark to the same point in space-time. These require considerably greater computational effort and for this reason, iso- singlet mesons might be excluded from a given analysis or the contribution from disconnected pieces might be ignored.\\\\The remaining expression in \eqref{eq:compute_fermion_exp_val}, which we have yet to look at, is the fermion determinant $Z_{F}[U]$. This determinant thankfully factorizes by flavour, meaning we can treat e.g. $Z_{F}^u[U] = \operatorname{det}\mkern-5mu\left[ -a^4D_u(n\mkern-4mu\mid \mkern-4mu m)\left[ U \right] \right]$ and $Z_{F}^d[U]=\operatorname{det}\mkern-5mu\left[ -a^4D_d(n\mkern-4mu\mid \mkern-4mu m)\left[ U \right] \right]$ separately. This fact allows for a procedure known as partial quenching, where the quark masses of the sea quarks (those in the determinants) are given different masses from the valence quarks (in the propagators)\footnote{Full QCD makes no distinction between sea quarks and valence quarks, this is only a useful concept for simulating LQCD.} which can give additional data points useful for extrapolation to physical parameters. Many useful results have been computed by calculating quantities in the so-called quenched approximation where the expectation value
+\begin{equation}
+\braket{O}=\frac{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} \prod\limits^{N_f} Z_{F}^f[U] \braket{O}_{F}}{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} \prod\limits_{N_f} Z_{F}^f[U]} 
+\end{equation}
+is replaced with
+\begin{equation}
+\braket{O}=\frac{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]}  \braket{O}_{F}}{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} },
+\end{equation}
+setting the fermion determinant to the identity. This amounts to ignoring the presence of quark loops in the vacuum, in other words setting the sea quark masses to be infinitely heavy. This has major implications for the theory. It can no longer be considered a valid quantum field theory with a Hilbert space, hadrons cannot decay, small eigenvalues in the Dirac operator spectrum cause greater numerical instability along with many others. Still, for many results the discrepancy between numerical and physical experiment is remarkably small \cite{aoki2003light} and seeing as the fermion determinant is the most costly part of generating gauge field configurations, this is a worthwhile approximation.
+\subsubsection{Calculating the quark propagators}
+For a moderately small lattice, e.g. $18\times18\times 36$, the quark propagator for a single flavour would have of $\mathcal{O}(10^{10})$ complex entries connecting every site $(m,\alpha,a)$ to every other site $(n,\beta,b)$. Rather than calculating this entire matrix (which carries a very low information density due to correlated entries), we instead calculate the product
+\begin{equation}
+\sum_{m, \alpha, a} D^{-1}(n \mid\boldsymbol{m},m_t)_{\beta,b}^{\alpha,a} \boldsymbol{s}^{\left(m_{0}, \alpha_{0}, a_{0}\right)}(\boldsymbol{m})_{\alpha,a}
+\end{equation}
+which picks out a subset of sources located on a single time- slice $m_t$. Their distribution is given by the source function $\boldsymbol{s}^{\left(m_{0}, \alpha_{0}, a_{0}\right)}(\boldsymbol{m})_{\alpha,a}$ which could simply be the Dirac-delta function
+\begin{equation}
+\boldsymbol{s}^{\left(m_{0}, \alpha_{0}, a_{0}\right)}(m)_{\alpha,a}=\delta\left(m-m_{0}\right) \delta_{\alpha \alpha_{0}} \delta_{a a_{0}}
+\end{equation}
+in the case of a point source, some gauge variant distribution, in which case you would need to fix the gauge, or a gauge covariant source with a Gaussian distribution such as in the case of Jacobi smearing, detailed in \cite{gusken1989non} and \cite{best1997pi}. Regardless, we now need to calculate $D^{-1}\boldsymbol{s} = \boldsymbol{x}$ for the source vector $\boldsymbol{s}$ and propagation vector $\boldsymbol{x}$, suppressing indices for the time being. This amounts to solving the system of equations
+\begin{equation} \label{eq:Dx_s}
+D\boldsymbol{x}=\boldsymbol{s}
+\end{equation}
+for the value of $\boldsymbol{x}$. Many different algorithms are fit for this purpose, but the most popular, is the class of algorithms based on the Conjugate Gradient Method (CGM). The computational cost of CGMs is proportional to the condition number\footnote{The condition number of a normal matrix is the ratio of the moduli of the largest and smallest eigenvalues of the matrix.} of the matrix $D$, which is made worse by the smallest bare quark mass which contributes to the eigenvalues of $D$. This is a substantial contribution to the numerical cost of simulating quarks at the physical quark mass.\\ Variants on the original CGM have removed the requirements of $D$ being positive definite and symmetric (which the Dirac- operator is not) and have improved convergence. These are for example the Bi-CGStab  \cite{van1992bi} and the Bi-CGStab(2) \cite{gutknecht1993variants} algorithms, the details of which can be found in \cite{templates} as well as the original papers. These algorithms can implement a so called preconditioner matrix $M$ s.t. $M^{-1}D\boldsymbol{x}=M^{-1}\boldsymbol{s}$. This can improve the aforementioned condition number, especially if the small eigenvalues of $M$ and $D$ coincide. This preconditioner matrix $M$ can be obtained e.g. by solving \eqref{eq:Dx_s} on a coarse grained lattice, then using the obtained result as $M$ on the fine lattice. Because the small eigenvalues are associated with the long distance quark modes, they should be preserved by the coarse graining process, more on this can be found in \cite{2003} and \cite{2007}.\\\\The eigenvalues of $D$ with a bare mass parameter $m$ are given by
+\begin{equation}
+\Lambda_i = m+\lambda_i[U]
+\end{equation}
+where $\lambda_i[U]$ are the eigenvalues of the massless Dirac- operator. As we saw in \eqref{eq:Ginsparg_wilson_circle}, for $\gamma_5$- Hermitian Dirac- operators obeying the Ginsparg-Wilson equation, $\lambda_i[U]$ are constrained to circle in the positive half of the complex plane, meaning $\Lambda_i$ is bounded from below by the smallest bare quark mass.\\ Other Dirac- operators, on the other hand, can have $\lambda_i[U] \approx -m$ giving very small eigenvalues and therefore numerical instability. This has to be offset by raising the bare quark mass.\\\\Another technique aimed at increasing numerical stability is variously called link smearing, gauge smoothing etc. These are aimed at lowering the coupling of fermions to local gauge field fluctuations by averaging field values across adjacent links. Care must be taken so as to make this averaging gauge invariant and local to not distort the short wavelength physics. APE smearing \cite{albanese1987glueball}, HYP smearing \cite{PhysRevD.64.034504} and Stout smearing \cite{morningstar2004analytic} are three such examples.
+\subsubsection{Dynamical fermions}
+The very last piece required for the full LQCD calculation of fermionic observables in \eqref{eq:compute_fermion_exp_val}, is the fermion determinant. For all but the smallest lattices (both in size and dimension), the problem of calculating the fermion determinant falls under the umbrella of generating gauge configurations. As was briefly mentioned, calculating gauge configurations and calculating observables can often be considered as separate issues. Once an ensemble of gauge configurations is available, it can be used to calculate any observable we could care to measure.
+
+The ways in which we can effectively treat the fermion determinant is dependent on several properties of the Dirac- operator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=3cm]
+\node (q0) [question]{$\gamma_5-Hermitian?$};
+
+\node (a1) [answer,below left of =q0]{Finite temperature QMC, solve $\gamma_5-H$ case + analytical continuation. Not covered};
+\node (q1) [question,below right of =q0]{Even number of mass- degenerate, dynamical flavours?};
+
+\node (a2) [answer,below right of =q1]{$\operatorname{det}\left[ D_{F_1} \right]\operatorname{det}\left[ D_{F_2} \right]=\operatorname{det}\left[ D_{F_1} D^\dagger_{F_1} \right] \geq 0$ and real valued};
+\node (q2) [question,below left of =q1]{Obeys the Ginsparg-Wilson equation?};
+
+\node (a3) [answer,below left of =a2]{Solvable using Hybrid Monte Carlo (HMC) methods};
+\node (a4) [answer,below left of =q2]{Solvable using Rational- or polynomial- HMC or the non- exact R- algorithm };
+
+
+\draw [arrow] (q0) -- node[anchor=west] {yes} (q1);
+\draw [arrow] (q0) -- node[anchor=east] {no} (a1);
+
+\draw [arrow] (q1) -- node[anchor=west] {yes} (a2);
+\draw [arrow] (q1) -- node[anchor=east] {no} (q2);
+
+\draw [arrow] (q2) -- node[anchor=west] {yes} (a3);
+\draw [arrow] (q2) -- node[anchor=east] {no} (a4);
+
+\draw [arrow] (a2) -- (a3);
+\end{tikzpicture}
+\caption{Decision chart for update algorithms based on the properties of the Dirac-operator being simulated. The options are by no means extensive and only reflect the most popular choices in modern LQCD simulations \cite{schaefer2012status}.}
+\end{figure}
+
+\paragraph{Pseudofermions and Monte Carlo methods}
+We will not cover HMC with Ginsparg-Wilson fermions of arbitrary flavour number, which are covered in \cite{DeGrand:2006ws} using the overlap operator. We instead focus on the case for two degenerate, light quark flavours.\\\\ The expectation value for an observable can be rewritten as
+\begin{equation}\label{eq:exp_val_w_pf}
+\begin{aligned} 
+\braket{O}&=\frac{1}{Z} \int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} \operatorname{det}\left[D_{u}\right] \operatorname{det}\left[D_{d}\right] \braket{O}_{F}\\&=\frac{1}{Z} \int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} \operatorname{det}\left[DD^\dagger\right]\braket{O}_{F}\\&=\frac{\pi^{-N_F}}{Z} \int \mathcal{D}[U]\mathcal{D}\left[\phi_{R}\right] \mathcal{D}\left[\phi_{I}\right] \mathrm{e}^{-S_{G}[U]-\phi^{\dagger}\left(D D^{\dagger}\right)^{-1} \phi}  \braket{O}_{F}
+\end{aligned}
+\end{equation}
+where in the third line, we've used a result from \cite{WeingartenD.H1981MCif}, expressing $\operatorname{det}\left[DD^\dagger\right]$ in terms of the integral over so- called pseudofermion fields. These have bosonic statistics, but an equal number of degrees of freedom to the fermionic fields, i.e. Dirac-,color- and space-time indices. $\pi$ is an irrelevant overall factor.\\\\What \eqref{eq:exp_val_w_pf} tells us is that rather than evaluating the determinant, we can instead sample gauge configurations from a probability measure similar to that of pure gauge theory (see \eqref{eq:prob_measure}). In the pure gauge theory calculation, we sampled gauge configurations using the Metropolis algorithm, where a single link was chosen and a new configuration $U^\prime$ selected according to some symmetric selection probability $T_0\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right)$, then the change was accepted if
+\begin{equation}
+T\mkern-4mu\left(U^{\prime}\mkern-6mu \mid\mkern-5mu U\right)_A = \min (1, \exp (S[U]-S\left[U^{\prime}\right]))
+\end{equation}
+exceeded a uniformly distributed random variable.
+We then leveraged the fact that the action was local in the link variables so that we only needed to calculate $S_{local}[U]-S_{local}\left[U^{\prime}\right]$, a much simpler task. But now, with dynamical fermions switched on, we have 
+\begin{equation}
+\exp \left(S[U]-S\left[U^{\prime}\right]\right)=\exp \left(S_{G}[U]-S_{G}\left[U^{\prime}\right]\right) \exp \left(S_{\mathrm{F}}^{\mathrm{eff}}[U]-S_{\mathrm{F}}^{\mathrm{eff}}\left[U^{\prime}\right]\right)
+\end{equation}
+with $S_{\mathrm{F}}^{\mathrm{eff}}[U] =\phi^{\dagger}\left(D[U] D^{\dagger}[U]\right)^{-1} \phi $, which is by no means a local action. This means that every time we proposed a change in a link variable, we would have to calculate the entire global effective action. If the entire action is going to change anyway, we might as well update several link variables between accept-reject steps. Doing this in a way that leads to acceptable acceptance- rates and autocorrelation times is the goal of the next section.
+\subsubsection{Hybrid Monte Carlo}
+HMC is an instance of the Metropolis-Hastings algorithm where proposed configurations are generated according to Hamiltonian time evolution using a numerical integrator. This integrator is subject to two conditions, due to the detailed balance condition, which are reversibility and volume preservation. The usual candidate (and the one we will be working with) is the leapfrog integrator. This integrator is subject to a discretization error, which can be corrected by including an accept-reject step akin to that of regular Monte Carlo.\\\\As for a system of classical particles, we define a Hamiltonian and a configuration space consisting of the field values $Q$ and their conjugate momenta $P$. In the case of $SU(3)$, we define $Q$ and $P$ to be elements of the algebra
+\begin{equation}
+Q_{\mu}(n) = \sum_{i=1}^{8} \omega_{\mu}^{i}(n) T_{i},\quad P_{\mu}(n)=\sum_{i=1}^{8} P_{\mu}^{i}(n) T_{i}
+\end{equation}
+such that $P_{\mu}^{i}(n)$ are conjugate to $\omega_{\mu}^{i}(n)$ and 
+$Q_{\mu}(n)=i\operatorname{ln}U_{\mu}(n).$
+The corresponding classical equations of motion for the Hamiltonian
+\begin{equation}
+H =\operatorname{tr}\left[P^{2}\right]+S_{G}[U]
++\phi^{\dagger}\left(D D^{\dagger}\right)^{-1} \phi
+\end{equation}
+are
+\begin{equation}
+\begin{aligned}
+\dot{P} &=-\frac{\partial H}{\partial Q}=-\sum_{i=1}^{8} T_{i} \nabla^{i}\left(S_{G}[U]+\phi^{\dagger}\left(D D^{\dagger}\right)^{-1} \phi\right) =  -F[U, \phi]\\
+\dot{Q} &=\frac{\partial H}{\partial P}=P.
+\end{aligned}
+\end{equation}
+for 
+\begin{equation}\label{eq:group_derivative}
+\nabla^{i} f(U) \equiv \frac{\partial f(U)}{\partial \omega^{i}}=\left.\frac{\partial}{\partial \omega} f\left(\mathrm{e}^{\mathrm{i} \omega T_{i}} U\right)\right|_{\omega=0}
+\end{equation}
+\cite{Gattringer:2010zz}.
+The leapfrog integrator for the system of equations is then
+\begin{equation}\label{eq:leapfrog_evolution}
+\begin{array}{ll}
+U_{(0)} & P_{(0)} \\
+ & \downarrow\\\Bigg\downarrow &P_{\left(\frac{1}{2}\right)}=P_{(0)}-\frac{\varepsilon}{2}F\left[ U_{(0)},\phi \right]  \\ &\downarrow
+\\
+U_{(1)}=\exp \left(\mathrm{i} \varepsilon P_{\left(\frac{1}{2}\right)}\right) U_{(0)} & P_{(1)}=P_{\left(\frac{1}{2}\right)}-\frac{\varepsilon}{2}F\left[ U_{(1)},\phi \right].
+\end{array}
+\end{equation}
+Several leapfrog steps can be combined by inserting a set of complete steps (step size $\varepsilon$) for $U$ and $P$ before the last half step. If the integrator was exact, then the equations of motion would transport the link variables along paths in configuration space with constant energy and therefore give an acceptance probability of $1$. \\\\Exponentiating algebra elements of non-Abelian groups can be computationally expensive, truncating an exponential series expansion with an associated error. Therefore, the Cayley-Hamilton theorem is often used to simplify the calculation. It states that any square matrix over a commutative ring is a solution to its own characteristic polynomial. The characteristic polynomial of a $3\times3$ matrix can be expressed as
+\begin{equation}
+p(\lambda)=\lambda^{3}-\operatorname{tr}(M) \lambda^{2}+\frac{1}{2}\left(\operatorname{tr}(M)^{2}-\operatorname{tr}\left(M^{2}\right)\right) \lambda-\operatorname{det}(M).
+\end{equation}
+Because $P \in su(3)$, it must be traceless and Hermitian in addition to being in the $ \operatorname{GL}(3,c)$ representation of $su(3)$. This means that the characteristic polynomial equation $P$ can be written as
+\begin{equation}\label{eq:char_poly_P}
+P^{3}-\frac{1}{2}\operatorname{tr}\left(P^{2}\right)P-\frac{1}{3}\operatorname{tr}(P^3) = 0
+\end{equation}
+where we have used an identity of $3\times3$ matrices to re-express the determinant of $P$ in terms of the trace of its cube. \eqref{eq:char_poly_P} defines a recursive relationship for all powers $P^n\,\mid\,n\geq3$ by left or right multiplication with $P$, which means that the matrix exponent series expansion 
+\begin{equation}
+\exp (P)=\sum_{k=0}^{\infty} \frac{P^{k}}{k !}=I_{3\times3}+P+\frac{1}{2} P^{2}+\frac{1}{6} P^{3}+\cdots
+\end{equation}
+is ultimately a function linear in the matrices $P$ and $P^2$ with coefficients dependent on $\operatorname{tr}(P^2)$ and $\operatorname{tr}(P^3)$ which need only be calculated once. For an in-depth example, see \cite{morningstar2004analytic}.\\\\ The most expensive part of the HMC algorithm is the computation of $F[U, \phi]$, which involves differentiating $D$ according to \eqref{eq:group_derivative} and taking the inverse of $DD^\dagger$. Any computationally sound implementation will be unique depending on the properties of the Dirac operator in question. Special attention must be paid when differentiating Dirac operators that are not strictly linear in the gauge fields, as $SU(3)$ is not a commutative group.\\\\In \eqref{eq:leapfrog_evolution}, the pseudofermion field $\phi$ is treated as a constant, external field. So before updating $P$ and $Q$, we first have to update $\phi$ according to the distribution
+\begin{equation}
+\begin{aligned} 
+ \exp&\left(- \phi^{\dagger}\left(D D^{\dagger}\right)^{-1} \phi \right)
+\\ = \exp&\left(- \phi^{\dagger} \left( D^{\dagger} \right)^{-1}D^{-1} \phi \right)\\=  \exp&\left(- \left( D\chi \right)^{\dagger} \left( D^{\dagger} \right)^{-1}D^{-1} \left( D\chi \right) \right)\\ = \exp&\left(- \chi^{\dagger} \chi  \right),\,\,\phi = D\chi.
+\end{aligned}
+\end{equation}
+We are now ready to state the algorithm for the full HMC update step. Here, $P$ and $Q$ carry suppressed lattice and Dirac- indices i.e. $P^{\mu,n}_{(k)},\,U^{\mu,n}_{(k)}\rightarrow P_{(k)},\,U_{(k)}$ with the exception of the real numbers $P_{\mu}^{i}(n)$ which parametrize the generator expansion of the algebra elements $P_{\mu}(n)$. $P^2$ denotes the sum $\sum\limits_{\mu,n} P_{\mu}(n)^2$.
+\begin{algorithm}[H]
+\caption{HMC updating algorithm}\label{alg:cap}
+\begin{algorithmic}
+
+\Ensure 
+\State $\chi \sim \exp\left(- \chi^{\dagger} \chi  \right)$
+\State $\phi = D\chi$
+\State $\left\{P_{\mu}^{i}(n)\, \mid \, P_{\mu}^{i}(n)\sim \exp \left(-\operatorname{tr}\left[P^{2}\right]\right)\,\forall\,\{\mu,n\}\in \Lambda \right\}$
+\State $F\left[ U_{(0)},\phi \right]$
+\State $P_{\left(\frac{1}{2}\right)}=P_{(0)}-\frac{\varepsilon}{2}F\left[ U_{(0)},\phi \right]$
+
+\While{$k\leq n-1$}\Comment{Full steps between half-steps, typically $n\approx 1/\varepsilon$}
+\State $U_{(k)}=\exp \left(\mathrm{i} \varepsilon P_{\left(k-\frac{1}{2}\right)}\right) U_{(k-1)}$
+\State $P_{\left(k+\frac{1}{2}\right)}=P_{\left(k-\frac{1}{2}\right)}-\varepsilon F\left[ U_{(k)},\phi \right]$
+\State $ k+=1$
+\EndWhile
+\State $U_{(n)}=\exp \left(\mathrm{i} \varepsilon P_{\left(n-\frac{1}{2}\right)}\right) U_{(n-1)}$
+\State $P_{\left(n\right)}=P_{\left(n-\frac{1}{2}\right)}-\frac{\varepsilon}{2} F\left[ U_{(n)},\phi \right]$\\
+\State Calculate $\exp (-\Delta H)$
+\State Generate a random, uniformly distributed number $r \in [0,1) $
+\If{$\exp (-\Delta H)\geq r$}
+    \State $U \gets U_{new}$
+\Else
+    \State $U \gets U_{old}$
+\EndIf
+
+\end{algorithmic}
+\end{algorithm}
+It can be shown \cite{DUANE1987216} that this algorithm obeys the necessary detailed balance condition. The step size $\varepsilon$ must be controlled so as to make the discretization error small enough for a large acceptance probability. Recall that if the integrator was exact, the Monte- Carlo step would accept every update. 
+\subsubsection{Other algorithms for dynamical fermions}
+We would often like to go without the restriction of using an even number of mass degenerate, dynamical quark flavours. In addition, working with Ginsparg- Wilson fermions in HMC can make the evaluation of the force term very costly. Several algorithms have been proposed to deal with these scenarios, either working to make HMC compatible with odd numbers of dynamical quark flavours or by using non- exact methods with mitigating procedures to reduce errors.
+\paragraph{The R-algorithm}\cite{PhysRevD.35.2531} calculates the change in the effective fermion action by the linear approximation 
+\begin{equation}
+\begin{aligned}
+\Delta S_{\mathrm{F}}^{\mathrm{eff}} &=S_{\mathrm{F}}^{\mathrm{eff}}\left[U_{\mu}(n)^{\prime}\right]-S_{\mathrm{F}}^{\mathrm{eff}}\left[U_{\mu}(n)\right] \\
+&=\sum_{n, \mu, i} \frac{\partial S_{\mathrm{F}}^{\mathrm{eff}}\left[U_{\mu}(n)\right]}{\partial \omega_{\mu}^{(i)}(n)} \Delta \omega_{\mu}^{(i)}(n)+\mathcal{O}\left(\left(\Delta \omega_{\mu}^{(i)}(n)\right)^{2}\right)
+\end{aligned}
+\end{equation}
+and, by assuming that $\operatorname{det}[D]$ is real-valued and strictly positive, the derivative can be expressed as
+\begin{equation}
+\frac{\partial S_{\mathrm{F}}^{\text {eff }}}{\partial \omega_{\mu}^{(i)}(n)}=-\frac{\partial \operatorname{tr}[\ln (D[U])]}{\partial \omega_{\mu}^{(i)}(n)}=-\operatorname{tr}\left[D[U]^{-1} \frac{\partial D[U]}{\partial \omega_{\mu}^{(i)}(n)}\right].
+\end{equation} 
+This method has a discretization error which must be dealt with by computing observables for decreasing step sizes, then extrapolating to zero step size.\\This arrangement is clearly not optimal as it requires multiple costly simulations just to remove the discretization error. It's a major reason why most modern simulations use one of the exact modified HMC schemes.
+\paragraph{Polynomial HMC}
+$\operatorname{det} D$ on its own, can not be implemented in standard HMC as in \eqref{eq:exp_val_w_pf}. Instead, it was noticed that, assuming $\operatorname{det} D$ is positive (this assumption does not seem a reasonable one, we'll cover this shortly), it can be expressed in the following way:
+\begin{equation}
+D^{-1} \approx P_{n} = \prod_{i=1}^{n}\left(D-z_{i}\right)
+\end{equation}
+where the roots $z_i$ of $P_{n}$ come in complex conjugate pairs for $n=2m$. Using this, along with the assumption of $\gamma_5$-hermiticity we find
+\begin{equation}
+P_{2 m}=\prod_{i=1}^{m}\left(D-z_{2 i-1}\right)\left(D-z_{2 i-1}\right)^\dagger = T_mT_m^\dagger.
+\end{equation}
+Therefore, the determinant of $D$ can be expressed as
+\begin{equation}
+\operatorname{det}(D)=C_{m} \operatorname{det}\left(T_{m}^{\dagger} T_{m}\right)^{-1}
+\end{equation}
+with the corrective factor 
+\begin{equation}
+C_{m}= \operatorname{det}\left(DT_{m}^{\dagger} T_{m}\right)
+\end{equation}
+going to $1$ in the limit $m\rightarrow \infty$. This gives an effective pseudofermion action
+\begin{equation}
+S=-\phi^{\dagger} T_{n}^{\dagger}(D) T_{n}(D) \phi
+\end{equation}
+\cite{BORICI1995645}. The above approximation can also be made using rationals, giving their name of rational HMC.\\On our earlier assumption that $\operatorname{det}D$ is positive, this clearly needs to be justified, as there is no visible constraint making this assumption true. This is known as the "sign problem" in LQCD\footnote{This is but one part of a larger class of problems in numerical physics dealing with partition functions of fermions (especially at non- zero chemical potential, recall that $\gamma_5$-hermiticity ensures the reality of the determinant) broadly known as the numerical sign problem.}, and it can be treated in a couple of ways.\\Firstly, one could just compute the sign of the determinant for every gauge configuration and include it in the average, but this is extremely cost-prohibitive.\\In practice, the assumption is made based on a couple of observations:\\$\operatorname{det}D$ is in fact positive in the continuum limit and this is indicated to hold at the range of lattice spacings and quark masses being used in simulations \cite{BORICI1995645}\cite{Zyla:2020zbs}.\\Secondly, under molecular dynamics evolution as is the case in HMC, the gauge configuration changes continuously and therefore also the eigenvalues of $D$. For an eigenvalue to change sign, it must cross zero, making $\operatorname{det}D$ vanish, and thus suppressing updates along such a trajectory \cite{JLQCD:2001ucs}.\\\\Many other algorithms exist for simulating dynamical fermions. A brief review of some of them can be found in \cite{schaefer2012status}.
+\subsection{Extrapolation}
+There are only a few free parameters in a LQCD program. These are the parameters for which we set a number in the program and they are the bare quark masses $m_f$, the inverse gauge coupling $\beta$ and the number of lattice sites which effectively sets the lattice volume through the lattice spacing $a$ which depends on $\beta$ and $m_f$.\par In order to obtain physical results from lattice simulations, one has to extrapolate the results to the continuum- and infinite volume- limit as well as to the physical quark masses if the simulation masses were larger than the physical masses.  
+\subsubsection{The continuum limit}
+The fact that we use different lattice actions to simulate seemingly the same physical systems comes from the express understanding that all of these lattice actions share the same universality class\footnote{There has been considerable debate on this point for staggered fermions, see e.g. \cite{BERNARD2007235},\cite{golterman2008qcd},\cite{Creutz2007ReplyT} etc.} i.e. have the same scaling behaviour near critical points, and share the same symmetries relevant to the observable in question. This is important, as taking the continuum limit of a lattice field theory involves driving the couplings to the critical point of the theory corresponding to $a=0$. Therefore, as long as the continuum limit is being considered, different lattice actions will produce the same physical predictions.\par A note of caution before proceeding: Extrapolation to the continuum limit has to be performed at a constant lattice volume. This means that as the couplings are driven towards their critical values, the number of lattice points has to change for every resulting value of $a$ so as to keep the lattice volume from changing.\\\\Keeping $\beta$ constant, the light quark masses $m_u=m_d=m_f$ are tuned to a value $m_f^\star$ where the dimensionless ratios of hadron masses (see \ref{hadron_masses} and \ref{Renormalization}) match the physical predictions. Then the lattice constant is gotten by dividing the hadron mass at the quark mass $m_f^\star$ in lattice units by the physical hadron mass. This procedure is then repeated at several values of $\beta$, allowing us to extrapolate the results to the critical point. Simulations are increasingly being performed at the physical light quark masses, but these may need to be extrapolated based on the available computational resources.
+\subsubsection{The infinite volume limit}
+Any simulation will happen at a finite lattice volume, and this impacts the outcomes of observables, as modes that traverse the spatial torus give contributions that would be absent in the infinite volume limit.\\Most simulations are carried out with a temporal extent roughly twice that of the spatial extent to allow excited states to decay. Therefore, the leading contributions are from spatial finite size effects. The largest correlation length in the system arises from the lightest hadron correlator. Volume dependence varies between observables, but for processes involving single particle states, the effects are purported to be sub- leading order for $m_\pi N_sa \geq 4$, where $m_\pi$ is the mass of the pion, the lightest hadron.\\\\The extrapolation can be carried out by increasing the number of spatial lattice points while keeping all other parameters fixed. If possible, the extrapolation might be accompanied by a parametrization based on theory or otherwise a naive power law dependence of the form $\frac{1}{(aN_s)^n}$.
+
+
+
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}

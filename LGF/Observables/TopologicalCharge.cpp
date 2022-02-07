@@ -4,11 +4,8 @@
 TopologicalCharge::TopologicalCharge(SU3_field& U) {
 	m_AutoCorrTime = calculate_AutoCorrTime();
 	m_U = &U;
+	calculate(0);
 }
-int leviCivita(int i, int j, int k, int l) {
-	return ((i - j) * (i - k) * (i - l) * (j - k) * (j - l) * (k - l) / 12);
-}
-
 
 void TopologicalCharge::calculate(double flowTime) {
 	static const double PI = 4.0 * atan(1.0);
@@ -96,13 +93,13 @@ int TopologicalCharge::calculate_AutoCorrTime(){
 	return 0;
 }
 
-void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::filesystem::path& identifier) {
+void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::string& identifier, const std::string& dataFolder) {
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');
 		std::filesystem::path fieldType("/Topological_Charge/beta" + beta_str + "/");
 		//move to the ensembles directory
-		std::filesystem::path outPath("../../../../data/Observables");
+		std::filesystem::path outPath(dataFolder + "Observables");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
 		int i;

@@ -27,6 +27,8 @@ void testLMC(int argc, char** argv);
 void testLHMC(int argc, char** argv);
 void testGradientFlow(int argc, char** argv);
 void testSU3_Heatbath(int argc, char** argv);
-void GenerateGaugeEnsembles(int argc, char** argv);
-void FlowSavedGaugeEnsembles(int argc, char** argv);
+void GenerateGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int NrUpdates);
+void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps);
+double getLatticeConstant(double beta);
+
 #define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
