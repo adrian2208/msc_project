@@ -7,11 +7,19 @@
 #include "../Math/SU3_gen.h"
 class SU3_Heatbath {
 public:
-	SU3_Heatbath(SU3_field& U);
+	SU3_Heatbath(SU3_field& U,double beta,int OR_per_HB);
 
-	void update(SU3_field& U, int n_iter, double beta);
-	void heatbath_SU2(Random& random, double beta_eff, C_double* a);
+	void update(int n_iter);
+	void Cabibbo_Marinari(SU3_field& U);
+	void OverRelaxation(SU3_field& U);
+	void heatbath_SU2(C_double* TSR, int internIdx);
+
+	std::string getupdateMethod() const;
 
 private:
+	std::string m_updateMethod;
+	int m_OR_per_HB;
+	double m_beta;
+	SU3_field* m_U;
 	RNG_field* m_rand;
 };

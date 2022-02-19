@@ -21,6 +21,9 @@
 #include "Observables/TopologicalCharge.h"
 #include "SU3_Heatbath/SU3_Heatbath.h"
 
+void GenerateHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int ThermalizationSteps, int ConfigTimeSeparation);
+void ResumeHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationResumeFrom, int ConfigurationStop, int ConfigTimeSeparation);
+
 void testSaveLoad(int argc, char** argv);
 void testHMC(int argc, char** argv);
 void testLMC(int argc, char** argv);

@@ -37,7 +37,7 @@ int EnergyDensity::calculate_AutoCorrTime() {
 	return 0;
 }
 
-void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& identifier, const std::string& dataFolder) {
+void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -50,7 +50,7 @@ void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& iden
 		for (i = 0; i < (*m_U).getLatticePtr().getNdims() - 1; i++) {
 			outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "X";
 		}
-		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/";
+		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/"+updateMethod + "/";
 		std::filesystem::create_directories(outPath);
 		//write the lattice shape to the filename
 

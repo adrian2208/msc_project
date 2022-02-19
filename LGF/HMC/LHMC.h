@@ -15,7 +15,10 @@ public:
 	void update(int parity);
 	void sweep();
 	double acceptanceRate();
+
+	std::string getupdateMethod() const;
 private:
+	std::string m_updateMethod;
 	SU3_field* m_U;
 	//RNG_field* m_rand; I would use this, but it takes up too much RAM
 	Random* m_rand;

@@ -95,6 +95,8 @@ su3_mat su3_mat::timesMinusI() const{
 	return out;
 }
 
+
+
 C_double su3_mat::det() const{	
 	return mat[0] * (mat[4] * mat[8] - mat[5] * mat[7]) - mat[1] * (mat[3] * mat[8] - mat[5] * mat[6]) + mat[2] * (mat[3] * mat[7] - mat[4] * mat[6]);
 }
@@ -456,6 +458,18 @@ bool isSpecialUnitary(su3_mat& mat, bool silence) {
 		}
 	}
 	return out;
+}
+
+void GetSU2submatrix_O4_rep(su3_mat& a, int SubGroupNr, double su2_O4[4]) {
+	int m, n;
+	n = SubGroupNr + 1;
+	m = n / 3;
+	n -= m;
+	su2_O4[0] = a(m, m).R() + a(n, n).R();
+	su2_O4[1] = a(m, n).I() + a(n, m).I();
+	su2_O4[2] = a(m, n).R() - a(n, m).R();
+	su2_O4[3] = a(m, m).I() - a(n, n).I();
+
 }
 
 std::ostream& operator << (std::ostream& stream, const su3_mat& a) {

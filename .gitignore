@@ -2,6 +2,12 @@
 *.d
 data/
 out/
+
+#tex makefiles
+*.gz
+*.aux
+
+
 # Compiled Object files
 *.slo
 *.lo

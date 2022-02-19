@@ -1,8 +1,12 @@
 #include "LHMC.h"
 #include <assert.h>
+#include <algorithm>
 
 
 LHMC::LHMC(SU3_field& U, Wilson& GaugeAction, double epsilon, int NrLeaps) {
+	std::string eps_str = std::to_string(epsilon);
+	std::replace(eps_str.begin(), eps_str.end(), '.', '_');
+	m_updateMethod = "LHMC_" + std::to_string(NrLeaps) + "_of_"+ eps_str;
 	m_NrAccepted = 0;
 	m_NrstepsTaken = 0;
 	m_epsilon = epsilon;
@@ -136,4 +140,7 @@ void LHMC::update(int parity) {
 
 double LHMC::acceptanceRate() {
 	return ((double)m_NrAccepted) / ((double)m_NrstepsTaken);
+}
+std::string LHMC::getupdateMethod() const {
+	return m_updateMethod;
 }

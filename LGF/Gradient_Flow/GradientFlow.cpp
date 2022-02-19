@@ -1,6 +1,7 @@
 #include "GradientFlow.h"
 
 GradientFlow::GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon){
+	m_updateMethod = "GF";
 	m_flowTime = 0.0;
 	m_GaugeAction = &GaugeAction;
 	m_epsilon = epsilon;
@@ -42,6 +43,7 @@ void GradientFlow::flow(){
 	}
 
 	m_flowTime += m_epsilon;
+	m_NrSteps++;
 	(*m_U).transfer_FieldValues();
 	MakeMeasurements();
 }
@@ -62,4 +64,7 @@ void GradientFlow::MakeMeasurements(){
 	if (m_EnergyDensity != nullptr) {
 		m_EnergyDensity->calculate(m_flowTime);
 	}
+}
+std::string GradientFlow::getupdateMethod() const {
+	return m_updateMethod;
 }

@@ -13,14 +13,15 @@ public:
 	void Include_EnergyDensity(EnergyDensity& Edensity);
 	
 	void MakeMeasurements();
-
+	std::string getupdateMethod() const;
 private: 
+	std::string m_updateMethod;
 	Action* m_GaugeAction;
 	SU3_field* m_U;
 	SU3_field* m_Z0;
 	SU3_field* m_Z1;
 	SU3_field* m_Z2;
-
+	int m_NrSteps;
 	double m_epsilon;
 	double m_flowTime;
 

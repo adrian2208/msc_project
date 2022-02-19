@@ -5,7 +5,7 @@ SU3_field::SU3_field(Lattice& lattice, int NrExtDOF) : Field(lattice, NrExtDOF){
 	m_FieldArray_NrBytes = 8*2*9 * NrExtDOF * lattice.m_thisProc_Volume;//9 entries of C_double each containing 16 bytes
 }
 
-void SU3_field::saveSU3ToFile(double beta, const std::string& identifier, const std::string& dataFolder) {
+void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
 	(*this).transfer_FieldValues();
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -22,7 +22,7 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& identifier, const 
 	for (i = 0; i < m_lattice->getNdims() - 1; i++) {
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
-	outPath += std::to_string(m_lattice->getShape()[i]) + "/";
+	outPath += std::to_string(m_lattice->getShape()[i]) + "/" + updateMethod + "/";
 	std::filesystem::create_directories(outPath);
 	//write the lattice shape to the filename
 
@@ -87,7 +87,7 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& identifier, const 
 	MPI_File_close(&file);
 }
 
-void SU3_field::loadSU3FromFile(double beta, const std::string& identifier, const std::string& dataFolder) {
+void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -104,7 +104,7 @@ void SU3_field::loadSU3FromFile(double beta, const std::string& identifier, cons
 	for (i = 0; i < m_lattice->getNdims() - 1; i++) {
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
-	outPath += std::to_string(m_lattice->getShape()[i]) + "/";
+	outPath += std::to_string(m_lattice->getShape()[i]) + "/" + updateMethod + "/";
 	std::filesystem::create_directories(outPath);
 	//write the lattice shape to the filename
 
@@ -441,7 +441,52 @@ su3_mat SU3_field::clover_avg(int internal_index, int mu, int nu) {
 	out[8].Im -= trace;
 	return out;
 }
+su3_mat SU3_field::RectangleClover_avg(int internal_index, int mu, int nu) {
+	su3_mat out;
+	int displacedIdx;
 
+	//displacedIdx = m_lattice->m_fwd[internal_index][nu];
+	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * ((*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu)).dagger();
+
+	//displacedIdx = m_lattice->m_back[internal_index][nu];
+	//out = out + (*this)(internal_index, mu) * ((*this)(displacedIdx, mu) * this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx, nu);
+
+	//displacedIdx = m_lattice->m_back[internal_index][mu];
+	//out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+
+	//displacedIdx = m_lattice->m_back[displacedIdx][nu];
+	//out = out + ((*this)(displacedIdx, mu) * this->back_fieldVal(internal_index, nu, nu)).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+
+
+
+	//displacedIdx = m_lattice->m_fwd[internal_index][nu];
+	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, mu) * this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
+	//
+	//displacedIdx = m_lattice->m_back[internal_index][nu];
+	//out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+	//
+	//displacedIdx = m_lattice->m_back[internal_index][mu];
+	//out = out + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+
+	//displacedIdx = m_lattice->m_back[displacedIdx][nu];
+	//out = out + this->back_fieldVal(internal_index, nu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+	
+
+
+
+
+
+
+	out = 0.25 * out;
+	su3_mat identity;
+	identity.setToIdentity();
+	double trace = 1.0 / 3.0 * out.Tr().I();
+	out = out - out.dagger();
+	out[0].Im -= trace;
+	out[4].Im -= trace;
+	out[8].Im -= trace;
+	return out;
+}
 
 inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){
 	su3_mat out;

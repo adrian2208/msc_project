@@ -23,6 +23,8 @@ public:
 	
 	su3_mat operator+=(const su3_mat& a);
 
+	
+
 	su3_mat dagger() const;
 	su3_mat dagger();
 	su3_mat timesI() const;
@@ -63,12 +65,14 @@ su3_mat operator*(const C_double b,const su3_mat& a);
 /// "Analytic smearing of SU(3) link variables in lattice QCD" by Colin Morningstar
 /// and Mike Peardon
 /// </summary>
-/// <param name="Q"></param>
+/// <param name="Q"></param
 su3_mat HermTrLessExp(su3_mat& iP);
 su3_mat HermTrLessExp_noI(su3_mat& Q);
 
 bool IsHermTrLess(su3_mat& mat, bool silence= false);
 bool IsAntiHermTrLess(su3_mat& mat, bool silence = false);
 bool isSpecialUnitary(su3_mat& mat, bool silence = false);
+
+void GetSU2submatrix_O4_rep(su3_mat& a, int SubGroupNr, double su2_O4[4]);
 
 std::ostream& operator << (std::ostream& stream, const su3_mat& a);

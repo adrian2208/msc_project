@@ -8,35 +8,51 @@
 int main(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
 	//Physical Parameters
-	//int NrDims = 4;
-	//int extdofs = 4;
-	//int shape[] = { 24,24,24,24};
-	//double beta = 6.0;
-	//int ConfigurationStart = 0;
-	//int ConfigurationStop = 26;
-	//std::cout << getLatticeConstant(beta)<< std::endl;
-	////GenerateGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
-	//FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,800);
-
-
 	int NrDims = 4;
 	int extdofs = 4;
 	int shape[] = {24,24,24,24};
 	double beta = 6.0;
-	int ConfigurationStart = 0;
-	int ConfigurationStop = 26;
-	std::cout << getLatticeConstant(beta) << std::endl;
-	//GenerateGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 1);
-	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 800);
+	int ConfigurationStart = 81;
+	int ConfigurationStop = 100;
+	//std::cout << getLatticeConstant(beta)<< std::endl;
+	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
+	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,800);
 
+	//int ThermalizationSteps = 0;
+	int ConfigTimeSeparation = 200;
+	//GenerateHeatBathGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, ThermalizationSteps, ConfigTimeSeparation);
+	int ConfigurationResumeFrom = 80;
+	//ResumeHeatBathGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationResumeFrom, ConfigurationStop,ConfigTimeSeparation);
 
 	mpiWrapper::end_parallelSession();
+
 	return 0;
 }
-
+void ResumeHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationResumeFrom, int ConfigurationStop,int ConfigTimeSeparation) {
+	Lattice lattice(NrDims, shape);
+	SU3_field U(lattice, extdofs);
+	SU3_Heatbath heatbath(U, beta, 4);
+	U.loadSU3FromFile(beta, heatbath.getupdateMethod(), std::to_string(ConfigurationResumeFrom));
+	for (int i = ConfigurationResumeFrom+1; i <= ConfigurationStop; i++) {
+		heatbath.update(ConfigTimeSeparation);
+		U.saveSU3ToFile(beta, heatbath.getupdateMethod(), std::to_string(i));
+	}
+}
+void GenerateHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int ThermalizationSteps, int ConfigTimeSeparation) {
+	Lattice lattice(NrDims, shape);
+	SU3_field U(lattice, extdofs);
+	U.InitializeHotStart();
+	SU3_Heatbath heatbath(U, beta, 4);
+	heatbath.update(ThermalizationSteps);
+	U.saveSU3ToFile(beta, heatbath.getupdateMethod(), std::to_string(ConfigurationStart));
+	for (int i = ConfigurationStart+1; i <= ConfigurationStop; i++) {
+		heatbath.update(ConfigTimeSeparation);
+		U.saveSU3ToFile(beta, heatbath.getupdateMethod(), std::to_string(i));
+	}
+}
 void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps) {
 	//flow step size
-	double epsilon = 0.01;
+	double epsilon = 0.02;
 	//instantiate the lattice and action
 	Lattice lattice(NrDims, shape);
 	Wilson action(beta);
@@ -44,8 +60,8 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 	for (int i = ConfigurationStart; i <= ConfigurationStop; i++) {
 		//load the gauge configuration into U
 		SU3_field U(lattice, extdofs);
-		std::string ensembleNum = "ensemble_" + std::to_string(i);
-		U.loadSU3FromFile(beta, ensembleNum);
+		std::string ensembleNum = std::to_string(i);
+		U.loadSU3FromFile(beta, "Heatbath_4_ORperHB", ensembleNum);
 		//instantiate the Gradient flow object
 		GradientFlow flowing(action, U, epsilon);
 		//instantiate and include the Topological Charge
@@ -60,13 +76,13 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 			flowing.flow();
 		}
 		//save the observables to files
-		topCharge.saveTopologicalChargeToFile(beta, ensembleNum + "flowed");
+		topCharge.saveTopologicalChargeToFile(beta,flowing.getupdateMethod() ,"Heatbath_4_ORperHB_Flowed" + ensembleNum);
 		//Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
-		U.saveSU3ToFile(beta, ensembleNum + "flowed");
+		U.saveSU3ToFile(beta, flowing.getupdateMethod(), "Heatbath_4_ORperHB_Flowed" + ensembleNum);
 	}
 }
 
-void GenerateGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int NrUpdates) {
+void GenerateLHMCGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int NrUpdates) {
 	
 	double LHMCepsilon = 0.33;
 	int NrLeaps = 3;
@@ -126,34 +142,7 @@ void testGradientFlow(int argc, char** argv) {
 
 	mpiWrapper::end_parallelSession();
 }
-void testSU3_Heatbath(int argc, char** argv) {
-	mpiWrapper::begin_parallelSession(argc, argv);
-	mpi_debug_breakpoint
-		int NrDims = 4;
-	int extdofs = 4;
-	int shape[] = { 24,24,24,24 };
-	double beta = 0.2;
 
-	Lattice lattice(NrDims, shape);
-	//Wilson action(beta);
-
-	SU3_field U(lattice, extdofs);
-	U.InitializeHotStart();
-	TopologicalCharge topCharge(U);
-
-	SU3_Heatbath heatbath(U);
-	int NrRuns = 2;
-	for (int i = 0; i < NrRuns; i++) {
-		std::string ensembleNum = "ensemble_Heatbath";
-		heatbath.update(U, 30, beta);
-		topCharge.calculate(0.0);
-		//topCharge.saveTopologicalChargeToFile(6.0, ensembleNum);
-		std::string ensemblename = "ensemble_Heatbath" + std::to_string(i);
-		U.saveSU3ToFile(beta, ensemblename);
-	}
-
-	mpiWrapper::end_parallelSession();
-}
 void testLHMC(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
 	int NrDims = 4;
