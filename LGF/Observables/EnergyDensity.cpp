@@ -24,10 +24,12 @@ void EnergyDensity::calculate(double flowTime) {
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
 
 	totalSum *= -1.0 / (4.0*(*m_U).getLatticePtr().m_totalVolume);
+	double avg_plaquette = (*m_U).Avg_Plaquette();
 	if (mpiWrapper::id() == 0) {
 		m_resultVector.push_back(totalSum);
-		std::cout << "Energy Density = "<< totalSum << "\n";
-		std::cout << "t = "<< flowTime << ", t^2<E> = " << totalSum*flowTime*flowTime << "\n";
+		std::cout << "Energy Density	   = "<< totalSum << "\n";
+		std::cout << "Average Plaquette	 = " << avg_plaquette << "\n";
+		//std::cout << "t = "<< flowTime << ", t^2<E> = " << totalSum*flowTime*flowTime << "\n";
 		std::cout.flush();
 	}
 

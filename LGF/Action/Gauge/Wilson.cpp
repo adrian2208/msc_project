@@ -64,6 +64,7 @@ void Wilson::calculate_FlowGradient(SU3_field& field, SU3_field& F) {
 			temp[4].Im -= trace;
 			temp[8].Im -= trace;
 			F(i, mu) = 0.5 * temp;
+
 		}
 	}
 }

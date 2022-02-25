@@ -81,6 +81,10 @@ protected:
 	int* m_coorBackBack;//stores a coordinate backwardly neighbouring the current working coordinate 
 	int* m_coorFwdBack;//stores a coordinate forwardly neighbouring the current working coordinate 
 	int* m_coorBackFwd;//stores a coordinate backwardly neighbouring the current working coordinate 
+	int* m_coorFwdFwdFwd;
+	int* m_coorBackBackBack;
+	int* m_coorFwdFwdBack;
+	int* m_coorBackBackFwd;
 	std::string type;
 
 };

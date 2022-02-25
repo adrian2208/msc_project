@@ -13,6 +13,11 @@ Lattice::Lattice(int Ndims, int shape[]) {
 	m_coorBackBack = new int[Ndims];
 	m_coorFwdBack = new int[Ndims];
 	m_coorBackFwd = new int[Ndims];
+
+	m_coorFwdFwdFwd = new int[Ndims];
+	m_coorBackBackBack = new int[Ndims];
+	m_coorFwdFwdBack = new int[Ndims];
+	m_coorBackBackFwd = new int[Ndims];
 	//Calculates the total volume of the lattice & writing to member variables
 	m_totalVolume = 1;
 	m_thisProc_Volume = 0;
@@ -328,6 +333,7 @@ int Lattice::Coordinate_ProcID(int* coordinate){
 		}
 		return coordinate[0] / (m_shape[0] / (xDivisions + 1)) + (coordinate[1] / (m_shape[1] / (yDivisions + 1))) + xDivisions * (coordinate[0] / (m_shape[0] / (xDivisions + 1)));
 	}
+	return 0;
 }
 
 
@@ -379,7 +385,6 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 			return true;
 		}
 		for (int j = 0; j < m_Ndims; j++) {
-			if (j != i) {
 				NearestNeighbour(coorFwd, j, m_coorFwdFwd, m_coorFwdBack);
 				NearestNeighbour(coorBack, j, m_coorBackFwd, m_coorBackBack);
 				if (Coordinate_ProcID(m_coorFwdFwd) == mpiWrapper::id() ||
@@ -388,7 +393,18 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 					Coordinate_ProcID(m_coorBackFwd) == mpiWrapper::id()) {
 					return true;
 				}
-			}
+				for (int k = 0; k < m_Ndims; k++) {
+					NearestNeighbour(m_coorFwdFwd, k, m_coorFwdFwdFwd, m_coorFwdFwdBack);
+					NearestNeighbour(m_coorBackBack, k, m_coorBackBackFwd, m_coorBackBackBack);
+					if (Coordinate_ProcID(m_coorFwdFwdFwd) == mpiWrapper::id() ||
+						Coordinate_ProcID(m_coorFwdFwdBack) == mpiWrapper::id() ||
+						Coordinate_ProcID(m_coorBackBackFwd) == mpiWrapper::id() ||
+						Coordinate_ProcID(m_coorBackBackBack) == mpiWrapper::id()) {
+						return true;
+					}
+
+				}
+
 		}
 	}
 	return false;
@@ -423,6 +439,7 @@ void Lattice::Print_Partitioning() {
 			std::cout << "\n";
 		}
 		delete[] coordinate;
+		std::cout.flush();
 	}
 	MPI_Barrier(mpiWrapper::comm());
 }

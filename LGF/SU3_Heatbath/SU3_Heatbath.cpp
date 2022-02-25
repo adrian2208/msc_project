@@ -16,6 +16,9 @@ void SU3_Heatbath::update(int n_iter) {
 	for (int i = 0; i < n_iter; i++) {
 		Cabibbo_Marinari((*m_U));
 		OverRelaxation((*m_U));
+		if (mpiWrapper::id() == 0) {
+			std::cout << "step: " << i << std::endl;
+		}
 	}
 }
 void SU3_Heatbath::OverRelaxation(SU3_field& U) {

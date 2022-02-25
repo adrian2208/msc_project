@@ -10,18 +10,18 @@ int main(int argc, char** argv) {
 	//Physical Parameters
 	int NrDims = 4;
 	int extdofs = 4;
-	int shape[] = {24,24,24,24};
+	int shape[] = {12,12,12,12};
 	double beta = 6.0;
-	int ConfigurationStart = 81;
-	int ConfigurationStop = 100;
+	int ConfigurationStart = 1000;
+	int ConfigurationStop = 1000;
 	//std::cout << getLatticeConstant(beta)<< std::endl;
 	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
-	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,800);
+	//FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,800);
 
-	//int ThermalizationSteps = 0;
-	int ConfigTimeSeparation = 200;
-	//GenerateHeatBathGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, ThermalizationSteps, ConfigTimeSeparation);
-	int ConfigurationResumeFrom = 80;
+	int ThermalizationSteps = 50;
+	int ConfigTimeSeparation = 1;
+	GenerateHeatBathGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, ThermalizationSteps, ConfigTimeSeparation);
+	int ConfigurationResumeFrom = 10;
 	//ResumeHeatBathGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationResumeFrom, ConfigurationStop,ConfigTimeSeparation);
 
 	mpiWrapper::end_parallelSession();
@@ -52,7 +52,7 @@ void GenerateHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], d
 }
 void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps) {
 	//flow step size
-	double epsilon = 0.02;
+	double epsilon = 0.04;
 	//instantiate the lattice and action
 	Lattice lattice(NrDims, shape);
 	Wilson action(beta);
@@ -68,8 +68,8 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 		TopologicalCharge topCharge(U);
 		flowing.Include_TopCharge(topCharge);
 		//instantiate and include the Energy density
-		//EnergyDensity Edensity(U);
-		//flowing.Include_EnergyDensity(Edensity);
+		EnergyDensity Edensity(U);
+		flowing.Include_EnergyDensity(Edensity);
 
 		//flow the configuration
 		for (int i = 0; i < flowSteps; i++) {
