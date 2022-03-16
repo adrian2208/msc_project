@@ -94,46 +94,50 @@ void LHMC::sweep() {
 	MPI_Barrier(mpiWrapper::comm());
 }
 void LHMC::update(int parity) {
-	su3_mat P;
-	su3_mat F;
-	SU3_gen generators;
-	double KE_init;
-	su3_mat U_init;
-	for (int mu = 0; mu < m_U->getNrExtDOF(); mu++) {
-		(*m_U).transfer_FieldValues();
-		for (int i = (*m_U).Responsible_Start(parity); i < (*m_U).Responsible_Stop(parity); i++) {
-		
-			U_init = (*m_U)(i, mu);
-			
-			P.setToZeros();
-			for (int j = 0; j < 8; j++) {
-				P = P + (*m_rand).Gaussian_Double(0.0, 1.0) * generators(j);
-			}
 
-			KE_init = calculate_KineticEnergy(P);
+	//
+	// THIS IS WRONG! MU -> EVEN -> ODD .... NOT EVEN -> MU ->NU ->... -> ODD -> ....
+	// 
+	//su3_mat P;
+	//su3_mat F;
+	//SU3_gen generators;
+	//double KE_init;
+	//su3_mat U_init;
+	//for (int mu = 0; mu < m_U->getNrExtDOF(); mu++) {
+	//	(*m_U).transfer_FieldValues();
+	//	for (int i = (*m_U).Responsible_Start(parity); i < (*m_U).Responsible_Stop(parity); i++) {
+	//	
+	//		U_init = (*m_U)(i, mu);
+	//		
+	//		P.setToZeros();
+	//		for (int j = 0; j < 8; j++) {
+	//			P = P + (*m_rand).Gaussian_Double(0.0, 1.0) * generators(j);
+	//		}
 
-			leapfrog((*m_U), P, F, (*m_GaugeAction), parity,i,mu);
+	//		KE_init = calculate_KineticEnergy(P);
 
-			double DeltaS = m_GaugeAction->calculate_LocalActionChange(U_init, (*m_U), i, mu);//new-old
-			double DeltaKE = calculate_KineticEnergy(P) - KE_init;
-			double DeltaH = DeltaS + DeltaKE;
+	//		leapfrog((*m_U), P, F, (*m_GaugeAction), parity,i,mu);
 
-			double Uni_double = (*m_rand).Uniform_Double();
-			double exp_minDeltaH = exp(-DeltaH);
-			//std::cout << "exp_minDeltaH = " << exp_minDeltaH << ", DeltaS = " << DeltaS << ", DeltaKE = " << DeltaKE << "\n";
-			if (Uni_double < exp_minDeltaH) {
-				m_NrAccepted++;
-				//std::cout << "Accepted!\n";
-			}
-			else {
-				(*m_U)(i, mu) = U_init;
-				//std::cout << "Not Accepted!\n";
-			}
+	//		double DeltaS = m_GaugeAction->calculate_LocalActionChange(U_init, (*m_U), i, mu);//new-old
+	//		double DeltaKE = calculate_KineticEnergy(P) - KE_init;
+	//		double DeltaH = DeltaS + DeltaKE;
 
-			m_NrstepsTaken++;
+	//		double Uni_double = (*m_rand).Uniform_Double();
+	//		double exp_minDeltaH = exp(-DeltaH);
+	//		//std::cout << "exp_minDeltaH = " << exp_minDeltaH << ", DeltaS = " << DeltaS << ", DeltaKE = " << DeltaKE << "\n";
+	//		if (Uni_double < exp_minDeltaH) {
+	//			m_NrAccepted++;
+	//			//std::cout << "Accepted!\n";
+	//		}
+	//		else {
+	//			(*m_U)(i, mu) = U_init;
+	//			//std::cout << "Not Accepted!\n";
+	//		}
 
-		}
-	}
+	//		m_NrstepsTaken++;
+
+	//	}
+	//}
 	
 }
 	

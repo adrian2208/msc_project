@@ -12,7 +12,8 @@ public:
 	void update(int n_iter);
 	void Cabibbo_Marinari(SU3_field& U);
 	void OverRelaxation(SU3_field& U);
-	void heatbath_SU2(C_double* TSR, int internIdx);
+	void SU2_Heatbath(C_double* TSR, su3_mat& W, int internIdx, int SubGroupNr);
+
 
 	std::string getupdateMethod() const;
 
@@ -21,5 +22,6 @@ private:
 	int m_OR_per_HB;
 	double m_beta;
 	SU3_field* m_U;
-	RNG_field* m_rand;
+	//RNG_field* m_rand;
+	Random* m_rand;
 };

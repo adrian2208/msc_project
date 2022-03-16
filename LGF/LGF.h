@@ -32,6 +32,8 @@ void testGradientFlow(int argc, char** argv);
 void testSU3_Heatbath(int argc, char** argv);
 void GenerateGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int NrUpdates);
 void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps);
+void ResumeFlowedConfiguration(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart,int ConfigurationStop, int extra_updates,double flowTime);
+void MeasureFlowedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, double flowTime);
 double getLatticeConstant(double beta);
 
 #define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());

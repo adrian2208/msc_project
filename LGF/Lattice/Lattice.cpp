@@ -1,14 +1,16 @@
 #include "Lattice.h"
 #include <assert.h>
-Lattice::Lattice(int Ndims, int shape[]) {
+Lattice::Lattice(int Ndims, int shape[],bool cloversRequired) {
 	
 	//Storing local variables
+	m_cloversRequired = cloversRequired;
 	type = "torus";
 	m_Ndims = Ndims;
 	m_shape = new int[Ndims];
 	m_coordinate = new int[Ndims];
 	m_coorFwd = new int[Ndims];
 	m_coorBack = new int[Ndims];
+
 	m_coorFwdFwd = new int[Ndims];
 	m_coorBackBack = new int[Ndims];
 	m_coorFwdBack = new int[Ndims];
@@ -18,6 +20,12 @@ Lattice::Lattice(int Ndims, int shape[]) {
 	m_coorBackBackBack = new int[Ndims];
 	m_coorFwdFwdBack = new int[Ndims];
 	m_coorBackBackFwd = new int[Ndims];
+
+	m_coorFwdFwdFwdFwd = new int[Ndims];
+	m_coorBackBackBackBack = new int[Ndims];
+	m_coorFwdFwdFwdBack = new int[Ndims];
+	m_coorBackBackBackFwd = new int[Ndims];
+	m_coorBackBackBackFwd = new int[Ndims];
 	//Calculates the total volume of the lattice & writing to member variables
 	m_totalVolume = 1;
 	m_thisProc_Volume = 0;
@@ -384,7 +392,8 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 		if (mpiWrapper::id() == id_fwd || mpiWrapper::id() == id_back) {
 			return true;
 		}
-		for (int j = 0; j < m_Ndims; j++) {
+		if (m_cloversRequired) {
+			for (int j = 0; j < m_Ndims; j++) {
 				NearestNeighbour(coorFwd, j, m_coorFwdFwd, m_coorFwdBack);
 				NearestNeighbour(coorBack, j, m_coorBackFwd, m_coorBackBack);
 				if (Coordinate_ProcID(m_coorFwdFwd) == mpiWrapper::id() ||
@@ -402,9 +411,25 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 						Coordinate_ProcID(m_coorBackBackBack) == mpiWrapper::id()) {
 						return true;
 					}
+					if (STFF_Flag == 1) {
+						for (int l = 0; l < m_Ndims; l++) {
+							//if (l != k) {
+							NearestNeighbour(m_coorFwdFwdFwd, l, m_coorFwdFwdFwdFwd, m_coorFwdFwdFwdBack);
+							NearestNeighbour(m_coorBackBackBack, l, m_coorBackBackBackFwd, m_coorBackBackBackBack);
+							if (Coordinate_ProcID(m_coorFwdFwdFwdFwd) == mpiWrapper::id() ||
+								Coordinate_ProcID(m_coorBackBackBackBack) == mpiWrapper::id() ||
+								Coordinate_ProcID(m_coorFwdFwdFwdBack) == mpiWrapper::id() ||
+								Coordinate_ProcID(m_coorBackBackBackFwd) == mpiWrapper::id()) {
+								return true;
+							}
+
+							//}
+						}
+					}
 
 				}
 
+			}
 		}
 	}
 	return false;

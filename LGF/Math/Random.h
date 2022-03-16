@@ -26,6 +26,10 @@ public:
 		std::uniform_real_distribution<double> out(0, 1);
 		return out(m_rng);
 	}
+	double Uniform_Double(double start, double stop) {
+		std::uniform_real_distribution<double> out(start, stop);
+		return out(m_rng);
+	}
 	double Gaussian_Double(double mean, double std) {
 		std::normal_distribution<double> out(mean,std);
 		return out(m_rng);

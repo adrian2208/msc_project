@@ -1,13 +1,19 @@
 \documentclass[a4paper,10pt]{article}
 
 \usepackage{graphicx}
-
+\usepackage{subcaption}
 % Variable enumeration
 \usepackage{enumerate}
 \usepackage{amsmath}
+\usepackage{mathrsfs}
 \usepackage[perpage]{footmisc}
 \usepackage{float}
-\usepackage[compat=1.0.0]{tikz-feynman}
+\usepackage[compat=1.1.0]{tikz-feynman}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations}
+\usetikzlibrary{positioning}
 \usepackage{bbold}
 \usepackage{braket}
 \newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
@@ -57,20 +63,10 @@ Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the str
 
 
 
-\section{Gradient Flow}
-
-\section{Generating Gauge Configurations}
-\subsection{Ensembles}
-\subsubsection{Lattice Constant}
-
-\subsection{Local Hybrid Monte Carlo}
 
 
-\section{Observables}
 
-\section{Error Analysis}
-
-\section{•}
+\section{Theory}
 
 \newpage
 \newpage
@@ -82,9 +78,12 @@ Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the str
 
 
 
-
-
-\section{Lattice field theory}
+\subsection{Wilson Flow}
+\subsubsection{Dynamical separation of topological sectors}
+file:///C:/Users/adria/Documents/Studier/Master/Special%20Syllabus/L%C3%BCscher1982_Topology_Of_Lattice_Gauge_Fields.pdf
+\subsection{The topological charge}
+\subsection{The strong CP problem}
+\subsection{Lattice field theory}
 To lay the theoretical ground work for lattice field theories, we start with the continuum field theory, then discretize it while justifying the transformation and finally, cover the novel issues that arise in lattice field theories.\\\\Starting with the central equations that are the origin of the main mathematical tool used to evaluate observables:\\
 The Euclidean correlation function is given by
 \begin{equation}\label{eq:first}
@@ -103,7 +102,7 @@ where $O_n$ is the eigenvalue of $\ket{n}$, although this result is independent 
 \lim _{T \rightarrow \infty}\left\langle O_{2}(t) O_{1}(0)\right\rangle_{T}=\sum_{n}\left\langle 0\left|\widehat{O}_{2}\right| n\right\rangle\left\langle n\left|\widehat{O}_{1}\right| 0\right\rangle \mathrm{e}^{-t E_{n}}
 \end{equation}
 where $E_{n}$ are the energy eigenvalues of the Hamiltonian such that $E_0 < E_1 <\ldots$. Here $\ket{0}$ denotes the vacuum, meaning only operators that act on the vacuum to produce states with a non- vanishing inner- product with the energy eigenstates of the Hamiltonian, will have non- vanishing correlation functions.\\ We see that contributions from states other than the ground state are supressed exponentially in $t$. This will become crucial later when calculating the mass spectrum of QCD.
-\subsection{Path integral formulation}
+\subsubsection{Path integral formulation}
 In the continuum, the partition function can be calculated using the Trotter formula with time- step $\epsilon = \frac{T}{N_T}$, and the Hamiltonian now acting on field eigenstates.  
 \begin{equation}\label{eq:partitionFunction_Trotter}
 Z_{T}=\int \mathcal{D} \Phi_{0}\left\langle\Phi\left|e^{-T \widehat{H}}\right| \Phi\right\rangle=\lim _{N_{T} \rightarrow \infty} \int \mathcal{D} \Phi\left\langle\Phi\left|\widehat{W}_{\varepsilon}^{N_{T}}\right| \Phi\right\rangle
@@ -162,7 +161,7 @@ The fact that we can do this i.e. change the discretization, is due to the Oster
 This will allow us to later extract valuable information about eigenvalues and matrix elements from \eqref{operator_correlationfunction} using computational methods applied to \eqref{eq:pathintegral_correlationfunction}
 and \eqref{eq:pathintegral_Z}.
 
-\subsection{Wick rotation}
+\subsubsection{Wick rotation}
 It's important to note that lattice gauge theories use the Euclidean metric as opposed to the Minkowski metric. Faithful Lorentz transformation in Minkowski spacetime on a lattice do not preserve locality or the lattice notion of distance.\\In order to work on the lattice the time dimension is rotated in the complex plane such that the Minkowski and Euclidean metric are related by 
 \begin{equation}
 d s^{2}=-\left(d t^{2}\right)+d x^{2}+d y^{2}+d z^{2} = d \tau^{2}+d x^{2}+d y^{2}+d z^{2} 
@@ -177,7 +176,7 @@ or
 \end{equation}
 with $\gamma_{\mu}^{M}$ being the Minkowski gamma matrices.
 
-\subsection{Continuum gauge theory}
+\subsubsection{Continuum gauge theory}
 QCD is the theory of quarks, gluons and their interactions. Quarks are Dirac 4- spinors 
 \begin{equation}
 \psi^{(f)}(x)_{\alpha, c}, \quad \bar{\psi}^{(f)}(x)_{\alpha, c}
@@ -251,7 +250,7 @@ where due to the property of the generators in the fundamental representation, $
 S_{G}[A]=\frac{1}{4} \sum_{i=1}^{n^2-1} \int \mathrm{d}^{4} x F_{\mu \nu}^{(i)}(x) F_{\mu \nu}^{(i)}(x)
 \end{equation}
 where the extra factor of $\frac{1}{2}$ is simply a manner of convention.
-\subsection{Lattice gauge theory}
+\subsubsection{Lattice gauge theory}
 In the continuum, we introduced the connection $A_\mu(x)$ as the algebra valued objects living in the tangent space of the space- time manifold $M$. From these, we can construct the parallel transporter
 \begin{equation}\label{eq:gauge_transporter}
 G(x, y)=P \exp \left(\mathrm{i} \int_{\mathcal{C}_{x y}} A \cdot \mathrm{d} s\right)
@@ -366,7 +365,7 @@ and
 \item The numerical results have to be renormalized to relate them to physical experiments.
 \end{itemize}
 
-\subsection{Group integration}
+\subsubsection{Group integration}
 The integration measure $\int \mathcal{D}[U]$ is the product measure of every link variable on the lattice
 \begin{equation}
 \prod\limits_{n\in \Lambda}\prod\limits_{\mu}\int dU_\mu(n)
@@ -410,8 +409,8 @@ The first of which, together with the gauge invariance of the action can be used
 \begin{theorem}
 A spontaneous breaking of local symmetry for a symmetrical gauge theory without gauge fixing is impossible
 \end{theorem}
-\section{Lattice fermions}
-\subsection{Grassmann numbers and Wick's theorem}
+\subsection{Lattice fermions}
+\subsubsection{Grassmann numbers and Wick's theorem}
 In this section, we deal entirely with the fermionic part of the expectation value i.e. \eqref{eq:fermionic_expectationValue}.\\The Fermi statistics we require of our quark fields are captured by their anti- commutativity. This notion leads inexorably to considering the Grassmann algebra, also known as the exterior algebra over the complex numbers. The generators of this algebra, so- called Grassmann numbers, anti- commute under the exterior product $\eta_i\wedge\eta_j$ which we simply denote $\eta_i\eta_j$. This property naturally leads to other properties
 \begin{equation}\label{eq:grassmannNumbers}
 \eta_i\eta_j = -\eta_j\eta_i \longrightarrow \eta_i^2 = 0 \longrightarrow \mathit{Finite  }\hspace{1mm}\mathit{multivectors} \rightarrow \exp\left( \eta_i \right) = 1+\eta_i
@@ -446,7 +445,7 @@ doing the same for the second equality of the generating functional gives
 \end{equation}
 where the sum is over every permutation $n$ numbers.
 This equality is known as Wick's theorem, and it's the final puzzle piece to understanding the fermionic expectation value in \eqref{eq:fermionic_expectationValue}.
-\subsection{The fermionic expectation value}
+\subsubsection{The fermionic expectation value}
 We take a short interlude to revisit the equations for the fermionic expectation value
 \begin{equation}\label{eq:fermion_exp_diracOperator}
 \braket{O}_{F}=\frac{1}{Z_{F}[U]} \int \mathcal{D}[\psi, \bar{\psi}] \exp\left( -a^4\mkern-18mu \,\,\sum\limits_{n,m\in\Lambda}\mkern-18mu\sum\limits^{a,b,\alpha,\beta} \bar{\psi}(n)_{\alpha,a}D(n\mkern-4mu\mid \mkern-4mu m)_{\beta,b}^{\alpha,a} \bar{\psi}(m)^{\beta,b}\right) O[\psi, \bar{\psi}, U]
@@ -466,7 +465,7 @@ where we have suppressed color and Dirac indices and made the dependence of the 
 \end{aligned}
 \end{equation}
 where a factor of $-a^{-4}$ has been absorbed into the definition of $D^{-1}$. Here, every index except the flavour index has been made explicit to avoid any ambiguity. The object $\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{j},b_{j}}^{\alpha_i,a_i}$ is what's known as a propagator and can be interpreted as propagating a fermion at space- time point $n$ with Dirac and color indices $\alpha_i$ and $a_i$ to the space-time -Dirac - color point $m,\,\beta_j,\,b_j$.
-\subsection{Chiral fermions and the problem of doublers}\label{Chiral_symmetry_breaking}
+\subsubsection{Chiral fermions and the problem of doublers}\label{Chiral_symmetry_breaking}
 To understand what is wrong about the naive fermion action introduced in \eqref{eq:naiveFermionAction}, we first have to understand some phenomenology in continuum QCD.\\\\In the continuum, the massless action for $N_f$ flavours has the global continous symmetry group
 
 \begin{equation}\label{eq:SU_SU_U_U}
@@ -721,7 +720,7 @@ Where the trace is over the color- and Dirac- indices, and $n_-$ and $n_+$ denot
 \begin{equation}\label{eq:topological_charge}
 Q_{\mathrm{top}}^{\mathrm{cont}}=\int \mathrm{d}^{4} x q(x)^{\mathrm{cont}}, \quad q(x)^{\mathrm{cont}}=\frac{1}{32 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} \operatorname{tr}_{C}\left[F_{\mu \nu}(x) F_{\rho \sigma}(x)\right]
 \end{equation}
-signals the existance of instantons, which are local minima of the Gauge action and thus  solutions to the classical equations of motion. These are of fundamental importance in the phenomenology QFTs including the axial anomaly which we mentioned briefly earlier. So we want the lattice expression to approach the continuum expression in the $a\rightarrow 0$ limit in the RG-flow. In fact, this was shown to hold for the fixed point Dirac operator, even for a finite cut-off \cite{Hasenfratz_1998}.\par In actual calculations of course, we deal in expectation values. However this can't tell us whether the topological charge is zero or not since the path integral is invariant to gauge configurations with opposite topological charges. Instead, we can examine the topological susceptibility
+signals the existance of instantons, which are local minima of the Gauge action and thus  solutions to the classical equations of motion. These are of fundamental importance in the phenomenology of QFTs including the axial anomaly which we mentioned briefly earlier. So we want the lattice expression to approach the continuum expression in the $a\rightarrow 0$ limit in the RG-flow. In fact, this was shown to hold for the fixed point Dirac operator, even for a finite cut-off \cite{Hasenfratz_1998}.\par In actual calculations of course, we deal in expectation values. However this can't tell us whether the topological charge is zero or not since the path integral is invariant to gauge configurations with opposite topological charges. Instead, we can examine the topological susceptibility
 \begin{equation}\label{eq:topological_susc}
 \chi_{\mathrm{top}}=\frac{1}{V}\left\langle Q_{\mathrm{top}}^{2}\right\rangle=\frac{1}{a^{4}|\Lambda|} a^{8} \sum_{m, n}\langle q(m) q(n)\rangle=a^{4} \sum_{n}\langle q(0) q(n)\rangle.
 \end{equation}
@@ -816,7 +815,7 @@ where $\rho_{A}(\alpha)$ is the angular density of eigenvalues on the Ginsparg-W
 \lambda=\frac{1}{a}\left(1-\mathrm{e}^{\mathrm{i} \varphi}\right), \quad \varphi \in(-\pi, \pi].
 \end{equation}
 This angular density can in turn be related to gauge field configurations carrying topological charge through the index theorem, allowing us to relate them to symmetry breaking VeV. of the mass term.
-\section{Observables}
+\subsection{Other observables}
 In the previous section, we covered different observables such as the topological charge and topological susceptibility given by equations \eqref{eq:topological_charge} and \eqref{eq:topological_susc}. We also covered the observable in \eqref{eq:chiral_condensate_exp_val}, which is known as the chiral condensate, although we've referred to it as the VeV. of the mass term.\\The purpose of this section is to cover, in somewhat rapid succession, some other observables of relevance.\\\\For convenience, I restate the relevant expressions here. The expectation value of an observable $O$ is given by
 \begin{equation}\label{eq:exp_val_collection}
 \begin{aligned}
@@ -843,7 +842,7 @@ where $\bar{O}$ is the operator in real space and $\widetilde{O}$ is the momentu
 \widetilde{O}\left(\boldsymbol{p}, n_{t}\right)=\frac{1}{\sqrt{\left|\Lambda_{3}\right|}} \sum_{\boldsymbol{n} \in \Lambda_{3}} O\left(\boldsymbol{n}, n_{t}\right) \mathrm{e}^{-\mathrm{i} a \boldsymbol{n} \boldsymbol{p}}
 \end{equation}
 and $\widehat{O}$ and $\widehat{O}^{\dagger}$ are annihilation and creation operators acting in Hilbert space, corresponding to the physical states in the correlation function.
-\subsection{Hadron masses}\label{hadron_masses}
+\subsubsection{Hadron masses}\label{hadron_masses}
 The methodology for extracting hadron masses revolves entirely around equation \eqref{eq:corr_function_for_hadron_masses}. The correlation function on the LHS. can be evaluated on a computer, and exploiting the exponential decay wrt. $n_t$ on the second line, we can isolate all but the lowest lying energy state $E_p=E_0$ \footnote{This is, among other reasons, why the temporal extent of most lattices are much larger than their spatial extent.}. This energy is related to the hadron mass through the dispersion relation $E_0 = m_H$.\\ To do this, we need to construct interpolators\footnote{Operators in the context of euclidean correlation functions} with the correct symmetries and quantum numbers of the physical states they represent. For mesons, a general local interpolator is given by
 \begin{equation}
 \begin{aligned} 
@@ -881,7 +880,7 @@ m_{eff}(n_t+\frac{1}{2}) &= \operatorname{ln}\frac{\left\langle\widetilde{O}\lef
 \end{aligned}
 \end{equation}
 which as we see, should plateau at $aE_p = am$, the hadron mass.\\\\There is still, however the matter of the lattice constant which appears alongside the hadron mass. We do not know what the lattice constant is and we won't know until we tackle the issue of renormalization and scale setting in section \ref{Renormalization}. In the meanwhile, we can still compare numerical results with experiments by comparing ratios of hadron masses, for which the lattice constant cancels.
-\subsection{The Wilson loop}
+\subsubsection{The Wilson loop}
 Other than quark bilinears, another gauge invariant object that can serve as an observable is the trace of a path ordered product of link variables along a closed curve, which we discussed in the construction of the Wilson action. Computing the expectation values of Wilson loops is an interesting exercise on its own, however we can take certain steps to glean a physical interpretation of this value.\\\\For large quark masses, Wilson's Dirac operator can be expanded, upto an irrelevant constant, into 
 \begin{equation}
 \begin{aligned} 
@@ -902,7 +901,7 @@ P_{\mu_{1} \ldots \mu_{j}}(n)_{a b}=\left(U_{\mu_{1}}(n) U_{\mu_{2}}\left(n+\hat
 \end{equation}
 \cite{Gattringer:2010zz}. Because of the Kroncker- delta in \eqref{eq:hopping_term}, the leading contributing term will be $H^{||m-n||}(n\mkern-5mu \mid\mkern-5mu m)$ where we denote by $||m-n||$ the smallest separation between lattice sites $m$ and $n$ in units of $a$. $P_{\mu_{1} \ldots \mu_{j}}(n)_{a b}$ is then the shortest (not necessarily unique) path ordered product of link variables connecting the two sites.\\\\To restate this, the leading contribution to the quark propagator in the large quark mass limit is a straight Wilson line. The connection to Wilson loops becomes immediately apparent if we gauge the temporal link variables to the identity. This turns the Wilson loop into a product of two straight, strictly spatial and oppositely oriented Wilson lines with a temporal separation commensurate with the temporal range of the original Wilson loop. We can therefore interpret the Wilson loop as a static quark-antiquark pair.
 
-\subsection{Pion decay constant}
+\subsubsection{Pion decay constant}
 The Pion decay constant can be determined from examining correlation functions of operators between the Pion state and the vacuum. Before seeing this however, we need to look at Ward identities.\\ The expectation values of observables 
 \begin{equation}
 \langle 0|O| 0\rangle=\frac{1}{Z} \int \mathcal{D}[\psi, \bar{\psi}, U] O[\psi, \bar{\psi}, U] \mathrm{e}^{-S[\psi, \bar{\psi}, U]}
@@ -996,7 +995,7 @@ where $M_\pi$ is the physical pion mass\cite{WeinbergSteven1979PL}\cite{gasser19
 \end{equation}
 Corresponding currents can be constructed on the lattice for Dirac operators obeying the Ginsparg- Wilson equation. Constructions using the overlap operator can be found in \cite{hasenfratz1998lattice}\cite{kikukawa1999axial}. 
 
-\section{Renormalization}\label{Renormalization}
+\subsection{Renormalization}\label{Renormalization}
 The lattice enforces a cut- off scale which regularizes lattice field theories. In lattice QCD, the scale is set by the inverse lattice spacing $\Lambda = \frac{1}{a}$, and the gauge coupling $g(\Lambda) = g\left( \frac{1}{a} \right)$ vanishes for vanishing $a$ in what's called asymptotic freedom. In the Wilsonian renormalization group, the cut-off $\Lambda$ should be much larger than the energy scale associated with the physical processes of interest. The remaining step to renormalizing the theory, is to associate measurable quantities to those calculated in the theory. For dimensionless quantities such as the hadron masses discussed in section \ref{hadron_masses}, one need only associate a single computed hadron mass e.g. $am_\rho$ or $am_{nucleon}$ to their measured physical mass to set the lattice constant $a$. This same constant can then be used to calculate any other hadron mass. Of course, this is at the cost of losing one physical prediction, namely the mass of the hadron which you used to set the scale.\\\\Many of the quantities that are precisely calculable in lattice QCD involve the hadronic matrix elements from operators in the electroweak Hamiltonian. A useful procedure for obtaining such matrix elements is to replace a product of two operators with an effective vertex in an effective Lagrangian. This procedure is known as the operator product expansion (OPE). We saw one such example in figure \ref{fig:feynman_weak_decay} where the two operators were the associated leptonic and quark currents separated by a distance $l \propto \frac{1}{m_W}$. The product of operators can be expanded in a basis of local operators with the same quantum numbers of the original operator product:
 \begin{equation}
 \mathcal{O}_{1}(x) \mathcal{O}_{2}(0) \rightarrow \sum_{n} C_{12}^{n}(x) \mathcal{O}_{n}(0)
@@ -1398,7 +1397,658 @@ The fact that we use different lattice actions to simulate seemingly the same ph
 \subsubsection{The infinite volume limit}
 Any simulation will happen at a finite lattice volume, and this impacts the outcomes of observables, as modes that traverse the spatial torus give contributions that would be absent in the infinite volume limit.\\Most simulations are carried out with a temporal extent roughly twice that of the spatial extent to allow excited states to decay. Therefore, the leading contributions are from spatial finite size effects. The largest correlation length in the system arises from the lightest hadron correlator. Volume dependence varies between observables, but for processes involving single particle states, the effects are purported to be sub- leading order for $m_\pi N_sa \geq 4$, where $m_\pi$ is the mass of the pion, the lightest hadron.\\\\The extrapolation can be carried out by increasing the number of spatial lattice points while keeping all other parameters fixed. If possible, the extrapolation might be accompanied by a parametrization based on theory or otherwise a naive power law dependence of the form $\frac{1}{(aN_s)^n}$.
 
+\section{Implementation}
+\subsection{Generating Gauge Configurations}
+\subsubsection{Critical slowing down}
 
+\subsubsection{Local Hybrid Monte Carlo}
+\subsubsection{Cabbibo- Marinari Heatbath}
+Heatbath algorithms have proven invaluable tools for generating gauge configurations in pure gauge theory. It has been shown to be, in the case of SU(3), about three times more efficient than the metropolis algorithm \cite{CABIBBO1982387}. The heatbath algorithm combines the configuration proposal and acceptance steps of the Wilson gauge action- Metropolis algorithm by sampling gauge links directly from the distribution
+\begin{equation}\label{eq:Heatbath_distribution}
+\mathrm{d} P(U)=\mathrm{d} U \exp \left(\frac{\beta}{N} \operatorname{Re} \operatorname{tr}[U A]\right)
+\end{equation}
+with $\mathrm{d} U$ denoting the Haar measure of $SU(N)$ and $A$ denoting the sum of staples 
+\begin{equation}
+\begin{aligned}
+A=&\sum_{\nu \neq \mu}\left(U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu})\right.\\
+&\left.+U_{-\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}-\hat{\nu}) U_{\nu}(n-\hat{\nu})\right).
+\end{aligned}
+\end{equation}
+While no Heatbath algorithms exist that sample directly from $SU(3)$ group space, the so- called pseudo- heatbath algorithm of Cabbibo and Marinari \cite{CABIBBO1982387} works by performing three $SU(2)$ heatbath updates on the $SU(2)$ subgroups of the link variables. Denote by 
+\begin{equation}
+R=\left(\begin{array}{ccc}
+r_{11} & r_{12} & 0 \\
+r_{21} & r_{22} & 0 \\
+0 & 0 & 1
+\end{array}\right), S=\left(\begin{array}{ccc}
+s_{11} & 0 & s_{12} \\
+0 & 1 & 0 \\
+s_{21} & 0 & s_{22}
+\end{array}\right)\,\, and\,\, T=\left(\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & t_{11} & t_{12} \\
+0 & t_{21} & t_{22}
+\end{array}\right)
+\end{equation}
+the elements of the $SU(2)$ subgroups of $UA$ embedded in $3\times3$ matrices. Then the link variable $U$ can be successively updated by left multiplication with $R$, $S$ and $T$, where the elements $r_{nm}$, $s_{nm}$ and $t_{nm}$ have been updated using a $SU(2)$ heatbath.
+\paragraph{The SU(2) Heatbath} algorithm we detail here follows that of Kennedy and Pendleton \cite{KENNEDY1985393}.\\$SU(2)$ has the property that the sum of any of its elements is proportional to another element of $SU(2)$. Because of this, the sum of staples can be expressed as $A = aV$ for $a=\sqrt{\operatorname{det}[A]}$. In the $O(4)$ representation of $SU(2)$, parameterized by 
+\begin{equation}\label{eq:O(4)SU(2)rep}
+A=x_{0} \mathbb{1}+\mathrm{i} \boldsymbol{x} \cdot \boldsymbol{\sigma}
+\end{equation}
+we have $a = \sqrt{x_0^2 +\mathbf{x}^2}$. To sample gauge links from \eqref{eq:Heatbath_distribution}, we can use the invariance of the Haar measure under left- and right multiplication with group elements to express the distribution as
+\begin{equation}
+\mathrm{d} P(X)=\mathrm{d} X \exp \left(\frac{1}{3} a \beta \operatorname{Retr}[X]\right)
+\end{equation}
+for $X = UV$ (note that the distribution has the factor $\frac{1}{3}$ because we're ultimately updating $SU(3)$ group elements). In this same representation, the new Haar measure is
+\begin{equation}
+\mathrm{d} X=\frac{1}{\pi^{2}} \mathrm{~d}^{4} x \frac{\theta\left(1-x_{0}^{2}\right)}{2 \sqrt{1-x_{0}^{2}}}\left(\delta\left(|\boldsymbol{x}|-\sqrt{1-x_{0}^{2}}\right)+\delta\left(|\boldsymbol{x}|+\sqrt{1-x_{0}^{2}}\right)\right).
+\end{equation}
+where $\theta$ is the step function. The second Dirac delta term doesn't contribute
+and so the only non- zero contribution is from $|\boldsymbol{x}| = \sqrt{1-x_{0}^{2}}$. From \eqref{eq:O(4)SU(2)rep}, we see that the only real diagonal element is $x_0$, which contributes to the real trace as $\operatorname{Retr}[X] = 2x_0$, thus the distribution can be expressed as 
+\begin{equation}
+\mathrm{d} P(X)=\frac{1}{2 \pi^{2}} \mathrm{~d} \cos \vartheta \mathrm{d} \varphi \mathrm{d} x_{0} \sqrt{1-x_{0}^{2}} \mathrm{e}^{\frac{2}{3}a \beta x_{0}}.
+\end{equation}
+for $x_{0} \in[-1,1], \cos \vartheta \in[-1,1]$, and $\varphi \in[0,2 \pi)$.
+Sampling matrices from this distribution effectively amounts sampling $ x_{0}$, as well as the trivial uniform sampling of $\cos \vartheta$ and $\varphi$ from their respective intervals.\\In order to effectively sample $x_0$ from the distribution $\mathrm{e}^{\frac{2}{3}a \beta x_{0}}$, four uniformly distributed random numbers $R,R',R''' \in (0,1]$ and $R''\in [0,1]$ are generated. We then introduce a new variable $\alpha =\frac{a\beta}{3} $ (this is to match the notation used in \cite{KENNEDY1985393}) and calculate 
+\begin{equation}
+\bar{\delta} = -\frac{1}{\alpha}\left(\ln \left(R'\right)+\cos ^{2}\left(2 \pi R''\right) \ln \left(R'\right)\right).
+\end{equation}
+$\bar{\delta}$ is then either accepted if 
+$R'''^2 \leq 1-\frac{1}{2}\bar{\delta}$ or otherwise rejected, in which case four new random numbers are generated and the procedure is repeated. If $\bar{\delta}$ is accepted, we set $x_0 = 1-\bar{\delta}$.\\\\With $x_0$ determined, we can now calculate $|\mathbf{x}| = \sqrt{1-x_0^2}$, and using $\cos \vartheta$, $\varphi$ and $\sin \vartheta = \sqrt{1.0-\cos^2 \vartheta}$ we get the values $x_1 = |\mathbf{x}|\sin \vartheta \cos\varphi$, $x_2 = |\mathbf{x}|\sin \vartheta \sin\varphi$, $x_3 = |\mathbf{x}|\cos \vartheta$. To get back to the matrix representation, we use \eqref{eq:O(4)SU(2)rep} to get
+\begin{equation}
+U=\left[\begin{array}{ll}
+x_0+ix_3 & x_2+ix_1 \\
+-x_2+ix_1 & x_0-ix_3
+\end{array}\right]
+\end{equation}
+\subsubsection{Overrelaxation}
+Overrelaxation is a method which attempts to increase the distance in group space traversed between configurations. It does this by exploiting the symmetry of the action under certain operations, to propose new link variables which leave the action invariant and therefore are automatically accepted.
+Overrelaxation is not ergodic on it's own as it only traverses the configuration subspace of constant action. It is therefore necessary to include fully canonical update methods such as the Heatbath to achieve ergodicity.\\We proceed by examining the Overrelaxation method which works by updating the $SU(2)$ subgroups of $SU(3)$. Similar in vein to the scheme introduced for the Cabbibo- Marinari Heatbath.\\There exists overrelaxation algorithms for SU(N) gauge theories with $N>2$, and they have proven to be more efficient than SU(2) subgroup update- algorithms. Its implementation however, is more involved than the SU(2) subgroup algorithm, and for $N=3$, the improvement in the autocorrelation time of e.g. the Polyakov loop is very slight \cite{inbook}.\\\\For the Wilson action we see that the trace remains invariant if the proposed $U'$ has the property that $U' = V^\dagger U^\dagger V^\dagger$ where $V = \frac{A}{a}$ following the same convention as for the $SU(2)$ Heatbath. We get that
+
+\begin{equation}
+\operatorname{tr}\left[U^{\prime} A\right]=\operatorname{tr}\left[V^{\dagger} U^{\dagger} V^{\dagger} A\right]=a \operatorname{tr}\left[V^{\dagger} U^{\dagger}\right]=\operatorname{tr}\left[A^{\dagger} U^{\dagger}\right]=\operatorname{tr}[U A].
+\end{equation}
+
+In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Overrelaxation constitues a massive improvement when it comes to decorrelating measurements in Monte Carlo time \cite{PhysRevLett.58.2394} and its ease of implementation to pre-existing update algorithms makes it an obvious addition when generating gauge configurations.
+
+
+\subsection{Observables}
+\subsubsection{Improved Lattice Field-Strength tensor}
+For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:
+\begin{equation}
+W_{\mu \nu}^{(m \times n)}=\mathscr{P} \mathrm{e}^{\mathrm{ig} \oint A \mathrm{~d} x}
+\end{equation}
+with 
+\begin{equation}\label{eq:WilsonLoopExpansionLoopIntegral}
+\begin{aligned}
+\oint A \mathrm{~d} x=& \int_{-m a / 2}^{m a / 2} \mathrm{~d} x_{\mu} \int_{-n a / 2}^{n a / 2} \mathrm{~d} x_{v}\left(F_{\mu v}\left(x_{0}\right)+\left\{x_{\mu} \partial_{\mu}+x_{v} \partial_{v}\right\} F_{\mu v}\left(x_{0}\right)\right.\\
+&+\left\{x_{\mu} x_{v} \partial_{\mu} \partial_{v}\right\} F_{\mu v}\left(x_{0}\right)+\frac{1}{2}\left\{x_{\mu}^{2} \partial_{\mu}^{2}+x_{v}^{2} \partial_{v}^{2}+x_{\mu}^{2} x_{v} \partial_{\mu}^{2} \partial_{v}\right.\\
+&\left.+x_{\mu} x_{v}^{2} \partial_{\mu} \partial_{v}^{2}\right\} F_{\mu v}\left(x_{0}\right)+\frac{1}{6}\left\{x_{\mu}^{3} \partial_{\mu}^{3}+x_{v}^{3} \partial_{v}^{3}+x_{\mu}^{3} x_{v} \partial_{\mu}^{3} \partial_{v}\right.\\
+&\left.+x_{\mu} x_{v}^{3} \partial_{\mu} \partial_{v}^{3}\right\} F_{\mu v}\left(x_{0}\right)+\frac{1}{24}\left\{x_{\mu}^{4} \partial_{\mu}^{4}+x_{v}^{4} \partial_{v}^{4}\right\} F_{\mu v}\left(x_{0}\right) \\
+&\left.+\frac{1}{4}\left\{x_{\mu}^{2} x_{v}^{2} \partial_{\mu}^{2} \partial_{v}^{2}+x_{\mu}^{2} x_{v}^{2} \partial_{\mu}^{2} \partial_{v}^{2}\right\} F_{\mu v}\left(x_{0}\right)+\mathcal{O}\left(x^{5}\right)\right) 
+\end{aligned}
+\end{equation}
+\cite{BILSONTHOMPSON20031}. This exponential can be expanded in the usual way to get 
+\begin{equation}
+\mathscr{P} \mathrm{e}^{\mathrm{i} g \oint A \mathrm{~d} x}=\mathscr{P}\left\{1+\mathrm{i} g \oint A \mathrm{~d} x-\frac{g^{2}}{2}(\oint A \mathrm{~d} x)^{2}+\cdots\right\}.
+\end{equation}
+To arrive at the term proportional to the field strength tensor in $\mathrm{i} g \oint A \mathrm{~d} x$ we observe that by subtracting the hermitian conjugate, every other term is removed and by subtracting a third of the trace, the traceless property is ensured. We get
+\begin{equation}\label{eq:cloverToFST}
+-\frac{i}{2}\left( W_{\mu \nu}^{(m \times n)}- W_{\mu \nu}^{(m \times n)\dagger} - \frac{1}{3}\operatorname{Tr}\left( W_{\mu \nu}^{(m \times n)}- W_{\mu \nu}^{(m \times n)\dagger} \right)  \right) = g \mathscr{P} \oint A \mathrm{~d} x+\mathcal{O}\left(g^{3}\right)
+\end{equation}
+\\\\The authors' improved field strength tensor takes the form 
+\begin{equation}\label{eq:Improved_lattice_field_strength_tensor}
+F_{\mu v}^{\operatorname{Imp}}=k_{1} C_{\mu v}^{(1,1)}+k_{2} C_{\mu v}^{(2,2)}+k_{3} C_{\mu v}^{(1,2)}+k_{4} C_{\mu v}^{(1,3)}+k_{5} C_{\mu v}^{(3,3)}
+\end{equation}
+wherein 
+\begin{equation}
+\begin{aligned}
+&C^{(1,1)}=\mathscr{A}+\frac{1}{6} \mathscr{B}+\frac{1}{120} \mathscr{C}+\frac{1}{36} \mathscr{D} \\
+&C^{(2,2)}=4 \mathscr{A}+\frac{8}{3} \mathscr{B}+\frac{8}{15} \mathscr{C}+\frac{16}{9} \mathscr{D} \\
+&C^{(1,2)}=2 \mathscr{A}+\frac{5}{6} \mathscr{B}+\frac{17}{120} \mathscr{C}+\frac{2}{9} \mathscr{D} \\
+&C^{(1,3)}=3 \mathscr{A}+\frac{5}{2} \mathscr{B}+\frac{41}{40} \mathscr{C}+\frac{3}{4} \mathscr{D} \\
+&C^{(3,3)}=9 \mathscr{A}+\frac{27}{2} \mathscr{B}+\frac{243}{40} \mathscr{C}+\frac{81}{4} \mathscr{D}
+\end{aligned}
+\end{equation}
+for 
+\begin{equation}
+\begin{aligned}
+&\mathscr{A}=g a^{2} F_{\mu \nu} \\
+&\mathscr{B}=g a^{4}\left(\partial_{\mu}^{2}+\partial_{v}^{2}\right) F_{\mu \nu} \\
+&\mathscr{C}=g a^{6}\left(\partial_{\mu}^{4}+\partial_{v}^{4}\right) F_{\mu v} \\
+&\mathscr{D}=g a^{6}\left(\partial_{\mu}^{2} \partial_{v}^{2}\right) F_{\mu v}.
+\end{aligned}
+\end{equation}
+give terms we recognize from equation \eqref{eq:WilsonLoopExpansionLoopIntegral}.
+The coefficients $k_i$ must then be tuned to eliminate all contributions from terms $\mathscr{B},\,\mathscr{C}\,and\,\mathscr{D}$. This amounts to solving the linear system of equations 
+\begin{equation}
+\left[\begin{array}{ccccc}
+1 & 4 & 2 & 3 & 9 \\
+\frac{1}{6} & \frac{8}{3} & \frac{5}{6} & \frac{5}{2} & \frac{27}{2} \\
+\frac{1}{120} & \frac{8}{15} & \frac{17}{120} & \frac{41}{40} & \frac{243}{40} \\
+\frac{1}{36} & \frac{16}{9} & \frac{2}{9} & \frac{3}{4} & \frac{81}{4}
+\end{array}\right]\left[\begin{array}{l}
+k_{1} \\
+k_{2} \\
+k_{3} \\
+k_{4} \\
+k_{5}
+\end{array}\right]=\left[\begin{array}{c}
+1 \\
+0 \\
+0 \\
+0
+\end{array}\right] \rightarrow \left[\begin{array}{l}
+k_{1} \\
+k_{2} \\
+k_{3} \\
+k_{4} \\
+k_{5}
+\end{array}\right] = \left[\begin{array}{l}
+\frac{19}{9}-55 k_{5} \\
+\frac{1}{36}-16 k_{5} \\
+64 k_{5}-\frac{32}{45} \\
+\frac{1}{15}-6 k_{5} \\
+k_{5}
+\end{array}\right].
+\end{equation}
+Here $k_{5}$ is a free parameter, and it allows us to eliminate one of the terms in \eqref{eq:Improved_lattice_field_strength_tensor_FINAL}. A good choice is $k_{5} = 0$, which allows us to ignore the $C_{\mu v}^{(3,3)}$ term. The improved lattice field strength tensor now looks like  
+
+\begin{equation}\label{eq:Improved_lattice_field_strength_tensor_FINAL}
+F_{\mu v}^{\operatorname{Imp}}=\frac{19}{9} C_{\mu v}^{(1,1)}+\frac{1}{36} C_{\mu v}^{(2,2)}+\frac{32}{45} C_{\mu v}^{(1,2)}+\frac{1}{15} C_{\mu v}^{(1,3)}.
+\end{equation}
+The terms $C^{(m,n)}$ are so called clover terms which can be calculated on the lattice by evaluating the set of $m\times n$ Wilson loops which immediately surround the lattice site. Those terms which are found in \eqref{eq:Improved_lattice_field_strength_tensor_FINAL} are illustrated below, in figure \ref{figure:Clovers}
+
+
+
+
+
+
+
+
+
+
+
+
+\tikzset{
+    gauge link/.style={
+        %thick,
+    },
+    link arrow/.style={
+    	color = orange,
+        decoration={
+            markings,
+            mark=at position 0.1 with {\arrow{Straight Barb}},
+        },
+        postaction={decorate},
+    },
+    link arrow midway/.style={
+        decoration={
+            markings,
+            mark=at position 0.5 with {\arrow{-{Latex}}},
+        },
+        postaction={decorate},
+    },
+    gauge link arrow/.style={
+        gauge link,
+        link arrow midway,
+    },
+    lattice point/.style={
+        draw,
+        fill,
+        circle,
+        minimum size=1.7mm,
+        inner sep=0,
+    },
+}
+\begin{figure}[H]\label{figure:Clovers}
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+\centering
+\begin{tikzpicture}
+
+    \foreach \x in {0,1,2}
+    {
+        \foreach \y in {0,1,2}
+        {
+            \coordinate (n\x\y) at ($\x*(20mm, 0)+\y*(0, 20mm)$);
+        }
+    }
+
+    \draw[style=help lines,dashed] (-0.2, 0) -- (4.2, 0);
+    \draw[style=help lines,dashed] (-0.2, 2) -- (4.2, 2);
+    \draw[style=help lines,dashed] (-0.2, 4) -- (4.2, 4);
+
+    \draw[style=help lines,dashed] (0, -0.2) -- (0, 4.2);
+    \draw[style=help lines,dashed] (2, -0.2) -- (2, 4.2);
+    \draw[style=help lines,dashed] (4, -0.2) -- (4, 4.2);
+
+    \newcommand\cloverlink{
+        \draw[link arrow, thick] (3, 2.17) .. controls (3.83, 2.17) and (3.83, 2.17) .. (3.83, 3);
+    }
+
+    \newcommand\linkmargin{1.7mm}
+    \newcommand\cloverplaquette{
+        \cloverlink
+
+        \begin{scope}[transform canvas={rotate around={90:(3, 3)}}]
+            \cloverlink
+        \end{scope}
+        \begin{scope}[transform canvas={rotate around={180:(3, 3)}}]
+            \cloverlink
+        \end{scope}
+        \begin{scope}[transform canvas={rotate around={270:(3, 3)}}]
+            \cloverlink
+        \end{scope}
+    }
+
+    \cloverplaquette
+    \begin{scope}[transform canvas={rotate around={90:(n11)}}]
+        \cloverplaquette
+    \end{scope}
+    \begin{scope}[transform canvas={rotate around={180:(n11)}}]
+        \cloverplaquette
+    \end{scope}
+    \begin{scope}[transform canvas={rotate around={270:(n11)}}]
+        \cloverplaquette
+    \end{scope}
+
+    \foreach \x in {0,1,2}
+    {
+        \foreach \y in {0,1,2}
+        {
+            \node[lattice point] at (n\x\y) {};
+        }
+    }
+
+
+
+\end{tikzpicture}
+\end{subfigure}
+%
+\begin{subfigure}[b]{0.4\textwidth}
+\centering
+\scalebox{0.5}{
+\begin{tikzpicture}
+
+    \foreach \x in {-1,0,1,2,3}
+    {
+        \foreach \y in {-1,0,1,2,3}
+        {
+            \coordinate (n\x\y) at ($\x*(20mm, 0)+\y*(0, 20mm)$);
+        }
+    }
+	\newcommand\XMin{-2.2}
+	\newcommand\XMax{6.2}
+	\draw[style=help lines,dashed] (\XMin, -2) -- (\XMax, -2);
+    \draw[style=help lines,dashed] (\XMin, 0) -- (\XMax, 0);
+    \draw[style=help lines,dashed] (\XMin, 2) -- (\XMax, 2);
+    \draw[style=help lines,dashed] (\XMin, 4) -- (\XMax, 4);
+    \draw[style=help lines,dashed] (\XMin, 6) -- (\XMax, 6);
+	
+	\draw[style=help lines,dashed] (-2, \XMin) -- (-2, \XMax);
+    \draw[style=help lines,dashed] (0, \XMin) -- (0, \XMax);
+    \draw[style=help lines,dashed] (2, \XMin) -- (2, \XMax);
+    \draw[style=help lines,dashed] (4, \XMin) -- (4, \XMax);
+    \draw[style=help lines,dashed] (6, \XMin) -- (6, \XMax);
+
+    \newcommand\cloverlink{
+        \draw[link arrow, thick] (3, 2.17) .. controls (3.83, 2.17) and (3.83, 2.17) .. (3.83, 3);
+        \draw[link arrow, thick] (3.83, 3) -- (3.83, 5);
+        \draw[link arrow, thick] (3.83, 5) .. controls (3.83, 5.83) and (3.83, 5.83) .. (3, 5.83);
+    }
+
+    \newcommand\linkmargin{1.7mm}
+    \newcommand\cloverplaquette{
+        \cloverlink
+
+%        \begin{scope}[transform canvas={rotate around={90:(3, 3)}}]
+%            \cloverlink
+%        \end{scope}
+        \begin{scope}[transform canvas={rotate around={180:(3, 4)}}]
+            \cloverlink
+        \end{scope}
+%        \begin{scope}[transform canvas={rotate around={270:(3, 3)}}]
+%            \cloverlink
+%       \end{scope}
+
+    }
+    
+    \newcommand\clover{
+    \cloverplaquette
+    \begin{scope}[transform canvas={xshift=-57pt}]
+        \cloverplaquette
+    \end{scope}
+    \begin{scope}[transform canvas={xshift=-57pt,yshift = -114pt}]
+        \cloverplaquette
+    \end{scope}
+        \begin{scope}[transform canvas={yshift = -114pt}]
+        \cloverplaquette
+    \end{scope}
+
+    }
+    \clover
+    \begin{scope}[transform canvas={rotate around={90:(2, 2)}}]
+    	\clover
+    \end{scope}
+
+    \foreach \x in {-1,0,1,2,3}
+    {
+        \foreach \y in {-1,0,1,2,3}
+        {
+            \node[lattice point] at (n\x\y) {};
+        }
+    }
+
+\end{tikzpicture}
+}
+\end{subfigure}
+
+\bigskip
+\begin{subfigure}[b]{0.4\textwidth}
+\centering
+\scalebox{0.5}{
+\begin{tikzpicture}
+
+    \foreach \x in {-1,0,1,2,3}
+    {
+        \foreach \y in {-1,0,1,2,3}
+        {
+            \coordinate (n\x\y) at ($\x*(20mm, 0)+\y*(0, 20mm)$);
+        }
+    }
+	\newcommand\XMin{-2.2}
+	\newcommand\XMax{6.2}
+	\draw[style=help lines,dashed] (\XMin, -2) -- (\XMax, -2);
+    \draw[style=help lines,dashed] (\XMin, 0) -- (\XMax, 0);
+    \draw[style=help lines,dashed] (\XMin, 2) -- (\XMax, 2);
+    \draw[style=help lines,dashed] (\XMin, 4) -- (\XMax, 4);
+    \draw[style=help lines,dashed] (\XMin, 6) -- (\XMax, 6);
+	
+	\draw[style=help lines,dashed] (-2, \XMin) -- (-2, \XMax);
+    \draw[style=help lines,dashed] (0, \XMin) -- (0, \XMax);
+    \draw[style=help lines,dashed] (2, \XMin) -- (2, \XMax);
+    \draw[style=help lines,dashed] (4, \XMin) -- (4, \XMax);
+    \draw[style=help lines,dashed] (6, \XMin) -- (6, \XMax);
+
+    \newcommand\cloverlink{
+        \draw[link arrow, thick] (5, 2.17) .. controls (5.83, 2.17) and (5.83, 2.17) .. (5.83, 3);
+        \draw[link arrow, thick] (5.83, 3) -- (5.83, 5);
+        \draw[link arrow, thick] (5.83, 5) .. controls (5.83, 5.83) and (5.83, 5.83) .. (5, 5.83);
+    }
+
+    \newcommand\linkmargin{1.7mm}
+    \newcommand\cloverplaquette{
+        \cloverlink
+
+        \begin{scope}[transform canvas={rotate around={90:(4, 4)}}]
+            \cloverlink
+        \end{scope}
+        \begin{scope}[transform canvas={rotate around={180:(4, 4)}}]
+            \cloverlink
+        \end{scope}
+        \begin{scope}[transform canvas={rotate around={270:(4, 4)}}]
+            \cloverlink
+       \end{scope}
+
+    }
+
+    \cloverplaquette
+    \begin{scope}[transform canvas={rotate around={90:(n11)}}]
+        \cloverplaquette
+    \end{scope}
+    \begin{scope}[transform canvas={rotate around={180:(n11)}}]
+        \cloverplaquette
+    \end{scope}
+    \begin{scope}[transform canvas={rotate around={270:(n11)}}]
+        \cloverplaquette
+    \end{scope}
+
+    \foreach \x in {-1,0,1,2,3}
+    {
+        \foreach \y in {-1,0,1,2,3}
+        {
+            \node[lattice point] at (n\x\y) {};
+        }
+    }
+
+\end{tikzpicture}
+}
+\end{subfigure}
+%
+\begin{subfigure}[b]{0.4\textwidth}
+
+\centering
+\scalebox{0.333}{
+\begin{tikzpicture}
+
+    \foreach \x in {-2,-1,0,1,2,3,4}
+    {
+        \foreach \y in {-2,-1,0,1,2,3,4}
+        {
+            \coordinate (n\x\y) at ($\x*(20mm, 0)+\y*(0, 20mm)$);
+        }
+    }
+	\newcommand\XMin{-4.2}
+	\newcommand\XMax{8.2}
+	\draw[style=help lines,dashed] (\XMin, -4) -- (\XMax, -4);
+	\draw[style=help lines,dashed] (\XMin, -2) -- (\XMax, -2);
+    \draw[style=help lines,dashed] (\XMin, 0) -- (\XMax, 0);
+    \draw[style=help lines,dashed] (\XMin, 2) -- (\XMax, 2);
+    \draw[style=help lines,dashed] (\XMin, 4) -- (\XMax, 4);
+    \draw[style=help lines,dashed] (\XMin, 6) -- (\XMax, 6);
+	\draw[style=help lines,dashed] (\XMin, 8) -- (\XMax, 8);
+	
+	\draw[style=help lines,dashed] (-4, \XMin) -- (-4, \XMax);
+	\draw[style=help lines,dashed] (-2, \XMin) -- (-2, \XMax);
+    \draw[style=help lines,dashed] (0, \XMin) -- (0, \XMax);
+    \draw[style=help lines,dashed] (2, \XMin) -- (2, \XMax);
+    \draw[style=help lines,dashed] (4, \XMin) -- (4, \XMax);
+    \draw[style=help lines,dashed] (6, \XMin) -- (6, \XMax);
+    \draw[style=help lines,dashed] (8, \XMin) -- (8, \XMax);
+
+    \newcommand\cloverlink{
+        \draw[link arrow, thick] (3, 2.17) .. controls (3.83, 2.17) and (3.83, 2.17) .. (3.83, 3);
+        \draw[link arrow, thick] (3.83, 3) -- (3.83, 7);
+        \draw[link arrow, thick] (3.83, 7) .. controls (3.83, 7.83) and (3.83, 7.83) .. (3, 7.83);
+    }
+
+    \newcommand\linkmargin{1.7mm}
+    \newcommand\cloverplaquette{
+        \cloverlink
+        \begin{scope}[transform canvas={rotate around={180:(3, 5)}}]
+            \cloverlink
+        \end{scope}
+    }
+    
+    \newcommand\clover{
+    \cloverplaquette
+    \begin{scope}[transform canvas={xshift=-57pt}]
+        \cloverplaquette
+    \end{scope}
+    \begin{scope}[transform canvas={xshift=-57pt,yshift = -171pt}]
+        \cloverplaquette
+    \end{scope}
+        \begin{scope}[transform canvas={yshift = -171pt}]
+        \cloverplaquette
+    \end{scope}
+
+    }
+    \clover
+    \begin{scope}[transform canvas={rotate around={90:(2, 2)}}]
+    	\clover
+    \end{scope}
+
+    \foreach \x in {-2,-1,0,1,2,3,4}
+    {
+        \foreach \y in {-2,-1,0,1,2,3,4}
+        {
+            \node[lattice point] at (n\x\y) {};
+        }
+    }
+
+\end{tikzpicture}
+}
+\end{subfigure}
+\caption{$C^{(1,1)}$ and $C^{(2,2)}$ contain a factor of $\frac{1}{4}$ since the two terms are symmetric under $n\leftrightarrow m$. $C^{(1,2)}$ and $C^{(1,3)}$ each need to be evaluated for two different orientations and their results added and multiplied by a factor of $\frac{1}{8}$}\label{figure:Clovers}
+\end{figure}
+equation \eqref{eq:cloverToFST} can then be applied to each clover term to get the improved field strength tensor from equation \eqref{eq:Improved_lattice_field_strength_tensor_FINAL}.
+\subsubsection{Average Plaquette}
+\subsubsection{Energy Density}
+The definition for the energy of the gauge fields can be defined directly from the continuum in terms of the lattice field strength tensor as
+\begin{equation}
+E=\frac{1}{4} F_{\mu \nu}^{a} F_{\mu \nu}^{a} = \frac{1}{2}\operatorname{Tr}\left[ F_{\mu \nu} F_{\mu \nu}\right].
+\end{equation}
+Because the energy is an extrinsic property of the gauge field, it is usually normalized by the size of the lattice to get the energy density
+\begin{equation}
+E = \frac{1}{2\left| \Lambda \right|}\sum\limits_{x\in\Lambda}\operatorname{Tr}\left[ F_{\mu \nu}(x) F_{\mu \nu}(x)\right].
+\end{equation}
+
+\subsubsection{Topological Charge}
+The lattice definition of the topological charge is given by the sum of the topological charge density 
+\begin{equation}
+q(x)=\frac{g^{2}}{32 \pi^{2}} \epsilon_{\mu v \rho \sigma} \operatorname{Tr}\left\{F_{\mu \nu}(x) F_{\rho \sigma}(x)\right\}
+\end{equation}
+over every site on the lattice
+\begin{equation}
+Q=\sum_{x} q(x)
+\end{equation}
+where $\epsilon_{\mu v \rho \sigma}$ is the 4- dimensional Levi- Civita and $F_{\mu \nu}(x)$ is some lattice implementation of the field strength tensor e.g. \eqref{eq:Improved_lattice_field_strength_tensor_FINAL}. To limit the number of terms being evaluated under any measurement, it's pertinent to evaluate which terms in $\epsilon_{\mu v \rho \sigma} \operatorname{Tr}\left\{F_{\mu \nu}(x) F_{\rho \sigma}(x)\right\} $ end up contributing. To do this, we can make use of the cyclic property of the trace operation and the antisymmetric property of the field strength tensor under the interchange of its indices. The 4- dimensional Levi- Civita is defined by 
+\begin{equation}
+\varepsilon_{\mu\nu\rho\sigma}=\left\{\begin{aligned}
++1 & \text { if }(\mu,\,\nu,\,\rho,\,\sigma) \text { is an even permutation of }(0,\,1,\,2,\,3) \\
+-1 & \text { if }(\mu,\,\nu,\,\rho,\,\sigma) \text { is an odd permutation of }(0,\,1,\,2,\,3) \\
+0 & \text { otherwise }
+\end{aligned}\right.
+\end{equation}
+Any term for which any of the four indices are equal, won't contribute. Additionally, looking at the trace under a cyclic permutation of the product $F_{\mu v}(x) F_{\rho \sigma}(x)$ is equivalent to permuting $\mu \leftrightarrow \rho,\,\,\nu \leftrightarrow \sigma $ which, because it's permuting two pairs of indices, will preserve the parity of any permutation and give the same sign. We also have the interchange of two indices within a field strength tensor e.g. $ \mu \leftrightarrow \nu$, giving $\varepsilon_{\mu\nu\rho\sigma} \leftrightarrow -\varepsilon_{\nu\mu\rho\sigma}$ and $F_{\mu \nu}(x) \leftrightarrow -F_{\nu \mu}(x)$ resulting in no over-all sign change.\\\\Out of 256 different choices for 4 ordered indices, 24 give non- zero contributions. Out of those 24, 3 sets of 8 permutations of $\{ \mu,\,\nu,\,\rho,\,\sigma\}$ give unique contributions, e.g.  
+\begin{equation*}
+\begin{aligned} 
+&\epsilon_{0123}\operatorname{Tr}\left\{F_{0 1} F_{2 3}\right\} = \epsilon_{2301}\operatorname{Tr}\left\{F_{2 3} F_{0 1}\right\}=\\
+&\epsilon_{1023}\operatorname{Tr}\left\{F_{10} F_{2 3}\right\} = \epsilon_{2310}\operatorname{Tr}\left\{F_{23} F_{10}\right\} =\\
+&\epsilon_{0132}\operatorname{Tr}\left\{F_{01} F_{32}\right\} = \epsilon_{3201}\operatorname{Tr}\left\{F_{32} F_{01}\right\} =\\
+&\epsilon_{1032}\operatorname{Tr}\left\{F_{10} F_{32}\right\} = \epsilon_{3210}\operatorname{Tr}\left\{F_{32} F_{10}\right\}
+\end{aligned}
+\end{equation*}
+Therefore, we only need to calculate the product $F_{\mu \nu}(x) F_{\rho \sigma}(x)$ for 3 different permutations of the 4 indices and multiply by their multiplicity, which is 8.\\
+We get that
+\begin{equation}
+\epsilon_{\mu \nu \rho \sigma} \operatorname{Tr}\left\{F_{\mu \nu} F_{\rho \sigma}\right\} = 8\left( \operatorname{Tr}\left\{F_{01} F_{23}\right\} + \operatorname{Tr}\left\{F_{31} F_{20}\right\}+ \operatorname{Tr}\left\{F_{30} F_{21}\right\} \right)
+\end{equation}
+which gives us a charge density of 
+\begin{equation}
+q(x)=\frac{g^{2}}{4 \pi^{2}} \left( \operatorname{Tr}\left\{F_{01}(x) F_{23}(x)\right\} + \operatorname{Tr}\left\{F_{31}(x) F_{20}(x)\right\}+ \operatorname{Tr}\left\{F_{30}(x) F_{21}(x)\right\} \right).
+\end{equation}
+We can see from equation \eqref{eq:cloverToFST}, that our lattice implementation of the field strength tensor includes a factor of $g$ and so, no such factor is required in the implementation.
+\subsubsection{Autocorrelation time}
+\subsubsection{Topological susceptibility}
+In the large volume limit, we can define the topological susceptibility on the lattice from the continuum definition as 
+\begin{equation}
+\chi_{\mathrm{t}}=\frac{1}{V} \int d^{4} x d^{4} y\langle q(x) q(y)\rangle = \lim\limits_{V\rightarrow \infty}\frac{1}{V}\left( \langle Q^2 \rangle - \langle Q\rangle^2 \right) =\lim\limits_{V\rightarrow \infty} \frac{\langle Q^2 \rangle}{V}
+\end{equation}
+where we have used the fact that the expectation value of the topological charge is 0.
+\subsection{Wilson Flow}
+
+\subsubsection{Numerical integration of the Wilson flow}
+It's not immediately obvious how one should interpret an equation such as 
+\begin{equation}
+\dot{V}_{t}(x, \mu)=-g_{0}^{2}\left\{\partial_{x, \mu} S_{\mathrm{w}}\left(V_{t}\right)\right\} V_{t}(x, \mu),\left.\quad V_{t}(x, \mu)\right|_{t=0}=U(x, \mu)
+\end{equation}
+because we're not just dealing with an 8- dimensional Lie group, but rather the $8\cdot4\cdot\left| \Lambda \right|$ dimensional Lie group $$\mathcal{G} =\prod\limits_{x\in \Lambda ,\,\mu}\!\!\!G_{\mu,x}$$ denoting the direct product of the $SU(3)$ group associated with every link of the lattice.
+\begin{equation}
+\dot{V}_{t}=Z\left(V_{t}\right) V_{t}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+W_{0} &=V_{t} \\
+W_{1} &=\exp \left\{\frac{1}{4} Z_{0}\right\} W_{0} \\
+W_{2} &=\exp \left\{\frac{8}{9} Z_{1}-\frac{17}{36} Z_{0}\right\} W_{1} \\
+V_{t+\epsilon} &=\exp \left\{\frac{3}{4} Z_{2}-\frac{8}{9} Z_{1}+\frac{17}{36} Z_{0}\right\} W_{2}
+\end{aligned}
+\end{equation}
+for $Z_{i}=\epsilon Z\left(W_{i}\right), \quad i=0,1,2$
+\subsection{Lattice Representation}
+CITE THE MATRIX PROCESSING PAPER YOU BASED THE LATTICE REPRESENTATION ON
+\subsection{Parallelization}
+
+\subsection{Checkerboard Update}
+Applying parallelization to the updating of link variables presents an issue. When a link is being updated it is necessary to ensure that none of the links required for its calculation are changed until the calculation is concluded.\\For the Wilson action, the set of links required to update a link are the links contained in the staples connected to it. One way to ensure that this requirement is met, is to assign to each lattice point either an even or odd parity according to its coordinate
+such that 
+\begin{equation}
+parity(\mathbf{x}) = \left( \sum\limits_i x_i \right) \mod 2.
+\end{equation}
+Then by choosing either parity $0$ or $1$ and a direction $\mu$, every such link variable can be simultaneously updated without impacting each other. This ends up looking, for a two- dimensional slice of the four- dimensional lattice, as illustrated in figure \ref{figure:Even-Odd}
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[scale = 0.7]
+
+    \clip (-0.5,-0.5) rectangle (10.5cm,10.5cm); % Clips the picture...
+
+    \coordinate (Origin)   at (2,4);
+    \coordinate (R)   at (4,4);
+    \coordinate (U)   at (2,6);
+    \coordinate (RU)   at (4,6);
+    \coordinate (D)   at (2,2);
+    \coordinate (RD)   at (4,2);
+    \draw[style=help lines,dashed] (-14,-14) grid[step=2cm] (14,14);
+          % Draws a grid in the new coordinates.
+          %\filldraw[fill=gray, fill opacity=0.3, draw=black] (0,0) rectangle (2,2);
+              % Puts the shaded rectangle
+    \draw [thick,-latex,red] (R)
+        -- (RU) node [below right] {};   
+    \draw [thick,-latex,red] (U)
+        -- (RU) node [above left] {$\dagger$};    
+    \draw [thick,-latex,red] (Origin)
+        -- (U) node [below left] {$\dagger$}; 
+    \draw [thick,-latex,red] (RD)
+        -- (R) node [below right] {$\dagger$};   
+    \draw [thick,-latex,red] (D)
+        -- (RD) node [below left] {$\dagger$};    
+    \draw [thick,-latex,red] (D)
+        -- (Origin) node [below left] {}; 
+        \foreach \x in {-7,-6,...,7}{% Two indices running over each
+      \foreach \y in {-7,-6,...,7}{% node on the grid we have drawn 
+        \node[draw,circle,inner sep=2pt,fill = white] at (2*\x,2*\y) {};
+            % Places a dot at those points
+      }
+    }              
+              
+    
+ 
+    \foreach \x in {-7,-5,...,6}{% Two indices running over each
+      \foreach \y in {-6,-4,...,6}{% node on the grid we have drawn 
+              \draw [ultra thick,-latex,orange] (2*\x,2*\y)
+        -- (2*\x+2,2*\y) node [below left] {};
+        \node[draw,circle,inner sep=2pt,fill] at (2*\x,2*\y) {};
+
+            % Places a dot at those points
+      }
+    }
+    \foreach \x in {-6,-4,...,6}{% Two indices running over each
+      \foreach \y in {-7,-5,...,6}{% node on the grid we have drawn 
+              \draw [ultra thick,-latex,orange] (2*\x,2*\y)
+        -- (2*\x+2,2*\y) node [below left] {};
+        \node[draw,circle,inner sep=2pt,fill] at (2*\x,2*\y) {};
+
+            % Places a dot at those points
+      }
+    }
+
+    
+
+  \end{tikzpicture}
+  \caption{Choosing a site parity and a direction $\mu$, every link $U_\mu (x_{parity})$ can be independently updated without affecting links relevant to the computation of any other $U_\mu (x_{parity})$. }
+  \label{figure:Even-Odd}
+\end{figure}
+
+We see that the lattice must necessarily contain an even number of sites in every direction in order for the lattice to be correctly partitioned into even and odd sites for periodic boundary conditions.
+
+\subsection{Algorithm for generating gauge configurations}
+pseudocode of the CM-OR- Even/odd program
+
+\section{Error Analysis}
+\section{Future Improvements}
+\subsection{SU(3) Over-Relaxation}
 
 \newpage
 \bibliographystyle{unsrt}

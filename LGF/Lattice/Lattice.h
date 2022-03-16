@@ -5,7 +5,7 @@
 
 class Lattice {
 public:
-	Lattice(int Ndims, int shape[]);
+	Lattice(int Ndims, int shape[], bool cloversRequired= true);
 
 	void partition_lattice();
 	//Tells each process which sites (in its own internal index) are shared with which neighbouring processes
@@ -66,6 +66,7 @@ public:
 
 
 protected:
+	bool m_cloversRequired;
 	bool Trivial_Flag;
 	bool TPancake_Flag;
 	bool STFF_Flag;
@@ -85,6 +86,11 @@ protected:
 	int* m_coorBackBackBack;
 	int* m_coorFwdFwdBack;
 	int* m_coorBackBackFwd;
+
+	int* m_coorFwdFwdFwdFwd;
+	int* m_coorBackBackBackBack;
+	int* m_coorFwdFwdFwdBack;
+	int* m_coorBackBackBackFwd;
 	std::string type;
 
 };

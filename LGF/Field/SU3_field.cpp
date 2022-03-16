@@ -108,7 +108,7 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, cons
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename
-	outPath += m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_Nprocs" + std::to_string(mpiWrapper::nProcs()) + "_";
+	outPath += m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_";
 	outPath += identifier;
 	outPath += ".bin";
 	//convert the filesystem path to a format suitable for the MPI_File_open argument
@@ -143,17 +143,20 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, cons
 
 	//the displacement in bytes sets the offset between the field stored by 
 	//process n and process n-1
-	displacement = mpiWrapper::id();
-	displacement *= 8 * 2 * 9 * m_NrExtDOF * m_lattice->m_responsible_Volume;
+	//displacement = mpiWrapper::id();
+	//displacement *= 8 * 2 * 9 * m_NrExtDOF * m_lattice->m_responsible_Volume;
 	if (mpiWrapper::id() == 0) {
-		std::cout << "Saving SU3 Field onto " << std::to_string(mpiWrapper::nProcs()) << " processes\nTo path " << outPath_string << "\n";
+		std::cout << "Saving SU3 Field to path " << outPath_string << "\n";
 		std::cout.flush();
 	}
 	//The file is written
 	for (int site = (*this).Responsible_Start(); site < (*this).Responsible_Stop(); site++) {
 		for (int extDOF = 0; extDOF < m_NrExtDOF; extDOF++) {
+			//std::cout << "id: " << mpiWrapper::id() << " location: " << m_lattice->m_InternalToTotal_idx[site] << std::endl;
+			displacement = (m_lattice->m_InternalToTotal_idx[site] * m_NrExtDOF + extDOF)*144;
 			result = MPI_File_write_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].getMemPointer(), 144, dataType, &status);
-			displacement += 144;
+			//result = MPI_File_write_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].getMemPointer(), 144, dataType, &status);
+			//displacement += 144;
 			if (result != MPI_SUCCESS) {
 				char Error_string[MPI_MAX_ERROR_STRING];
 				int Error_class;
@@ -276,7 +279,7 @@ void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, co
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename
-	outPath += m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_Nprocs" + std::to_string(mpiWrapper::nProcs()) + "_";
+	outPath += m_lattice->getType() + "_extdof" + std::to_string(m_NrExtDOF) + "_";
 	outPath += identifier;
 	outPath += ".bin";
 	//convert the filesystem path to a format suitable for the MPI_File_open argument
@@ -301,6 +304,8 @@ void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, co
 		MPI_Error_class(result, &Error_class);
 		MPI_Error_string(result, Error_string, &Error_len);
 		std::cout << Error_class << " Error: " << Error_string << std::endl;
+		int term;
+		std::cin >> term;
 	}
 	char datarep[7] = "native";
 	result = MPI_File_set_view(file, displacement, dataType, dataType, datarep, MPI_INFO_NULL);
@@ -311,18 +316,22 @@ void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, co
 		MPI_Error_class(result, &Error_class);
 		MPI_Error_string(result, Error_string, &Error_len);
 		std::cout << Error_class << " Error: " << Error_string << std::endl;
+		int term;
+		std::cin >> term;
 	}
 
 	//the displacement in bytes sets the offset between the field stored by 
 	//process n and process n-1
-	displacement = mpiWrapper::id();
-	displacement *= 8 * 2 * 9 * m_NrExtDOF * m_lattice->m_responsible_Volume;
+	//displacement = mpiWrapper::id();
+	//displacement *= 8 * 2 * 9 * m_NrExtDOF * m_lattice->m_responsible_Volume;
 
 	//The file is written
 	for (int site = (*this).Responsible_Start(); site < (*this).Responsible_Stop(); site++) {
 		for (int extDOF = 0; extDOF < m_NrExtDOF; extDOF++) {
+			displacement = (m_lattice->m_InternalToTotal_idx[site] * m_NrExtDOF + extDOF) * 144;
 			result = MPI_File_read_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].getMemPointer(), 144, dataType, &status);
-			displacement += 144;
+			//result = MPI_File_read_at(file, displacement, FieldArray[site * m_NrExtDOF + extDOF].getMemPointer(), 144, dataType, &status);
+			//displacement += 144;
 			if (result != MPI_SUCCESS) {
 				char Error_string[MPI_MAX_ERROR_STRING];
 				int Error_class;
@@ -573,8 +582,8 @@ su3_mat SU3_field::clover_avg(int internal_index, int mu, int nu) {
 }
 su3_mat SU3_field::Improved_fieldStrengthTensor(int internal_index, int mu, int nu) {
 	//double k1 = 1.7341;
-	//double k2 = 0.0251;
-	//double k3 = -0.4179;
+	//double k3 = 0.0251;
+	//double k2 = -0.4179;
 	double k1 = 19.0/9.0;
 	double k2 = 1.0/36.0;
 	double k3 = -32.0/45.0;

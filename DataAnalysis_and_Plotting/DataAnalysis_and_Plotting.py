@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 matplotlib.style.use('ggplot')
 from scipy import stats
 import numpy as np
+from sklearn.utils import resample
 #directory = '.\\data\\Observables\\Topological_Charge\\beta6_450000\\8X8X8X8\\'
 directory = '.\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\'
 
@@ -73,7 +74,7 @@ def HistogramFromDataFrameRow(dataframe,row,x_min,x_max,Nr_bins):
     #plt.savefig('test.pdf')
 
 
-#HistogramFromDataFrameRow(DirectoryToDataframe("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\"),0,-13,13,53)
+#HistogramFromDataFrameRow(DirectoryToDataframe("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\"),0,-13,13,103)
 
 #AUTOCORRELATION TIME
 #data = DirectoryToDataframe("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\").iloc[0].to_numpy()
@@ -82,7 +83,16 @@ def HistogramFromDataFrameRow(dataframe,row,x_min,x_max,Nr_bins):
 #print(mod.tauint(data,0))
 #print(mod.gamma(data,0))
 
-#print(stats.bootstrap([DirectoryToDataframe("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\").iloc[800].to_numpy()],np.mean,n_resamples = 1000,))
+
+def TopSusc(dir,latticeSize,latticeConstant):
+    df = DirectoryToDataframe(dir).iloc[0]**2
+    result= stats.bootstrap([df.to_numpy()],np.mean,n_resamples = 1000,confidence_level=0.0)
+    mean = result.confidence_interval[0]
+    std_error = result.standard_error
+    propagated_error = 197.3*0.25*mean**(-3.0/4.0)/((latticeConstant**4 * latticeSize)**(0.25))*std_error
+    mean = (mean/(latticeConstant**4*latticeSize))**(1/4)*197.3
+    print("Chi^1/4 = "+str(mean)+"("+str(propagated_error)+") Mev")
+TopSusc("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\",24**4,0.09314)
 
 
 #df1 = pd.read_csv("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\beta6_000000\\8X8X8X8\\torus_extdof4ensemble_0LHMC.csv",names = [0], sep="\n", header=None)
@@ -90,12 +100,21 @@ def HistogramFromDataFrameRow(dataframe,row,x_min,x_max,Nr_bins):
 #plt.savefig('EDvLHMCstep.pdf')
 #plt.close()
 
-dataPath ="C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\unaltered_gradient_flow\\" #ObservableDirectory('Topological_Charge',6.0,'24X24X24X24')
+dataPath ="C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\" #ObservableDirectory('Topological_Charge',6.0,'24X24X24X24')
 #outDir = getPlotDirectory(dataPath)
-fileName = "torus_extdof4Heatbath_4_ORperHB_Flowed101.csv"
-df1 = pd.read_csv(dataPath+fileName,names = [0], sep="\n", header=None)
-fig = sns.lineplot(data=df1)
-plt.savefig('FLOWv.pdf')
+#for i in range(16):
+#    fileName = "torus_extdof4Heatbath_4_ORperHB_Flowed"+ str(i) + ".csv"
+#    df1 = pd.read_csv(dataPath+fileName,names = [0], sep="\n", header=None)
+#    fig = sns.lineplot(data=df1,legend=None)
+#    fig.set(yticks=list(range(-12,12,1)))
+#plt.savefig('FLOWv.pdf')
+
+
+
+#df = DirectoryToDataframe(dataPath)
+#fig = sns.lineplot(data=df,legend=None)
+#fig.set(yticks=list(range(-12,12,1)))
+#plt.savefig('FLOWv.pdf')
 
 
 def plotFlowedTopologicalChargeOverMcStep(dir):
@@ -112,8 +131,17 @@ def plotFlowedTopologicalChargeOverMcStep(dir):
 #plt.xticks(rotation = 90)
 #plt.savefig('flowedQvHeatbathStep_no_therm.pdf')
 
+def changeFileNames():
+    dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\"
+    for file in os.listdir(dir):
+        tempFileName = file[:13]+"_"+file[13:]
+        #tempFileName = file[:38]+"0"+file[38:]
+        print("will be renamed to:")
+        print(tempFileName)
+    val = str(input("accept?"))
+    if (val == "yes"):
+        for file in os.listdir(dir):
+            tempFileName = file[:13]+"_"+file[13:]
+            os.rename(dir+file,dir +tempFileName )
 
-#for file in os.listdir("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\"):
-#    tempFileName = file[:38]+"0"+file[38:]
-#    os.rename("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\"+file,"C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\" +tempFileName )
 

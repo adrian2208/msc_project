@@ -154,7 +154,7 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 		//const char* endByte = (char*)&m_resultVector.back() + sizeof(double);
 		//std::copy(beginByte, endByte, osi);
 
-		std::ofstream outFile(outPath_string);
+		std::ofstream outFile(outPath_string,std::ios_base::app);
 		for (const auto& e : m_resultVector) outFile << e << "\n";
 	}
 	MPI_Barrier(mpiWrapper::comm());

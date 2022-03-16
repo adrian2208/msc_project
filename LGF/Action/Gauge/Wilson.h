@@ -15,6 +15,7 @@ public:
 	void calculate_LocalForce(SU3_field& field, su3_mat& F, int i, int mu);
 	void calculate_Force(SU3_field& field, SU3_field& F);
 	void calculate_FlowGradient(SU3_field& field, SU3_field& F);
+	void calculate_FlowGradient(SU3_field& field, SU3_field& F, int parity, int mu);
 	inline double getBeta() const {
 		return m_beta;
 	}

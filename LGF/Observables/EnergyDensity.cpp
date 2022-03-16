@@ -14,7 +14,7 @@ void EnergyDensity::calculate(double flowTime) {
 	for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) {
 		for (int mu = 0; mu < 4; mu++) {
 			for (int nu = mu + 1; nu < 4; nu++) {
-				localSum += ((*m_U).clover_avg(i, mu, nu) * (*m_U).clover_avg(i, mu, nu)).ReTr();
+				localSum += ((*m_U).Improved_fieldStrengthTensor(i, mu, nu) * (*m_U).Improved_fieldStrengthTensor(i, mu, nu)).ReTr();
 			}
 		}
 	}
@@ -23,7 +23,7 @@ void EnergyDensity::calculate(double flowTime) {
 	double totalSum = 0.0;
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
 
-	totalSum *= -1.0 / (4.0*(*m_U).getLatticePtr().m_totalVolume);
+	totalSum *= 1.0 / (4.0*(*m_U).getLatticePtr().m_totalVolume);
 	double avg_plaquette = (*m_U).Avg_Plaquette();
 	if (mpiWrapper::id() == 0) {
 		m_resultVector.push_back(totalSum);

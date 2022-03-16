@@ -54,21 +54,34 @@ void Wilson::calculate_Force(SU3_field& field, SU3_field& F){
 
 void Wilson::calculate_FlowGradient(SU3_field& field, SU3_field& F) {
 	su3_mat temp;
-	double trace;
+	C_double trace;
 	for (int mu = 0; mu < field.getNrExtDOF(); mu++) {
 		for (int i = field.Responsible_Start(); i < field.Responsible_Stop(); i++) {
 			temp = field(i, mu) * field.staple(i, mu);
 			temp = temp - temp.dagger();
-			trace = temp.ImTr() / 3.0;
-			temp[0].Im -= trace;
-			temp[4].Im -= trace;
-			temp[8].Im -= trace;
-			F(i, mu) = 0.5 * temp;
+			trace = temp.Tr()*(1.0 / 3.0);
+			temp[0] -= trace;
+			temp[4] -= trace;
+			temp[8] -= trace;
+			F(i, mu) = -0.5 * temp;
+
 
 		}
 	}
 }
 
-
+void Wilson::calculate_FlowGradient(SU3_field& field, SU3_field& F, int parity, int mu) {
+	su3_mat temp;
+	C_double trace;
+	for (int i = field.Responsible_Start(parity); i < field.Responsible_Stop(parity); i++) {
+		temp = field(i, mu) * field.staple(i, mu);
+		temp = temp - temp.dagger();
+		trace = temp.Tr() * (1.0 / 3.0);
+		temp[0] -= trace;
+		temp[4] -= trace;
+		temp[8] -= trace;
+		F(i, mu) = -0.5 * temp;
+	}
+}
 
 
