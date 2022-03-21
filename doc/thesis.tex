@@ -5,6 +5,7 @@
 % Variable enumeration
 \usepackage{enumerate}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{mathrsfs}
 \usepackage[perpage]{footmisc}
 \usepackage{float}
@@ -29,7 +30,18 @@
 \newcommand{\xdownarrow}[1]{%
   {\left\downarrow\vbox to #1{}\right.\kern-\nulldelimiterspace}
 }
+
+
 \usepackage{tikz}
+%TIKZ COLOR PALLETE
+\definecolor{sciBlue}{RGB}{68,125,172}
+\definecolor{sciPurple}{RGB}{112,71,173}
+\definecolor{sciCyan}{RGB}{48,143,172}
+\definecolor{sciGreen}{RGB}{48,152,138}
+\definecolor{sciYellow}{RGB}{167,226,55}
+\definecolor{sciOrange}{RGB}{213,130,75}
+\definecolor{sciRed}{RGB}{223,69,69}
+
 \usetikzlibrary{shapes.geometric, arrows}
 
 \tikzstyle{question} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered,text width=3cm, draw=black, fill=red!30]
@@ -308,7 +320,7 @@ where the familiar space- time integral is replaced with a sum over the lattice 
 \prod_{(n, \mu) \in \mathcal{P}} U_{\mu}(n) \rightarrow \Omega(n_0)\left( \prod_{(n, \mu) \in \mathcal{P}} U_{\mu}(n) \right)\Omega(n_N)^\dagger
 \end{equation}
 where $n_0$ and $n_N$ are the beginning and endpoints of the path $\mathcal{P}$. Clearly, if the beginning and endpoints are the same, we can construct gauge invariant objects by again exploiting the cyclicity of the trace. The trivial example of this, we have already discussed. It's the equivalent of taking one step forward then one step back ($U_{\mu}(n)U_{-\mu}(n+\hat{\mu}) = \mathbb{1}$). The first non- trivial example is the smallest closed loop of link variables, known as a plaquette
-\begin{equation}
+\begin{equation}\label{eq:plaquette}
 \begin{aligned}
 U_{\mu \nu}(n) &=U_{\mu}(n) U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu}) \\
 &=U_{\mu}(n) U_{\nu}(n+\hat{\mu}) U_{\mu}(n+\hat{\nu})^{\dagger} U_{\nu}(n)^{\dagger}.
@@ -1272,7 +1284,7 @@ We then leveraged the fact that the action was local in the link variables so th
 \exp \left(S[U]-S\left[U^{\prime}\right]\right)=\exp \left(S_{G}[U]-S_{G}\left[U^{\prime}\right]\right) \exp \left(S_{\mathrm{F}}^{\mathrm{eff}}[U]-S_{\mathrm{F}}^{\mathrm{eff}}\left[U^{\prime}\right]\right)
 \end{equation}
 with $S_{\mathrm{F}}^{\mathrm{eff}}[U] =\phi^{\dagger}\left(D[U] D^{\dagger}[U]\right)^{-1} \phi $, which is by no means a local action. This means that every time we proposed a change in a link variable, we would have to calculate the entire global effective action. If the entire action is going to change anyway, we might as well update several link variables between accept-reject steps. Doing this in a way that leads to acceptable acceptance- rates and autocorrelation times is the goal of the next section.
-\subsubsection{Hybrid Monte Carlo}
+\subsubsection{Hybrid Monte Carlo}\label{HMC}
 HMC is an instance of the Metropolis-Hastings algorithm where proposed configurations are generated according to Hamiltonian time evolution using a numerical integrator. This integrator is subject to two conditions, due to the detailed balance condition, which are reversibility and volume preservation. The usual candidate (and the one we will be working with) is the leapfrog integrator. This integrator is subject to a discretization error, which can be corrected by including an accept-reject step akin to that of regular Monte Carlo.\\\\As for a system of classical particles, we define a Hamiltonian and a configuration space consisting of the field values $Q$ and their conjugate momenta $P$. In the case of $SU(3)$, we define $Q$ and $P$ to be elements of the algebra
 \begin{equation}
 Q_{\mu}(n) = \sum_{i=1}^{8} \omega_{\mu}^{i}(n) T_{i},\quad P_{\mu}(n)=\sum_{i=1}^{8} P_{\mu}^{i}(n) T_{i}
@@ -1305,7 +1317,7 @@ U_{(0)} & P_{(0)} \\
 U_{(1)}=\exp \left(\mathrm{i} \varepsilon P_{\left(\frac{1}{2}\right)}\right) U_{(0)} & P_{(1)}=P_{\left(\frac{1}{2}\right)}-\frac{\varepsilon}{2}F\left[ U_{(1)},\phi \right].
 \end{array}
 \end{equation}
-Several leapfrog steps can be combined by inserting a set of complete steps (step size $\varepsilon$) for $U$ and $P$ before the last half step. If the integrator was exact, then the equations of motion would transport the link variables along paths in configuration space with constant energy and therefore give an acceptance probability of $1$. \\\\Exponentiating algebra elements of non-Abelian groups can be computationally expensive, truncating an exponential series expansion with an associated error. Therefore, the Cayley-Hamilton theorem is often used to simplify the calculation. It states that any square matrix over a commutative ring is a solution to its own characteristic polynomial. The characteristic polynomial of a $3\times3$ matrix can be expressed as
+Several leapfrog steps can be combined by inserting a set of complete steps (step size $\varepsilon$) for $U$ and $P$ before the last half step. If the integrator was exact, then the equations of motion would transport the link variables along paths in configuration space with constant energy and therefore give an acceptance probability of $1$. \paragraph{Exponentiating algebra elements of non-Abelian groups} can be computationally expensive, truncating an exponential series expansion with an associated error. Therefore, the Cayley-Hamilton theorem is often used to simplify the calculation. It states that any square matrix over a commutative ring is a solution to its own characteristic polynomial. The characteristic polynomial of a $3\times3$ matrix can be expressed as
 \begin{equation}
 p(\lambda)=\lambda^{3}-\operatorname{tr}(M) \lambda^{2}+\frac{1}{2}\left(\operatorname{tr}(M)^{2}-\operatorname{tr}\left(M^{2}\right)\right) \lambda-\operatorname{det}(M).
 \end{equation}
@@ -1315,9 +1327,66 @@ P^{3}-\frac{1}{2}\operatorname{tr}\left(P^{2}\right)P-\frac{1}{3}\operatorname{t
 \end{equation}
 where we have used an identity of $3\times3$ matrices to re-express the determinant of $P$ in terms of the trace of its cube. \eqref{eq:char_poly_P} defines a recursive relationship for all powers $P^n\,\mid\,n\geq3$ by left or right multiplication with $P$, which means that the matrix exponent series expansion 
 \begin{equation}
-\exp (P)=\sum_{k=0}^{\infty} \frac{P^{k}}{k !}=I_{3\times3}+P+\frac{1}{2} P^{2}+\frac{1}{6} P^{3}+\cdots
+\exp (iP)=\sum_{k=0}^{\infty} \frac{(iP)^{k}}{k !}=I_{3\times3}+iP-\frac{1}{2} P^{2}-\frac{1}{6}i P^{3}+\cdots
 \end{equation}
-is ultimately a function linear in the matrices $P$ and $P^2$ with coefficients dependent on $\operatorname{tr}(P^2)$ and $\operatorname{tr}(P^3)$ which need only be calculated once. For an in-depth example, see \cite{morningstar2004analytic}.\\\\ The most expensive part of the HMC algorithm is the computation of $F[U, \phi]$, which involves differentiating $D$ according to \eqref{eq:group_derivative} and taking the inverse of $DD^\dagger$. Any computationally sound implementation will be unique depending on the properties of the Dirac operator in question. Special attention must be paid when differentiating Dirac operators that are not strictly linear in the gauge fields, as $SU(3)$ is not a commutative group.\\\\In \eqref{eq:leapfrog_evolution}, the pseudofermion field $\phi$ is treated as a constant, external field. So before updating $P$ and $Q$, we first have to update $\phi$ according to the distribution
+is ultimately a function linear in the matrices $P$ and $P^2$ with coefficients which depend on $\operatorname{tr}(P^2)$ and $\operatorname{tr}(P^3)$ which need only be calculated once. Following the procedure in \cite{morningstar2004analytic}, we attempt to solve 
+\begin{equation}\label{eq:Cay_ham_eq}
+e^{i P}=f_{0} I+f_{1} P+f_{2} P^{2} 
+\end{equation}
+for the three coefficients $f_i$. The three eigenvalues of $P$, denoted $p_1,\,p_2,\,p_3$ are parametrized as 
+\begin{equation}
+\begin{aligned}
+&p_{1}=2 u \\
+&p_{2}=-u+w\\
+&p_{3}=-p_{1}-p_{2}=-u-w
+\end{aligned}
+\,\,\,\,\,
+\begin{aligned}
+&u=\sqrt{\frac{1}{6}\operatorname{Tr}\left(Q^{2}\right)} \cos \left(\frac{1}{3} \theta\right) \\
+&w=\sqrt{\frac{1}{2} \operatorname{Tr}\left(Q^{2}\right)} \sin \left(\frac{1}{3} \theta\right) \\
+&\theta=\arccos \left(\frac{\frac{1}{3} \operatorname{Tr}\left(Q^{3}\right)}{\left(\frac{ \operatorname{Tr}\left(Q^{2}\right)}{3}\right)^{3 / 2}}\right)
+\end{aligned}.
+\end{equation}
+They are subsequently used to diagonalize $P$, which reduces \eqref{eq:Cay_ham_eq} to a system of linear equations
+\begin{equation}
+\left[\begin{array}{lll}
+1 & p_{1} & p_{1}^{2} \\
+1 & p_{2} & p_{2}^{2} \\
+1 & p_{3} & p_{3}^{2}
+\end{array}\right]\left[\begin{array}{l}
+f_{0} \\
+f_{1} \\
+f_{2}
+\end{array}\right]=\left[\begin{array}{c}
+e^{i p_{1}} \\
+e^{i p_{2}} \\
+e^{i p_{3}}
+\end{array}\right]
+\end{equation}
+Morningstar and Peardon isolate the numerical instability in a term $\xi_{0}(w)=\frac{\sin w}{w}$ which can be separately evaluated as 
+\begin{equation}
+\xi_{0}(w)= \begin{cases}1-\frac{1}{6} w^{2}\left(1-\frac{1}{20} w^{2}\left(1-\frac{1}{42} w^{2}\right)\right), & |w| \leqslant 0.05 \\ \sin (w) / w, & |w|>0.05\end{cases}
+\end{equation}
+and give the coefficients as 
+\begin{equation}\label{eq:f_coeffs_equation}
+f_{j}=\frac{h_{j}}{\left(9 u^{2}-w^{2}\right)}
+\end{equation}
+for 
+\begin{equation}
+\begin{aligned}
+h_{0}=&\left(u^{2}-w^{2}\right) e^{2 i u}+e^{-i u}\left\{8 u^{2} \cos (w)\right.\\
+&\left.+2 i u\left(3 u^{2}+w^{2}\right) \xi_{0}(w)\right\} \\
+h_{1}=& 2 u e^{2 i u}-e^{-i u}\{2 u \cos (w)\\
+&\left.-i\left(3 u^{2}-w^{2}\right) \xi_{0}(w)\right\} \\
+h_{2}=& e^{2 i u}-e^{-i u}\left\{\cos (w)+3 i u \xi_{0}(w)\right\}
+\end{aligned}
+\end{equation}
+The final numerical instability in the denominator of \eqref{eq:f_coeffs_equation} is removed by identifying cases where $\frac{1}{3} \operatorname{Tr}\left(Q^{3}\right)<0$ and exploiting the symmetry relation 
+$$
+f_{i}\left(-\frac{1}{3} \operatorname{Tr}\left(Q^{3}\right), \frac{1}{2} \operatorname{Tr}\left(Q^{2}\right)\right)=(-)^{i} f_{i}^{*}\left(\frac{1}{3} \operatorname{Tr}\left(Q^{3}\right), \frac{1}{2} \operatorname{Tr}\left(Q^{2}\right)\right)
+$$
+to instead evaluate only the positive case, and apply the above relation for the negative case after the evaluation.
+\paragraph{HMC algorithm}The most expensive part of the HMC algorithm is the computation of $F[U, \phi]$, which involves differentiating $D$ according to \eqref{eq:group_derivative} and taking the inverse of $DD^\dagger$. Any computationally sound implementation will be unique depending on the properties of the Dirac operator in question. Special attention must be paid when differentiating Dirac operators that are not strictly linear in the gauge fields, as $SU(3)$ is not a commutative group.\\\\In \eqref{eq:leapfrog_evolution}, the pseudofermion field $\phi$ is treated as a constant, external field. So before updating $P$ and $Q$, we first have to update $\phi$ according to the distribution
 \begin{equation}
 \begin{aligned} 
  \exp&\left(- \phi^{\dagger}\left(D D^{\dagger}\right)^{-1} \phi \right)
@@ -1890,7 +1959,7 @@ The terms $C^{(m,n)}$ are so called clover terms which can be calculated on the 
 \end{tikzpicture}
 }
 \end{subfigure}
-\caption{$C^{(1,1)}$ and $C^{(2,2)}$ contain a factor of $\frac{1}{4}$ since the two terms are symmetric under $n\leftrightarrow m$. $C^{(1,2)}$ and $C^{(1,3)}$ each need to be evaluated for two different orientations and their results added and multiplied by a factor of $\frac{1}{8}$}\label{figure:Clovers}
+\caption{$C^{(1,1)}$ and $C^{(2,2)}$ contain a factor of $\frac{1}{4}$ since the two terms are symmetric under $n\leftrightarrow m$. $C^{(1,2)}$ and $C^{(1,3)}$ each need to be evaluated for two different orientations and their results added and multiplied by a factor of $\frac{1}{8}$. Thanks to Martin Ueding for providing Tikz templates on \href{https://github.com/HISKP-LQCD/lqcd-tikz-graphics}{\textbf{their github}}.}\label{figure:Clovers}
 \end{figure}
 equation \eqref{eq:cloverToFST} can then be applied to each clover term to get the improved field strength tensor from equation \eqref{eq:Improved_lattice_field_strength_tensor_FINAL}.
 \subsubsection{Average Plaquette}
@@ -1950,14 +2019,27 @@ where we have used the fact that the expectation value of the topological charge
 \subsection{Wilson Flow}
 
 \subsubsection{Numerical integration of the Wilson flow}
-It's not immediately obvious how one should interpret an equation such as 
-\begin{equation}
+A differential equation of the form 
+\begin{equation}\label{eq:WF_diffeq}
 \dot{V}_{t}(x, \mu)=-g_{0}^{2}\left\{\partial_{x, \mu} S_{\mathrm{w}}\left(V_{t}\right)\right\} V_{t}(x, \mu),\left.\quad V_{t}(x, \mu)\right|_{t=0}=U(x, \mu)
 \end{equation}
-because we're not just dealing with an 8- dimensional Lie group, but rather the $8\cdot4\cdot\left| \Lambda \right|$ dimensional Lie group $$\mathcal{G} =\prod\limits_{x\in \Lambda ,\,\mu}\!\!\!G_{\mu,x}$$ denoting the direct product of the $SU(3)$ group associated with every link of the lattice.
+which uses the Lie algebra valued differential operator $\partial_{x, \mu} S_{\mathrm{w}}\left(V_{t}\right)$ presents a challenge to any numerical integrator. A standard third- order Runge-Kutta integrator would  propose successive values $V_{t+\epsilon}$ according to the scheme 
+$$
+V_{t+\epsilon} = V_{t}+a\Delta V_0+b\Delta V_1 + c\Delta V_2
+$$
+for
+\begin{equation*}
+\begin{aligned} 
+\Delta V_0 &= \epsilon \dot{V}_{t}\left( V_{t} \right)\\
+\Delta V_1 &= \epsilon \dot{V}_{t+\epsilon/2}\left( V_{t} +\epsilon/2 \Delta V_0\right)\\
+\Delta V_2 &= \epsilon \dot{V}_{t+\epsilon}\left( V_{t} -\epsilon \Delta V_0 + 2\epsilon\Delta V_1 \right)
+\end{aligned}
+\end{equation*}
+and some suitably chosen real numbers $a,\,b,\,c$, mapping the field of real numbers onto itself. It's immediately apparent that this scheme won't work in the case of gauge groups because the set of group elements are not closed under addition.\\Thankfully, Grossman and Crouch provide a method of numerically integrating ODEs on manifolds \cite{CrouchP.E.1993Nioo}. Rather than $4\cdot\left| \Lambda \right|$ individual group elements located at each link, consider the $8\cdot4\cdot\left| \Lambda \right|$ dimensional Lie group $$\mathcal{G} =\prod\limits_{x\in \Lambda ,\,\mu}\!\!\!G_{\mu,x}.$$ Where $\prod$ denotes the direct product of the $SU(3)$ group associated with every link of the lattice. This Lie group with its associated Lie algebra $\mathfrak{g}$ can now have its dynamics in flow time be described by the ordinary first-order differential equation
 \begin{equation}
-\dot{V}_{t}=Z\left(V_{t}\right) V_{t}
+\dot{V}_{t}=Z\left(V_{t}\right) V_{t}\,\,for\,\,V_{t} \in \mathcal{G} \text { and } Z\left(V_{t}\right) \in \mathfrak{g}
 \end{equation}
+which is solvable by their method.\\The method they describe "decouples" the numerical integration steps from the resultant flow along the manifold and introduces a "freezing" procedure for the coefficients of the differential operators. It's based on this method, and the coefficients calculated by Lüscher, that we make use of the third- order Runge-Kutta integrator described in \cite{Luscher2010} which looks like
 \begin{equation}
 \begin{aligned}
 W_{0} &=V_{t} \\
@@ -1966,10 +2048,269 @@ W_{2} &=\exp \left\{\frac{8}{9} Z_{1}-\frac{17}{36} Z_{0}\right\} W_{1} \\
 V_{t+\epsilon} &=\exp \left\{\frac{3}{4} Z_{2}-\frac{8}{9} Z_{1}+\frac{17}{36} Z_{0}\right\} W_{2}
 \end{aligned}
 \end{equation}
-for $Z_{i}=\epsilon Z\left(W_{i}\right), \quad i=0,1,2$
+for $Z_{i}=\epsilon Z\left(W_{i}\right), \quad i=0,1,2$.
+Because all of the iterates remain on the group manifold, this integration procedure preserves the underlying group structure. This property will also allow us to make use of the matrix exponentiation algorithm presented in section \ref{HMC}.\\It should be noted that other such numerical integrators on homogeneous manifolds exist, such as the Runge-Kutta-Munthe-Kaas(RKMK) method, even upto arbitrary order. However, this method requires the computation of several commutators arising from the Baker-Campbell-Hausdorff expansion of products of exponents of non-commutative matrices. The coefficients in \cite{Luscher2010} are helpfully crafted to eliminate commutators upto the degree of the Runge- Kutta method. For an implementation of the RKMK method to the gradient flow of $SU(3)$ gauge fields, see \cite{non_gaussianities2015}.
+\paragraph{Differentiating the Wilson action}
+The $su(3)$- algebra valued differential operator $\partial^a_{x,\mu}$ acting on a differentiable function of the gauge group $f(U)$ is defined as
+\begin{equation}\label{eq:diffOponGaugeGroup}
+\partial_{x, \mu}^{a} f(U)=\left.\frac{\mathrm{d}}{\mathrm{d} s} f\left(\mathrm{e}^{s X} U\right)\right|_{s=0}, \quad X_\nu(n)= \begin{cases}T^{a} & \text { if }\{n, \nu\}=\{m, \mu\} \\ 0 & \text { otherwise }\end{cases}
+\end{equation}
+where $T^a$ are the generators of $SU(3)$. Applied to equation \eqref{eq:WF_diffeq} for the Wilson action
+\begin{equation}
+S_{W}[U]=\frac{2}{g_0^{2}} \sum_{n \in \Lambda} \sum_{\mu<\nu} \operatorname{Re} \operatorname{tr}\left[\mathbb{1}-U_{\mu \nu}(n)\right]
+\end{equation}
+where $g_0$ is the bare coupling and $U_{\mu \nu}(n)$ is the product of links in the oriented plaquette originating at lattice site $n$ defined in \eqref{eq:plaquette}.
+We get\footnote{The product rule turns out to be an incredibly general result, and it's application to non-commutative objects is taken for granted here}
+\begin{equation}
+\begin{aligned} 
+\partial_{n, \mu}^{a}S_W = \frac{2}{g_0^{2}} \sum_{n \in \Lambda} \sum_{\rho<\sigma} \frac{\mathrm{d}}{\mathrm{d} t}\operatorname{Re} \operatorname{tr}&\left[\mathbb{1}-V^t_{\rho}(n) V^t_{\sigma}(n+\hat{\rho}) V^t_{\rho}(n+\hat{\sigma})^{\dagger} V^t_{\sigma}(n)^{\dagger}\right]\Big|_{t=0}\\
+= -\frac{2}{g_0^{2}} \sum_{n \in \Lambda} \sum_{\rho<\sigma} \operatorname{Re} \operatorname{tr}\Bigg[&\frac{\mathrm{d}}{\mathrm{d} t}\left( V^t_{\rho}(n) \right) V^t_{\sigma}(n+\hat{\rho}) V^t_{\rho}(n+\hat{\sigma})^{\dagger} V^t_{\sigma}(n)^{\dagger}\\ &+V^t_{\rho}(n)\frac{\mathrm{d}}{\mathrm{d} t} \left( V^t_{\sigma}(n+\hat{\rho}) \right) V^t_{\rho}(n+\hat{\sigma})^{\dagger} V^t_{\sigma}(n)^{\dagger}\\&+V^t_{\rho}(n) V^t_{\sigma}(n+\hat{\rho}) \frac{\mathrm{d}}{\mathrm{d} t}\left( V^t_{\rho}(n+\hat{\sigma})^{\dagger} \right) V^t_{\sigma}(n)^{\dagger}\\&+ V^t_{\rho}(n) V^t_{\sigma}(n+\hat{\rho}) V^t_{\rho}(n+\hat{\sigma})^{\dagger} \frac{\mathrm{d}}{\mathrm{d} t}\left( V^t_{\sigma}(n)^{\dagger} \right)\Bigg]\Bigg|_{t=0}
+\end{aligned}
+\end{equation}
+
+From equation \eqref{eq:diffOponGaugeGroup} we see that any terms not contained in the set of links that make up the staples of the link being differentiated, give no contribution. We get, with the staples denoted by
+\begin{equation}
+\begin{aligned}
+A=&\sum_{\nu \neq \mu}\left(U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu})\right.\\
+&\left.+U_{-\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}-\hat{\nu}) U_{\nu}(n-\hat{\nu})\right),
+\end{aligned}
+\end{equation}
+that 
+\begin{equation}
+\partial_{n, \mu}^{a}S_W = -\frac{2}{g_0^{2}}\operatorname{Re} \operatorname{tr}\left[ T^aV_\mu(n)A \right].
+\end{equation}
+This is in turn contracted with the generators $T^a$. We get
+\begin{equation}
+\partial_{n, \mu}S_W =\frac{1}{2}\left( \Omega -\frac{1}{3}\operatorname{Tr}\Omega  \right) 
+\end{equation}
+where we introduced the variable $\Omega = V_\mu(n)A - \left( V_\mu(n)A \right)^\dagger$ and have used the fact that $3\times 3$ matrices can be expanded as
+\begin{equation}
+M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a^i = 2\operatorname{Tr}\left( T^iM \right)  
+\end{equation}
+\cite{borodulin1995core}.
+
+
 \subsection{Lattice Representation}
 CITE THE MATRIX PROCESSING PAPER YOU BASED THE LATTICE REPRESENTATION ON
+
+Each point on the $M$- dimensional lattice is assigned a global index based on its global coordinate, given by 
+\begin{equation}
+i_{global} = \sum\limits_{i\neq M}\left[ \left( \prod\limits_{j> i}N_j \right)n_i \right] + n_M
+\end{equation}
+where $N_j$ is the extent of the lattice in the direction $j \in \{1,2,\ldots M \}$ and $n_i$ is the i'th component of the coordinate of the lattice point $\textbf{n} = (n_1,n_2,\ldots,n_M)$. On a 4- dimensional lattice, this would give $i_{global} = N_4(N_3(N_2n_1+n_2)+n_3)+n_4$ but here we simply illustrate the general concept in two dimensions.
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[scale = 0.7]
+
+    \clip (-1.0,-1.0) rectangle (11.0cm,11.0cm); % Clips the picture...
+	\draw [ultra thick,sciBlue] (-1.0,-0.0)
+        -- (-1.0cm,10.0cm) node [below left] {};
+	\draw [ultra thick,sciOrange] (-0.0,-1.0)
+        -- (10.0cm,-1.0cm) node [below left] {};
+
+	\draw [ultra thick,sciBlue] (11.0,-0.0)
+        -- (11.0cm,10.0cm) node [below left] {};
+	\draw [ultra thick,sciOrange] (-0.0,11.0)
+        -- (10.0cm,11.0cm) node [below left] {};
+        
+        
+    \coordinate (Origin)   at (2,4);
+    \coordinate (R)   at (4,4);
+    \coordinate (U)   at (2,6);
+    \coordinate (RU)   at (4,6);
+    \coordinate (D)   at (2,2);
+    \coordinate (RD)   at (4,2);
+    \draw[style=help lines,dashed] (-14,-14) grid[step=2cm] (14,14);
+
+      \foreach \x in {-7,-6,...,7}{% Two indices running over each
+      \foreach \y in {-7,-6,...,7}{% node on the grid we have drawn 
+        \node[draw,circle,inner sep=2pt,fill = white] at (2*\x,2*\y) {};		
+        \pgfmathsetmacro{\z}{int(6*\x+\y)}
+        \node[below right] at (2*\x,2*\y) {\z};
+            % Places a dot at those points
+      }
+    }              
+              
+    
+ 
+    \foreach \x in {-7,-5,...,6}{% Two indices running over each
+      \foreach \y in {-6,-4,...,6}{
+        \node[draw,circle,inner sep=2pt,fill] at (2*\x,2*\y) {};
+      }
+    }
+    \foreach \x in {-6,-4,...,6}{% Two indices running over each
+      \foreach \y in {-7,-5,...,6}{
+        \node[draw,circle,inner sep=2pt,fill] at (2*\x,2*\y) {};
+      }
+    }
+
+    
+
+  \end{tikzpicture}
+  \caption{Choosing a site parity and a direction $\mu$, every link $U_\mu (x_{parity})$ can be independently updated without affecting links relevant to the computation of any other $U_\mu (x_{parity})$. }
+  \label{figure:Even-Odd}
+\end{figure}
+
+
+
+
+
 \subsection{Parallelization}
+Because the global parameterization is shared across all processes, there is no ambiguity as to what lattice point is being addressed.
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[scale = 0.7]
+
+    \clip (-0.935,-1.04) rectangle (10.95cm,11.5cm); % Clips the picture...
+	
+
+	
+  \node[above] at (1,11) {\textcolor{sciOrange}{Process 0}};
+  \node[above] at (5,11) {\textcolor{sciBlue}{Process 1}};
+  \node[above] at (9,11) {\textcolor{sciGreen}{Process 2}};	
+	
+    \coordinate (Origin)   at (2,4);
+    \coordinate (R)   at (4,4);
+    \coordinate (U)   at (2,6);
+    \coordinate (RU)   at (4,6);
+    \coordinate (D)   at (2,2);
+    \coordinate (RD)   at (4,2);
+    \draw[style=help lines,dashed] (-14,-14) grid[step=2cm] (14,11);
+	\draw[ultra thick,color = sciOrange] (-0.9,-1.0) rectangle (2.9,11.0);
+	\draw[ultra thick,color = sciBlue] (3.1,-1.0) rectangle (6.9,11.0);
+	\draw[ultra thick,color = sciGreen] (7.1,-1.0) rectangle (10.9,11.0);
+	\foreach \x in {0,6}{
+      \foreach \y in {-7,-6,...,7}{
+        \node[draw = sciGreen,very thick,draw,circle,inner sep=2pt,fill = white] at (\x,2*\y) {};		
+      }     
+           
+    } 
+    
+    	\foreach \x in {2,8}{
+      \foreach \y in {-7,-6,...,7}{
+        \node[draw = sciBlue,very thick,draw,circle,inner sep=2pt,fill = white] at (\x,2*\y) {};		
+      }          
+    } 
+	\foreach \x in {4,10}{
+      \foreach \y in {-7,-6,...,7}{
+        \node[draw = sciOrange,very thick,draw,circle,inner sep=2pt,fill = white] at (\x,2*\y) {};		
+      }          
+    } 
+    \foreach \x in {2,6,10}{
+      \foreach \y in {-6,-4,...,6}{
+        \node[fill,circle,very thick,inner sep=1.3pt,fill = black] at (\x,2*\y) {};		
+      }          
+    } 
+        \foreach \x in {0,4,8}{
+      \foreach \y in {-7,-5,...,7}{
+        \node[fill,circle,very thick,inner sep=1.3pt,fill = black] at (\x,2*\y) {};		
+      }          
+    } 
+    
+
+  \node[below right] at (0,0) {\textcolor{sciOrange}{0}};
+  \node[below right] at (0,4) {\textcolor{sciOrange}{1}};
+  \node[below right] at (0,8) {\textcolor{sciOrange}{2}};
+  \node[below right] at (2,2) {\textcolor{sciOrange}{3}};
+  \node[below right] at (2,6) {\textcolor{sciOrange}{4}};
+  \node[below right] at (2,10) {\textcolor{sciOrange}{5}};
+  \node[below right] at (0,2) {\textcolor{sciOrange}{6}};
+  \node[below right] at (0,6) {\textcolor{sciOrange}{7}};
+  \node[below right] at (0,10) {\textcolor{sciOrange}{8}};
+  \node[below right] at (2,0) {\textcolor{sciOrange}{9}};
+  \node[below right] at (2,4) {\textcolor{sciOrange}{10}};
+  \node[below right] at (2,8) {\textcolor{sciOrange}{11}};
+  \node[below right] at (4,0) {\textcolor{sciOrange}{12}};
+  \node[below right] at (4,4) {\textcolor{sciOrange}{13}};
+  \node[below right] at (4,8) {\textcolor{sciOrange}{14}};
+  \node[below right] at (4,2) {\textcolor{sciOrange}{15}};
+  \node[below right] at (4,6) {\textcolor{sciOrange}{16}};
+  \node[below right] at (4,10) {\textcolor{sciOrange}{17}};
+  \node[below right] at (10,2) {\textcolor{sciOrange}{18}};
+  \node[below right] at (10,6) {\textcolor{sciOrange}{19}};
+  \node[below right] at (10,10) {\textcolor{sciOrange}{20}};
+  \node[below right] at (10,0) {\textcolor{sciOrange}{21}};
+  \node[below right] at (10,4) {\textcolor{sciOrange}{22}};
+  \node[below right] at (10,8) {\textcolor{sciOrange}{23}};
+  
+  \node[above right] at (2,0) {\textcolor{sciBlue}{3}};
+  \node[above right] at (2,4) {\textcolor{sciBlue}{4}};
+  \node[above right] at (2,8) {\textcolor{sciBlue}{5}};
+  \node[above right] at (4,2) {\textcolor{sciBlue}{9}};
+  \node[above right] at (4,6) {\textcolor{sciBlue}{10}};
+  \node[above right] at (4,10) {\textcolor{sciBlue}{11}};
+  \node[above right] at (2,2) {\textcolor{sciBlue}{0}};
+  \node[above right] at (2,6) {\textcolor{sciBlue}{1}};
+  \node[above right] at (2,10) {\textcolor{sciBlue}{2}};
+  \node[above right] at (4,0) {\textcolor{sciBlue}{6}};
+  \node[above right] at (4,4) {\textcolor{sciBlue}{7}};
+  \node[above right] at (4,8) {\textcolor{sciBlue}{8}};
+  \node[above right] at (6,0) {\textcolor{sciBlue}{15}};
+  \node[above right] at (6,4) {\textcolor{sciBlue}{16}};
+  \node[above right] at (6,8) {\textcolor{sciBlue}{17}};
+  \node[above right] at (6,2) {\textcolor{sciBlue}{12}};
+  \node[above right] at (6,6) {\textcolor{sciBlue}{13}};
+  \node[above right] at (6,10) {\textcolor{sciBlue}{14}};
+  \node[above right] at (8,2) {\textcolor{sciBlue}{21}};
+  \node[above right] at (8,6) {\textcolor{sciBlue}{22}};
+  \node[above right] at (8,10) {\textcolor{sciBlue}{23}};
+  \node[above right] at (8,0) {\textcolor{sciBlue}{18}};
+  \node[above right] at (8,4) {\textcolor{sciBlue}{19}};
+  \node[above right] at (8,8) {\textcolor{sciBlue}{20}};
+  
+  \node[above left] at (0,0) {\textcolor{sciGreen}{0}};
+  \node[above left] at (0,4) {\textcolor{sciGreen}{1}};
+  \node[above left] at (0,8) {\textcolor{sciGreen}{2}};
+  \node[above left] at (6,0) {\textcolor{sciGreen}{9}};
+  \node[above left] at (6,4) {\textcolor{sciGreen}{10}};
+  \node[above left] at (6,8) {\textcolor{sciGreen}{11}};
+  \node[above left] at (0,2) {\textcolor{sciGreen}{3}};
+  \node[above left] at (0,6) {\textcolor{sciGreen}{4}};
+  \node[above left] at (0,10) {\textcolor{sciGreen}{5}};
+  \node[above left] at (6,2) {\textcolor{sciGreen}{6}};
+  \node[above left] at (6,6) {\textcolor{sciGreen}{7}};
+  \node[above left] at (6,10) {\textcolor{sciGreen}{8}};
+  \node[above left] at (8,2) {\textcolor{sciGreen}{15}};
+  \node[above left] at (8,6) {\textcolor{sciGreen}{16}};
+  \node[above left] at (8,10) {\textcolor{sciGreen}{17}};
+  \node[above left] at (8,0) {\textcolor{sciGreen}{12}};
+  \node[above left] at (8,4) {\textcolor{sciGreen}{13}};
+  \node[above left] at (8,8) {\textcolor{sciGreen}{14}};
+  \node[above left] at (10,0) {\textcolor{sciGreen}{21}};
+  \node[above left] at (10,4) {\textcolor{sciGreen}{22}};
+  \node[above left] at (10,8) {\textcolor{sciGreen}{23}};
+  \node[above left] at (10,2) {\textcolor{sciGreen}{18}};
+  \node[above left] at (10,6) {\textcolor{sciGreen}{19}};
+  \node[above left] at (10,10) {\textcolor{sciGreen}{20}};
+
+      
+  \end{tikzpicture}
+  \caption{The lattice is partitioned into 3 processes whose sites of responsibility are enclosed within their respective coloured rectangle. Each process reserves memory for every site contained within its domain of responsibility in addition to the sites encircled with the color belonging to that process.\\Every process maintains its own internal parametrization of the lattice given by indices assigned from zero, to the total number of sites stored by that process, with the following precedence: sites of lowest process rank $\rightarrow$ sites of even parity $\rightarrow$ sites of odd parity.}
+  \label{figure:Local_lattice_parameterization}
+\end{figure}
+\subsubsection{Lattice Partitioning}
+The lattice can be subdivided among processes in many different ways. The two methods that have been implemented are working within a few constraints: limiting the size of communications and the number of different processes neighbouring each process, packing as many processes onto the lattice as possible and partitioning equally many points to every process. This is to reduce communication overhead, improve parallellization scaling and reduce thread downtime respectively.\\\\We can roughly approximate the communication overhead as being proportional to the amount of data being shared between processes (within some hardware imposed threshold) and as scaling with some function of the number of different processes each process needs to establish communication with. The size of transferred data packets can be reduced by e.g. using a checkerboard update and only communicating sites of a given parity. We can also improve efficiency through how we partition the lattice among processes.\\\\Working in four dimensions and using only boxes which evenly divide the lattice into $N_{procs}$ domains. Naively, we might think the problem of improving efficiency comes down to something like the following:
+\begin{equation*}
+\operatorname{min}\left\{  2(xyz + xyt + xtz + ytz) \,\Big|\,xyzt = \frac{|\Lambda|}{N_{procs}}\right\}
+\end{equation*}
+where we attempt to minimize the $(4-1)$-volume of the boundary between process domains and conclude that $x=y=z=t$. But this neglects a crucial detail of the lattice we actually want to implement: it has periodic boundary conditions. We see that the topology imposed on the lattice by the periodic boundary conditions alters the problem statement, because when a process' domains' extent in a dimension is the size of the lattice in that dimension, it will boarder itself in that dimension. This means that those boundary sites would no longer have to be communicated between processes. We get the following optimization problem:
+\begin{equation*}
+\operatorname{min}\left\{  2(xyz\delta(t-|\Lambda_t|) + xyt\delta(z-|\Lambda_z|) + xtz\delta(y-|\Lambda_y|) + ytz\delta(x-|\Lambda_x|)) \,\Big|\,xyzt = \frac{|\Lambda|}{N_{procs}}\right\}
+\end{equation*}
+for 
+\begin{equation*}
+\delta(x) = \begin{cases}0 & \text { if }x=0 \\ 1 & \text { otherwise }\end{cases}.
+\end{equation*}
+and 
+\begin{equation*}
+x\leq|\Lambda_x|,\,y\leq|\Lambda_y|,\,z\leq|\Lambda_z|,\,t\leq|\Lambda_t|
+\end{equation*}
+
+
+WRONG!!!!!!!!!!!!!!!! NOT THAT SIMPLE!!!!!!!!!!!!!
+Therefore, the lattice should be split along as few dimensions as possible, and only when $N_{procs}$ exceeds the size of the lattice in the first dimension, should the next dimension be included in the subdivision.\\An example of the former can be seen in figure \ref{figure:Local_lattice_parameterization} where we imagine the lattice and process domains extending in two more dimensions, yet each process will only boarder two other processes. This of-course leads to terrible scaling, as the lattice can maximally by partitioned into 6 processes. Implementing this partitioning scheme is trivial, and so we move on to the latter case of subdividing along two dimensions.
+\paragraph{Space-Time-French-Fry}
+
 
 \subsection{Checkerboard Update}
 Applying parallelization to the updating of link variables presents an issue. When a link is being updated it is necessary to ensure that none of the links required for its calculation are changed until the calculation is concluded.\\For the Wilson action, the set of links required to update a link are the links contained in the staples connected to it. One way to ensure that this requirement is met, is to assign to each lattice point either an even or odd parity according to its coordinate
