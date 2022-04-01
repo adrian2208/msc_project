@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	int extdofs = 4;
 	int shape[] = {24,24,24,24};
 	double beta = 6.0;
-	int ConfigurationStart = 234;
+	int ConfigurationStart = 355;
 	int ConfigurationStop = 400;
 	//std::cout << getLatticeConstant(beta)<< std::endl;
 	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);

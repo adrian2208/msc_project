@@ -31,7 +31,7 @@
   {\left\downarrow\vbox to #1{}\right.\kern-\nulldelimiterspace}
 }
 
-
+\usepackage{pgfplots}
 \usepackage{tikz}
 %TIKZ COLOR PALLETE
 \definecolor{sciBlue}{RGB}{68,125,172}
@@ -43,7 +43,7 @@
 \definecolor{sciRed}{RGB}{223,69,69}
 
 \usetikzlibrary{shapes.geometric, arrows}
-
+\usetikzlibrary{hobby}
 \tikzstyle{question} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered,text width=3cm, draw=black, fill=red!30]
 
 \tikzstyle{answer} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=3cm, draw=black, fill=orange!30]
@@ -90,10 +90,167 @@ Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the str
 
 
 
-\subsection{Wilson Flow}
+\subsection{Yang- Mills gradient flow}
+The Yang- Mills gradient flow (We refer to the Wilson flow in the case of pure gauge theory using the Wilson action) is an essential tool in QCD phenomenology, with many diverse applications such as the determination of the topological susceptibility in lattice QCD \cite{Luscher2010}, the energy-momentum tensor\cite{10.1093/ptep/ptt059}, strong coupling constant \cite{Luscher2010} and chiral condensate\cite{L_scher_2013}\cite{SHINDLER201471}. As well as providing a reference scale for scale setting and an understanding of the separation of topological sectors at small lattice spacings\cite{Luscher2010}, to mention a few.\\Although the method has been extended to the quark fields \cite{L_scher_2013}, we only tackle the method applied to SU(3) gauge fields as described Lüscher in \cite{Luscher2010}. We will in particular look at its implications for topological observables.\\\\The Wilson flow in lattice QCD is defined by
+\begin{equation}\label{eq:flow1}
+\dot{B}_{\mu}=D_{\nu} G_{\nu \mu},\left.\quad B_{\mu}\right|_{t=0}=A_{\mu}
+\end{equation}
+\begin{equation}\label{eq:flow2}
+G_{\mu \nu}=\partial_{\mu} B_{\nu}-\partial_{\nu} B_{\mu}+\left[B_{\mu}, B_{\nu}\right], \quad D_{\mu}=\partial_{\mu}+\left[B_{\mu}, \cdot\right]
+\end{equation}
+where $A_\mu$ is the fundamental QCD gauge field which sets the boundary condition for the corresponding "flowed" gauge field $B_\mu$ at zero flow time $t$. The derivative with respect to this flow time is denoted by a dot.\\We can understand these equations as applying gauge-covariant transformations to the gauge fields, which drive the Yang-Mills action in the direction of steepest descent towards its stationary points.\\\\Preliminary investigations by Lüscher indicated that the flowed gauge fields were smooth and renormalized \cite{Luscher2010}. That these gauge fields were free of ultra-violet divergences was later proved with an all-order analysis of the perturbation theory of the flow in \cite{L_scher_2011}.
+\subsubsection{The Wilson flow in perturbation theory}
+The Wilson flow can be studied at small coupling using perturbation theory. For reasons that are thoroughly outlined in the not dissimilar case of the Langevin equation, not gauge fixing, introduces difficulties with renormalization, which the authors remedy by adding a gauge-fixing force term tangent to the gauge orbit of the gauge field \cite{Zinn-JustinJ1988Wift}.\\The flow equations \eqref{eq:flow1} and \eqref{eq:flow2} are at present invariant under gauge transformations which are not themselves functions of the flow time. Lüscher alters the existing flow equations by adding an extra term
+\begin{equation}\label{eq:mod_flow}
+\dot{B}_{\mu}=D_{\nu} G_{\nu \mu}+\lambda D_{\mu} \partial_{\nu} B_{\nu}
+\end{equation}
+which preserves the original evolution of gauge-invariant observables, as these are related at different values of $\lambda$ by a flow time- dependent gauge transformation
+\begin{equation}
+B_{\mu}=\left.\Lambda B_{\mu}\right|_{\lambda=0} \Lambda^{-1}+\Lambda \partial_{\mu} \Lambda^{-1}, \quad \dot{\Lambda}=-\lambda \partial_{\nu} B_{\nu} \Lambda,\left.\quad \Lambda\right|_{t=0}=1.
+\end{equation}
+Knowing this, we can proceed with the modified equation \eqref{eq:mod_flow}. By inserting the covariant derivative and field-strength tensor, 
+\begin{equation}
+\dot{B}_{\mu}=\left(\partial_{\nu}+\left[B_{\nu}, \cdot\right]\right)\left(\partial_{\nu} B_{\mu}-\partial_{\mu} B_{\nu}+\left[B_{\nu}, B_{\mu}\right]\right)+\lambda \left(\partial_{\mu}+\left[B_{\mu}, \cdot\right]\right) \partial_{\nu} B_{\nu}
+\end{equation}
+we see that this equation can be separated into a linear and a remainder term
+
+\begin{equation}
+\dot{B}_{\mu}=\partial_{\nu} \partial_{\nu} B_{\mu}+\left(\lambda-1\right) \partial_{\mu} \partial_{\nu} B_{\nu}+R_{\mu}
+\end{equation}
+with 
+\begin{equation}\label{eq:flow_R_expression}
+R_{\mu}=2\left[B_{\nu}, \partial_{\nu} B_{\mu}\right]-\left[B_{\nu}, \partial_{\mu} B_{\nu}\right]+\left(\lambda-1\right)\left[B_{\mu}, \partial_{\nu} B_{\nu}\right]+\left[B_{\nu},\left[B_{\nu}, B_{\mu}\right]\right].
+\end{equation}
+With the boundary condition in equation \eqref{eq:flow1}, the flow equation is expressed as the integral
+\begin{equation}\label{eq:flow_integral-form}
+B_{\mu}(t, x)=\int \mathrm{d}^{D} y\left\{K_{t}(x-y)_{\mu \nu} A_{\nu}(y)+\int_{0}^{t} \mathrm{~d} s K_{t-s}(x-y)_{\mu \nu} R_{\nu}(s, y)\right\}
+\end{equation}
+with $D$ denoting the dimension and $K_{t}(z)_{\mu \nu}$ denoting the heat kernel
+\begin{equation}\label{eq:flowKernel}
+K_{t}(z)_{\mu \nu} = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\frac{\mathrm{e}^{i p z}}{p^{2}}\left\{\left(\delta_{\mu \nu} p^{2}-p_{\mu} p_{\nu}\right) \mathrm{e}^{-t p^{2}}+p_{\mu} p_{\nu} \mathrm{e}^{-\lambda t p^{2}}\right\}
+\end{equation}
+\cite{L_scher_2011}.\\The higher order expressions in \eqref{eq:flow_integral-form} containing $R_\mu$ can be seen to contribute to $B_\mu (t,x)$ as tree diagrams, due to the terms $B_\mu$, $\partial_\nu B_\mu$ and so on. Their explicit calculation can be found in \cite{L_scher_2011}. Here we only consider the leading term. By scaling the gauge potential to $A_{\mu} \rightarrow g_{0} A_{\mu}$ and expanding the $B_\mu(t,x)$ in powers of the bare coupling as
+\begin{equation}\label{eq:flow_g_0expansion}
+B_{\mu}=\sum_{k=1}^{\infty} g_{0}^{k} B_{\mu, k},\left.\quad B_{\mu, k}\right|_{t=0}=\delta_{k 1} A_{\mu}
+\end{equation}
+we can see from equations \eqref{eq:flow_R_expression} and\eqref{eq:flowKernel} that $\lambda = 1$ provides a particularly nice expression with the first order solution reducing from \eqref{eq:flow_integral-form} to 
+\begin{equation}
+B_{\mu,1}(t, x)=\int \mathrm{d}^{D} y\left\{K_{t}(x-y) A_{\mu}(y)\right\}
+\end{equation}
+and from \eqref{eq:flowKernel} to 
+\begin{equation}
+K_{t}(z) = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\mathrm{e}^{i p z-t p^{2}} = \frac{\mathrm{e}^{-z^{2} / 4 t}}{(4 \pi t)^{D / 2}}
+\end{equation}
+where we have used a well known result for integrals over Gaussian functions.\\Figure \ref{fig:flowTimeMeanSquareRadius} illustrates the point that the flow smooths the gauge fields with increasing flow time, averaging the field values with a mean square radius which is some function of the flow time.  
+
+\begin{figure}[H]
+\centering
+
+\includegraphics[trim=0cm 0.2cm 0cm 1.0cm, clip=true,scale = 0.7]{smearRad.pdf}
+\caption[]{Plot of $K_t(0.5)$ and $\sqrt{8t}$ with flow time $t$ for $D=4$. We see that $K_t(z)$ peaks at the flow time corresponding to $\sqrt{8t}=z$ then slowly attenuates with increasing flow time. }\label{fig:flowTimeMeanSquareRadius}
+\end{figure}
+
+\subsubsection{Scale-setting with the Wilson flow}
+One observable of interest is the energy of the gauge fields, which is the contraction of two copies of the field strength tensor, summed over all generators $T^a$ of the gauge group 
+\begin{equation}
+E=\frac{1}{4} G_{\mu \nu}^{a} G_{\mu \nu}^{a}.
+\end{equation}
+We can expand this by inserting the expression for the flowed field strength tensor. Additionally, we show the corresponding generators without actually including them in the expression, they're there to keep track of which terms contribute and are removed in the final line. We get
+\begin{equation}
+\begin{aligned} 
+E&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+\left[B^{a}_{\mu}T^{a}, B^{b}_{\nu}T^{b}\right] \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+\left[B^{a}_{\mu}T^{a}, B^{b}_{\nu}T^{b}\right] \right)\\
+&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}\left[T^{a}, T^{b}\right] \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}\left[T^{a}, T^{b}\right] \right)\\
+&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}f^{a b c} T^{c} \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}f^{a b c} T^{c} \right)\\
+&=\frac{1}{4}  \left( 2\left(\partial_{\mu} B^{a}_{\nu}\partial_{\mu} B^{a}_{\nu}-\partial_{\nu} B^{a}_{\mu}\partial_{\nu} B^{a}_{\mu}\right)+4f^{a b c}\partial_{\mu} B^{a}_{\nu} B^{b}_{\mu}B^{c}_{\nu}  + f^{a b e} f^{cde}  B^{a}_{\mu}B^{b}_{\nu} B^{c}_{\mu}B^{d}_{\nu} \right)
+\end{aligned}
+\end{equation}
+using the convention that $\left[T^{a}, T^{b}\right]=f^{a b c} T^{c}$ and $\operatorname{tr}\left\{T^{a} T^{b}\right\}=-\frac{1}{2} \delta^{a b}$ where $f^{a b c}$ are the structure constants.\\If we expand this expression in terms of powers of the bare coupling as in equation \eqref{eq:flow_g_0expansion}, we get a leading term
+\begin{equation}
+\mathcal{E}_{0}=\frac{1}{2} g_{0}^{2}\left\langle\partial_{\mu} B_{\nu, 1}^{a} \partial_{\mu} B_{\nu, 1}^{a}-\partial_{\mu} B_{\nu, 1}^{a} \partial_{\nu} B_{\mu, 1}^{a}\right\rangle
+\end{equation}
+and next order terms
+\begin{equation}
+\begin{aligned}
+&\mathcal{E}_{1}=g_{0}^{3} f^{a b c}\left\langle\partial_{\mu} B_{\nu, 1}^{a} B_{\mu, 1}^{b} B_{\nu, 1}^{c}\right\rangle \\
+&\mathcal{E}_{2}=g_{0}^{3}\left\langle\partial_{\mu} B_{\nu, 2}^{a} \partial_{\mu} B_{\nu, 1}^{a}-\partial_{\mu} B_{\nu, 2}^{a} \partial_{\nu} B_{\mu, 1}^{a}\right\rangle.
+\end{aligned}
+\end{equation}
+Each term can be solved in turn by passing to momentum space and inserting the expressions for $B_{\mu,k}^a$ as done by Lüscher in \cite{Luscher2010}. Here, we simply quote his result for the $g_0^4$ order expression for $\langle E \rangle$
+\begin{equation}
+\begin{aligned}
+&\langle E\rangle=\frac{1}{2} g_{0}^{2} \frac{N^{2}-1}{(8 \pi t)^{D / 2}}(D-1)\left\{1+c_{1} g_{0}^{2}+\mathrm{O}\left(g_{0}^{4}\right)\right\} \\
+&c_{1}=\frac{1}{16 \pi^{2}}(4 \pi)^{\epsilon}(8 t)^{\epsilon}\left\{N\left(\frac{11}{3 \epsilon}+\frac{52}{9}-3 \ln 3\right)-N_{\mathrm{f}}\left(\frac{2}{3 \epsilon}+\frac{4}{9}-\frac{4}{3} \ln 2\right)+\mathrm{O}(\epsilon)\right\}
+\end{aligned}
+\end{equation}
+where $N_f$ is the number of flavours and $\epsilon$ arises from the dimensional regularization $D=4-2\epsilon$. Evidently, this term contains ultraviolet singularities in the form of $\frac{1}{\epsilon}$ contributions, however once re-expressed in terms of the renormalized coupling $g$ and the normalization mass $\mu$ from \cite{BardeenWilliamA.1978Dsbt}:
+\begin{equation}
+\begin{aligned}
+g_{0}^{2} &=g^{2} \mu^{2 \epsilon}\left(4 \pi \mathrm{e}^{-\gamma_{\mathrm{E}}}\right)^{-\epsilon}\left\{1-\frac{1}{\epsilon} b_{0} g^{2}+\mathrm{O}\left(g^{4}\right)\right\} \\
+b_{0} &=\frac{1}{16 \pi^{2}}\left\{\frac{11}{3} N-\frac{2}{3} N_{\mathrm{f}}\right\}
+\end{aligned}
+\end{equation}
+the $\frac{1}{\epsilon}$ terms cancel and we're left with an expression for $\langle  E \rangle$ which at $\mathcal{O}(g^4)$, has no need for renormalization
+\begin{equation}
+\begin{aligned}
+&\langle E\rangle=\frac{3\left(N^{2}-1\right) g^{2}}{128 \pi^{2} t^{2}}\left\{1+\bar{c}_{1} g^{2}+\mathrm{O}\left(g^{4}\right)\right\} \\
+&\bar{c}_{1}=\frac{1}{16 \pi^{2}}\left\{N\left(\frac{11}{3} L+\frac{52}{9}-3 \ln 3\right)-N_{\mathrm{f}}\left(\frac{2}{3} L+\frac{4}{9}-\frac{4}{3} \ln 2\right)\right\}
+\end{aligned}
+\end{equation}
+where $L=\ln \left(8 \mu^{2} t\right)+\gamma_{\mathrm{E}}$ and $\gamma_{\mathrm{E}}=0.577\ldots$ is Euler's constant  \cite{Luscher2010}.\\For pure $SU(3)$ gauge theory, this can also be expressed in terms of the running coupling at the scale $q=\frac{1}{\sqrt{8t}}$ as
+\begin{equation}\label{eq:leadingOrder_pt_E}
+\langle E\rangle=\frac{3}{4 \pi t^{2}} \alpha(q)\left\{1+1.0978\alpha(q)+\mathrm{O}\left(\alpha^{2}\right)\right\}.
+\end{equation}
+Using the result for the four-loop QCD $\beta$-function calculated in the $\overline{MS}$-scheme in \cite{vanRitbergenT1997}, the $\beta$-function is given by
+\begin{equation}
+\frac{\partial \left( \alpha\right)}{\partial \ln q^{2}}=\beta\left(\alpha\right)=-\beta_{0} \alpha^{2}-\beta_{1} \alpha^{3}-\beta_{2} \alpha^{4}-\beta_{3} \alpha^{5}+O\left(\alpha^{6}\right)
+\end{equation}
+and the coefficients are given by
+\begin{equation}
+\begin{aligned}
+\beta_{0}=&\left( \frac{1}{4\pi} \right)\left( 11-\frac{2}{3} N_{f} \right), \quad \beta_{1}=\left( \frac{1}{4\pi} \right)^2\left( 102-\frac{38}{3} N_{f} \right)\\ \beta_{2}=&\left( \frac{1}{4\pi} \right)^3\left( \frac{2857}{2}-\frac{5033}{18} N_{f}+\frac{325}{54} N_{f}^{2} \right)\\ \beta_{3}=&\left( \frac{1}{4\pi} \right)^4\left(\left(\frac{149753}{6}+3564 \zeta(3)\right)-\left(\frac{1078361}{162}+\frac{6508}{27} \zeta(3)\right) N_{f})\right.\\&\left.+\left(\frac{50065}{162}+\frac{6472}{81} \zeta(3)\right) N_{f}^{2}+\frac{1093}{729} N_{f}^{3}\right)
+\end{aligned}
+\end{equation}
+where $\zeta(x)$ is the Riemann-Zeta function which evaluates to $\zeta(3) = 1.202056903 \ldots$. One possible approximate 4-loop solution to the renormalization group equation (RGE) is given in \cite{AgasheK2016ROPP} in the $\overline{MS}$-scheme as
+\begin{equation}\label{eq:runningCouplingApprox}
+\begin{gathered}
+\alpha\left(q^{2}\right) \simeq \frac{1}{\beta_{0} t_Q}\left(1-\frac{\beta_{1}}{\beta_{0}^{2}} \frac{\ln t_Q}{t_Q}+\frac{\beta_{1}^{2}\left(\ln ^{2} t_Q-\ln t_Q-1\right)+\beta_{0} \beta_{2}}{\beta_{0}^{4} t_Q^{2}}\right. \\
+\left.-\frac{\beta_{1}^{3}\left(\ln ^{3} t_Q-\frac{5}{2} \ln ^{2} t_Q-2 \ln t_Q+\frac{1}{2}\right)+3 \beta_{0} \beta_{1} \beta_{2} \ln t_Q-\frac{1}{2} \beta_{0}^{2} \beta_{3}}{\beta_{0}^{6} t_Q^{3}}\right), \\
+t_Q \equiv \ln \frac{q^{2}}{\Lambda^{2}},
+\end{gathered}
+\end{equation}
+where $\Lambda$ is a constant of integration which corresponds to the scale at which the coupling diverges in perturbation theory. Because this is not a unique approximation, $\alpha\left(q^{2}\right)$ can only be defined from $\Lambda$ in conjunction with the appropriate approximation. For this reason and others, it is standard practice to state the value of $\alpha$ at a particular scale.\\\\Equation \eqref{eq:leadingOrder_pt_E} shows that, to leading order in perturbation theory, $t^{2}\langle E\rangle$ is proportional to the running coupling, picking up a non-trivial flow time dependence at next to leading order. Using $\Lambda$ at zero flavour in terms of the Sommer scale $r_0$ as calculated in \cite{CapitaniStefano1999Nqmr}
+\begin{equation}
+\Lambda_{\overline{MS}}=0.602(48) / r_{0}
+\end{equation}
+and equation \eqref{eq:runningCouplingApprox}, the perturbative expansion for $t^2\langle E \rangle$ can be calculated.\\\\Just as the Sommer parameter sets the scale through the static quark potential $V(r)$ through
+\begin{equation}
+r^2\left.\frac{d}{d r} V(r)\right|_{r=r0} = 1.65
+\end{equation}
+a reference scale $t_0$ can be defined by the equation
+\begin{equation}
+\left.t^{2}\langle E(t)\rangle\right|_{t=t_{0}}=0.3
+\end{equation}
+which has the advantage of not needing any fits or extrapolations and requiring relatively small statistics to achieve small statistical errors \cite{Luscher2010}.
+
+\subsection{The topological charge and Wilson flow}
+"""On a lattice, continuity (in space) is lost and any lattice gauge field $U(n, \mu)[3]$ can be continuously deformed to the trivial field $U(n, \mu)=1$ : there is apparently no topological structure. However, this argumentation overlooks the fact that ultimately one is only interested in lattice gauge theories with small values of the bare coupling constant $g$, i.e. in the region near the (quantum) continuum limit. In"""
 \subsubsection{Dynamical separation of topological sectors}
 file:///C:/Users/adria/Documents/Studier/Master/Special%20Syllabus/L%C3%BCscher1982_Topology_Of_Lattice_Gauge_Fields.pdf
-\subsection{The topological charge}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[scale = 1]{Top_sector_Illustration.png}};
+\node[anchor=south west,inner sep=0] at (2.5,2.5){$Q=-1$};
+\node[anchor=south west,inner sep=0] at (0.8,0.8){$Q=0$};
+\node[anchor=south west,inner sep=0] at (1.2,4.6){$Q=-2$};
+\node[anchor=south west,inner sep=0] at (3.9,4.5){$Q=1$};
+\node[anchor=south west,inner sep=0,rotate=80] at (4.7,1.0){$Q=2$};
+\draw [thick, ->] (-0.5,2.5) -- (1,2.0) node[near start,above left] {large $||F_{\mu\nu(x)}||$};
+\node[anchor=south,inner sep=0] at (2.6,-0.4){Field space};
+\end{tikzpicture}
+\caption[]{}\label{fig:topologicalSectors_illustration}
+\end{figure}
 \subsection{The strong CP problem}
 \subsection{Lattice field theory}
 To lay the theoretical ground work for lattice field theories, we start with the continuum field theory, then discretize it while justifying the transformation and finally, cover the novel issues that arise in lattice field theories.\\\\Starting with the central equations that are the origin of the main mathematical tool used to evaluate observables:\\
@@ -221,7 +378,7 @@ $A_{\mu}(x)$ is what is known as a connection on a fiber bundle, of which gauge 
 D \vec{\Phi}=\mathrm{d} \vec{\Phi}+i g A \wedge \vec{\Phi}
 \end{equation}
 where $\mathrm{d} \vec{\Phi}$ is the exterior derivative and $\cdot \wedge\cdot$ is the exterior(wedge)-product.
-As it happens, we just introduced the 1-form $A_{\mu}(x)$, and so applying the covariant to it, doesn't seem like such a big leap. We get that
+As it happens, we just introduced the 1-form $A_{\mu}(x)$, and so applying the covariant derivative to it, doesn't seem like such a big leap. We get that
 \begin{equation}\label{eq:covariantDerivative_on_1_form}
 D_\mu A_{\nu}= d_\mu A_{\nu} + igA_{\mu} \wedge A_{\nu} =F_{\mu \nu}(x)=\partial_{\mu} A_{\nu}(x)-\partial_{\nu} A_{\mu}(x)+\mathrm{i}g\left[A_{\mu}(x), A_{\nu}(x)\right].
 \end{equation}
@@ -2009,13 +2166,14 @@ which gives us a charge density of
 q(x)=\frac{g^{2}}{4 \pi^{2}} \left( \operatorname{Tr}\left\{F_{01}(x) F_{23}(x)\right\} + \operatorname{Tr}\left\{F_{31}(x) F_{20}(x)\right\}+ \operatorname{Tr}\left\{F_{30}(x) F_{21}(x)\right\} \right).
 \end{equation}
 We can see from equation \eqref{eq:cloverToFST}, that our lattice implementation of the field strength tensor includes a factor of $g$ and so, no such factor is required in the implementation.
-\subsubsection{Autocorrelation time}
+
 \subsubsection{Topological susceptibility}
 In the large volume limit, we can define the topological susceptibility on the lattice from the continuum definition as 
 \begin{equation}
 \chi_{\mathrm{t}}=\frac{1}{V} \int d^{4} x d^{4} y\langle q(x) q(y)\rangle = \lim\limits_{V\rightarrow \infty}\frac{1}{V}\left( \langle Q^2 \rangle - \langle Q\rangle^2 \right) =\lim\limits_{V\rightarrow \infty} \frac{\langle Q^2 \rangle}{V}
 \end{equation}
 where we have used the fact that the expectation value of the topological charge is 0.
+\subsubsection{Autocorrelation time}
 \subsection{Wilson Flow}
 
 \subsubsection{Numerical integration of the Wilson flow}
@@ -2091,9 +2249,7 @@ M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a
 
 
 \subsection{Lattice Representation}
-CITE THE MATRIX PROCESSING PAPER YOU BASED THE LATTICE REPRESENTATION ON
-
-Each point on the $M$- dimensional lattice is assigned a global index based on its global coordinate, given by 
+Choosing a proper representation of the lattice on the computer is important for ease of implementation, use and efficiency. Using a four- dimensional coordinate system to address locations in memory would work, but would also incur very large performance penalties in caching, memory speed etc. Instead, at the beginning of the program, every site is assigned an index, identifying its location along a one-dimensional array in memory.\\The addition of parallellization will also require the introduction of two separate index systems. One global, shared by every process, and one local, unique to every process. It will also require a mapping between the two to facilitate unambiguous communication between processes. The choice of local and global index systems are from a paper by Massimo Di Pierro describing the workings of a MPI based lattice simulation library known as MDP \cite{MDP}.\\\\Each point on the $M$- dimensional lattice is assigned a global index based on its global coordinate, given by 
 \begin{equation}
 i_{global} = \sum\limits_{i\neq M}\left[ \left( \prod\limits_{j> i}N_j \right)n_i \right] + n_M
 \end{equation}
@@ -2147,8 +2303,8 @@ where $N_j$ is the extent of the lattice in the direction $j \in \{1,2,\ldots M 
     
 
   \end{tikzpicture}
-  \caption{Choosing a site parity and a direction $\mu$, every link $U_\mu (x_{parity})$ can be independently updated without affecting links relevant to the computation of any other $U_\mu (x_{parity})$. }
-  \label{figure:Even-Odd}
+  \caption{Every point on the lattice is given a unique index, shared across every process. White and black dots represent sites of even and odd parity respectively, the relevance of this is explained in section \ref{sec:Checkerboard_Update}. Edges associated by periodic boundary conditions are denoted by coloured lines.}
+  \label{figure:global_index}
 \end{figure}
 
 
@@ -2156,7 +2312,10 @@ where $N_j$ is the extent of the lattice in the direction $j \in \{1,2,\ldots M 
 
 
 \subsection{Parallelization}
-Because the global parameterization is shared across all processes, there is no ambiguity as to what lattice point is being addressed.
+LQCD is inherently very costly to simulate, and the cost increases rapidly for the larger lattices required to maintain the simulation volume at small lattice spacings. Therefore it is a necessity that the program includes some form of parallel computing, specifically the type known as "Single instruction, multiple data" or SIMD. To do this, the simulation volume is split into a number of non-overlapping areas of responsibility, each assigned to a different process. A popular protocol for handling cross- process communications, timing, I/O and many other features, is known as MPI (Message-Passing-Interface), and it's the protocol this program is based on.\\\\Every process will have two sets of sites in its memory which we may call "sites of responsibility" and "boundary sites". The former are all the sites which that process will have the sole responsibility for updating. The latter are all the sites which the process needs in order to complete its calculations, but which are within another process' sites of responsibility. The scope of boundary sites required by a process is dependent on the type of operations it's required to do. For example, calculating the plaquette term in the Wilson action requires only the first layer of boundary sites. More complicated terms, such as the clover terms in our definition for the lattice field strength tensor  illustrated in figure \ref{figure:Clovers}, requires three layers of boundary sites.\\\\We'll want a set of indices unique to each process, this is mainly for two reasons: data locality and keeping indices going from zero and up.
+We can imagine trying to use the set of global indices to index a list of field values. When the program is updating a point on the lattice, it will need to fetch the field values of the surrounding points from memory. If the data of those points are stored sequentially in memory, there is a chance that that data can be found in the cache, which is much greater if they are stored physically close in memory.\\With the global indices, this is very unlikely to happen as neighbouring points will be separated by many numbers corresponding to points outside the process domain. The local index is only assigned to points which are needed by the process, which keeps the separation in indices between neighbouring points low, and therefore the chance of cache hits high, improving performance.\\\\With this point in mind, another consideration is the fact that Monte Carlo updates with the local Wilson action only uses field values from points of opposite parity, which gives another point of improvement for the local index system. By first assigning indices to points of one parity, then the other, relevant field values are even more closely located in memory, improving caching even further. This local index system is illustrated in figure \ref{figure:Local_lattice_parameterization}.
+
+
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}[scale = 0.7]
@@ -2306,13 +2465,9 @@ and
 x\leq|\Lambda_x|,\,y\leq|\Lambda_y|,\,z\leq|\Lambda_z|,\,t\leq|\Lambda_t|
 \end{equation*}
 
+Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be highly dependent on the ratio $\frac{|\Lambda|}{N_{procs}}$ and we can make sense of why that is. When the simulation volume of each process is small, the reduction in boundary 3-volume gained from setting any $x,\,y,\,z,\,t = |\Lambda_x|,\,|\Lambda_y|,\,|\Lambda_z|,\,\Lambda_t|$ is quite small, while the addition of boundary 3-volume by deviating from $x=y=z=t$ becomes quite large. Likewise, when each process' simulation volume is large, there is substantial reductions to be made from eliminating either of the terms in the above minimization problem.\\For instance, in many LQCD simulations the time extent of the lattice can be much larger than the spatial extent, and so all of the three terms that include $t$ could be completely removed by only subdividing the temporal dimension of the lattice, i.e. $x=|\Lambda_x|,\,y=|\Lambda_y|,\,z=|\Lambda_z|$.\\Another benefit of partitioning the lattice in this way is that there is a hardware-specific overhead associated with establishing communications between two processes, and eliminating process boundaries in a dimension will require fewer connections between processes.\\\\Ultimately this choice will depend on the number of processors that are available to you and the total simulation volume, as well as the relative difference in computer time associated with either establishing communications between processes or transceiving a certain amount of data between processes. Regardless, for all but the most modest core-counts, this minimization problem favours hyper-cubic process domains by a significant margin, especially when it comes to scaling, as subdivisions in more dimensions admit more processes to be used.
 
-WRONG!!!!!!!!!!!!!!!! NOT THAT SIMPLE!!!!!!!!!!!!!
-Therefore, the lattice should be split along as few dimensions as possible, and only when $N_{procs}$ exceeds the size of the lattice in the first dimension, should the next dimension be included in the subdivision.\\An example of the former can be seen in figure \ref{figure:Local_lattice_parameterization} where we imagine the lattice and process domains extending in two more dimensions, yet each process will only boarder two other processes. This of-course leads to terrible scaling, as the lattice can maximally by partitioned into 6 processes. Implementing this partitioning scheme is trivial, and so we move on to the latter case of subdividing along two dimensions.
-\paragraph{Space-Time-French-Fry}
-
-
-\subsection{Checkerboard Update}
+\subsection{Checkerboard Update}\label{sec:Checkerboard_Update}
 Applying parallelization to the updating of link variables presents an issue. When a link is being updated it is necessary to ensure that none of the links required for its calculation are changed until the calculation is concluded.\\For the Wilson action, the set of links required to update a link are the links contained in the staples connected to it. One way to ensure that this requirement is met, is to assign to each lattice point either an even or odd parity according to its coordinate
 such that 
 \begin{equation}
@@ -2386,7 +2541,7 @@ We see that the lattice must necessarily contain an even number of sites in ever
 
 \subsection{Algorithm for generating gauge configurations}
 pseudocode of the CM-OR- Even/odd program
-
+\section{Results}
 \section{Error Analysis}
 \section{Future Improvements}
 \subsection{SU(3) Over-Relaxation}
