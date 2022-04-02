@@ -90,168 +90,7 @@ Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the str
 
 
 
-\subsection{Yang- Mills gradient flow}
-The Yang- Mills gradient flow (We refer to the Wilson flow in the case of pure gauge theory using the Wilson action) is an essential tool in QCD phenomenology, with many diverse applications such as the determination of the topological susceptibility in lattice QCD \cite{Luscher2010}, the energy-momentum tensor\cite{10.1093/ptep/ptt059}, strong coupling constant \cite{Luscher2010} and chiral condensate\cite{L_scher_2013}\cite{SHINDLER201471}. As well as providing a reference scale for scale setting and an understanding of the separation of topological sectors at small lattice spacings\cite{Luscher2010}, to mention a few.\\Although the method has been extended to the quark fields \cite{L_scher_2013}, we only tackle the method applied to SU(3) gauge fields as described Lüscher in \cite{Luscher2010}. We will in particular look at its implications for topological observables.\\\\The Wilson flow in lattice QCD is defined by
-\begin{equation}\label{eq:flow1}
-\dot{B}_{\mu}=D_{\nu} G_{\nu \mu},\left.\quad B_{\mu}\right|_{t=0}=A_{\mu}
-\end{equation}
-\begin{equation}\label{eq:flow2}
-G_{\mu \nu}=\partial_{\mu} B_{\nu}-\partial_{\nu} B_{\mu}+\left[B_{\mu}, B_{\nu}\right], \quad D_{\mu}=\partial_{\mu}+\left[B_{\mu}, \cdot\right]
-\end{equation}
-where $A_\mu$ is the fundamental QCD gauge field which sets the boundary condition for the corresponding "flowed" gauge field $B_\mu$ at zero flow time $t$. The derivative with respect to this flow time is denoted by a dot.\\We can understand these equations as applying gauge-covariant transformations to the gauge fields, which drive the Yang-Mills action in the direction of steepest descent towards its stationary points.\\\\Preliminary investigations by Lüscher indicated that the flowed gauge fields were smooth and renormalized \cite{Luscher2010}. That these gauge fields were free of ultra-violet divergences was later proved with an all-order analysis of the perturbation theory of the flow in \cite{L_scher_2011}.
-\subsubsection{The Wilson flow in perturbation theory}
-The Wilson flow can be studied at small coupling using perturbation theory. For reasons that are thoroughly outlined in the not dissimilar case of the Langevin equation, not gauge fixing, introduces difficulties with renormalization, which the authors remedy by adding a gauge-fixing force term tangent to the gauge orbit of the gauge field \cite{Zinn-JustinJ1988Wift}.\\The flow equations \eqref{eq:flow1} and \eqref{eq:flow2} are at present invariant under gauge transformations which are not themselves functions of the flow time. Lüscher alters the existing flow equations by adding an extra term
-\begin{equation}\label{eq:mod_flow}
-\dot{B}_{\mu}=D_{\nu} G_{\nu \mu}+\lambda D_{\mu} \partial_{\nu} B_{\nu}
-\end{equation}
-which preserves the original evolution of gauge-invariant observables, as these are related at different values of $\lambda$ by a flow time- dependent gauge transformation
-\begin{equation}
-B_{\mu}=\left.\Lambda B_{\mu}\right|_{\lambda=0} \Lambda^{-1}+\Lambda \partial_{\mu} \Lambda^{-1}, \quad \dot{\Lambda}=-\lambda \partial_{\nu} B_{\nu} \Lambda,\left.\quad \Lambda\right|_{t=0}=1.
-\end{equation}
-Knowing this, we can proceed with the modified equation \eqref{eq:mod_flow}. By inserting the covariant derivative and field-strength tensor, 
-\begin{equation}
-\dot{B}_{\mu}=\left(\partial_{\nu}+\left[B_{\nu}, \cdot\right]\right)\left(\partial_{\nu} B_{\mu}-\partial_{\mu} B_{\nu}+\left[B_{\nu}, B_{\mu}\right]\right)+\lambda \left(\partial_{\mu}+\left[B_{\mu}, \cdot\right]\right) \partial_{\nu} B_{\nu}
-\end{equation}
-we see that this equation can be separated into a linear and a remainder term
 
-\begin{equation}
-\dot{B}_{\mu}=\partial_{\nu} \partial_{\nu} B_{\mu}+\left(\lambda-1\right) \partial_{\mu} \partial_{\nu} B_{\nu}+R_{\mu}
-\end{equation}
-with 
-\begin{equation}\label{eq:flow_R_expression}
-R_{\mu}=2\left[B_{\nu}, \partial_{\nu} B_{\mu}\right]-\left[B_{\nu}, \partial_{\mu} B_{\nu}\right]+\left(\lambda-1\right)\left[B_{\mu}, \partial_{\nu} B_{\nu}\right]+\left[B_{\nu},\left[B_{\nu}, B_{\mu}\right]\right].
-\end{equation}
-With the boundary condition in equation \eqref{eq:flow1}, the flow equation is expressed as the integral
-\begin{equation}\label{eq:flow_integral-form}
-B_{\mu}(t, x)=\int \mathrm{d}^{D} y\left\{K_{t}(x-y)_{\mu \nu} A_{\nu}(y)+\int_{0}^{t} \mathrm{~d} s K_{t-s}(x-y)_{\mu \nu} R_{\nu}(s, y)\right\}
-\end{equation}
-with $D$ denoting the dimension and $K_{t}(z)_{\mu \nu}$ denoting the heat kernel
-\begin{equation}\label{eq:flowKernel}
-K_{t}(z)_{\mu \nu} = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\frac{\mathrm{e}^{i p z}}{p^{2}}\left\{\left(\delta_{\mu \nu} p^{2}-p_{\mu} p_{\nu}\right) \mathrm{e}^{-t p^{2}}+p_{\mu} p_{\nu} \mathrm{e}^{-\lambda t p^{2}}\right\}
-\end{equation}
-\cite{L_scher_2011}.\\The higher order expressions in \eqref{eq:flow_integral-form} containing $R_\mu$ can be seen to contribute to $B_\mu (t,x)$ as tree diagrams, due to the terms $B_\mu$, $\partial_\nu B_\mu$ and so on. Their explicit calculation can be found in \cite{L_scher_2011}. Here we only consider the leading term. By scaling the gauge potential to $A_{\mu} \rightarrow g_{0} A_{\mu}$ and expanding the $B_\mu(t,x)$ in powers of the bare coupling as
-\begin{equation}\label{eq:flow_g_0expansion}
-B_{\mu}=\sum_{k=1}^{\infty} g_{0}^{k} B_{\mu, k},\left.\quad B_{\mu, k}\right|_{t=0}=\delta_{k 1} A_{\mu}
-\end{equation}
-we can see from equations \eqref{eq:flow_R_expression} and\eqref{eq:flowKernel} that $\lambda = 1$ provides a particularly nice expression with the first order solution reducing from \eqref{eq:flow_integral-form} to 
-\begin{equation}
-B_{\mu,1}(t, x)=\int \mathrm{d}^{D} y\left\{K_{t}(x-y) A_{\mu}(y)\right\}
-\end{equation}
-and from \eqref{eq:flowKernel} to 
-\begin{equation}
-K_{t}(z) = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\mathrm{e}^{i p z-t p^{2}} = \frac{\mathrm{e}^{-z^{2} / 4 t}}{(4 \pi t)^{D / 2}}
-\end{equation}
-where we have used a well known result for integrals over Gaussian functions.\\Figure \ref{fig:flowTimeMeanSquareRadius} illustrates the point that the flow smooths the gauge fields with increasing flow time, averaging the field values with a mean square radius which is some function of the flow time.  
-
-\begin{figure}[H]
-\centering
-
-\includegraphics[trim=0cm 0.2cm 0cm 1.0cm, clip=true,scale = 0.7]{smearRad.pdf}
-\caption[]{Plot of $K_t(0.5)$ and $\sqrt{8t}$ with flow time $t$ for $D=4$. We see that $K_t(z)$ peaks at the flow time corresponding to $\sqrt{8t}=z$ then slowly attenuates with increasing flow time. }\label{fig:flowTimeMeanSquareRadius}
-\end{figure}
-
-\subsubsection{Scale-setting with the Wilson flow}
-One observable of interest is the energy of the gauge fields, which is the contraction of two copies of the field strength tensor, summed over all generators $T^a$ of the gauge group 
-\begin{equation}
-E=\frac{1}{4} G_{\mu \nu}^{a} G_{\mu \nu}^{a}.
-\end{equation}
-We can expand this by inserting the expression for the flowed field strength tensor. Additionally, we show the corresponding generators without actually including them in the expression, they're there to keep track of which terms contribute and are removed in the final line. We get
-\begin{equation}
-\begin{aligned} 
-E&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+\left[B^{a}_{\mu}T^{a}, B^{b}_{\nu}T^{b}\right] \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+\left[B^{a}_{\mu}T^{a}, B^{b}_{\nu}T^{b}\right] \right)\\
-&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}\left[T^{a}, T^{b}\right] \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}\left[T^{a}, T^{b}\right] \right)\\
-&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}f^{a b c} T^{c} \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}f^{a b c} T^{c} \right)\\
-&=\frac{1}{4}  \left( 2\left(\partial_{\mu} B^{a}_{\nu}\partial_{\mu} B^{a}_{\nu}-\partial_{\nu} B^{a}_{\mu}\partial_{\nu} B^{a}_{\mu}\right)+4f^{a b c}\partial_{\mu} B^{a}_{\nu} B^{b}_{\mu}B^{c}_{\nu}  + f^{a b e} f^{cde}  B^{a}_{\mu}B^{b}_{\nu} B^{c}_{\mu}B^{d}_{\nu} \right)
-\end{aligned}
-\end{equation}
-using the convention that $\left[T^{a}, T^{b}\right]=f^{a b c} T^{c}$ and $\operatorname{tr}\left\{T^{a} T^{b}\right\}=-\frac{1}{2} \delta^{a b}$ where $f^{a b c}$ are the structure constants.\\If we expand this expression in terms of powers of the bare coupling as in equation \eqref{eq:flow_g_0expansion}, we get a leading term
-\begin{equation}
-\mathcal{E}_{0}=\frac{1}{2} g_{0}^{2}\left\langle\partial_{\mu} B_{\nu, 1}^{a} \partial_{\mu} B_{\nu, 1}^{a}-\partial_{\mu} B_{\nu, 1}^{a} \partial_{\nu} B_{\mu, 1}^{a}\right\rangle
-\end{equation}
-and next order terms
-\begin{equation}
-\begin{aligned}
-&\mathcal{E}_{1}=g_{0}^{3} f^{a b c}\left\langle\partial_{\mu} B_{\nu, 1}^{a} B_{\mu, 1}^{b} B_{\nu, 1}^{c}\right\rangle \\
-&\mathcal{E}_{2}=g_{0}^{3}\left\langle\partial_{\mu} B_{\nu, 2}^{a} \partial_{\mu} B_{\nu, 1}^{a}-\partial_{\mu} B_{\nu, 2}^{a} \partial_{\nu} B_{\mu, 1}^{a}\right\rangle.
-\end{aligned}
-\end{equation}
-Each term can be solved in turn by passing to momentum space and inserting the expressions for $B_{\mu,k}^a$ as done by Lüscher in \cite{Luscher2010}. Here, we simply quote his result for the $g_0^4$ order expression for $\langle E \rangle$
-\begin{equation}
-\begin{aligned}
-&\langle E\rangle=\frac{1}{2} g_{0}^{2} \frac{N^{2}-1}{(8 \pi t)^{D / 2}}(D-1)\left\{1+c_{1} g_{0}^{2}+\mathrm{O}\left(g_{0}^{4}\right)\right\} \\
-&c_{1}=\frac{1}{16 \pi^{2}}(4 \pi)^{\epsilon}(8 t)^{\epsilon}\left\{N\left(\frac{11}{3 \epsilon}+\frac{52}{9}-3 \ln 3\right)-N_{\mathrm{f}}\left(\frac{2}{3 \epsilon}+\frac{4}{9}-\frac{4}{3} \ln 2\right)+\mathrm{O}(\epsilon)\right\}
-\end{aligned}
-\end{equation}
-where $N_f$ is the number of flavours and $\epsilon$ arises from the dimensional regularization $D=4-2\epsilon$. Evidently, this term contains ultraviolet singularities in the form of $\frac{1}{\epsilon}$ contributions, however once re-expressed in terms of the renormalized coupling $g$ and the normalization mass $\mu$ from \cite{BardeenWilliamA.1978Dsbt}:
-\begin{equation}
-\begin{aligned}
-g_{0}^{2} &=g^{2} \mu^{2 \epsilon}\left(4 \pi \mathrm{e}^{-\gamma_{\mathrm{E}}}\right)^{-\epsilon}\left\{1-\frac{1}{\epsilon} b_{0} g^{2}+\mathrm{O}\left(g^{4}\right)\right\} \\
-b_{0} &=\frac{1}{16 \pi^{2}}\left\{\frac{11}{3} N-\frac{2}{3} N_{\mathrm{f}}\right\}
-\end{aligned}
-\end{equation}
-the $\frac{1}{\epsilon}$ terms cancel and we're left with an expression for $\langle  E \rangle$ which at $\mathcal{O}(g^4)$, has no need for renormalization
-\begin{equation}
-\begin{aligned}
-&\langle E\rangle=\frac{3\left(N^{2}-1\right) g^{2}}{128 \pi^{2} t^{2}}\left\{1+\bar{c}_{1} g^{2}+\mathrm{O}\left(g^{4}\right)\right\} \\
-&\bar{c}_{1}=\frac{1}{16 \pi^{2}}\left\{N\left(\frac{11}{3} L+\frac{52}{9}-3 \ln 3\right)-N_{\mathrm{f}}\left(\frac{2}{3} L+\frac{4}{9}-\frac{4}{3} \ln 2\right)\right\}
-\end{aligned}
-\end{equation}
-where $L=\ln \left(8 \mu^{2} t\right)+\gamma_{\mathrm{E}}$ and $\gamma_{\mathrm{E}}=0.577\ldots$ is Euler's constant  \cite{Luscher2010}.\\For pure $SU(3)$ gauge theory, this can also be expressed in terms of the running coupling at the scale $q=\frac{1}{\sqrt{8t}}$ as
-\begin{equation}\label{eq:leadingOrder_pt_E}
-\langle E\rangle=\frac{3}{4 \pi t^{2}} \alpha(q)\left\{1+1.0978\alpha(q)+\mathrm{O}\left(\alpha^{2}\right)\right\}.
-\end{equation}
-Using the result for the four-loop QCD $\beta$-function calculated in the $\overline{MS}$-scheme in \cite{vanRitbergenT1997}, the $\beta$-function is given by
-\begin{equation}
-\frac{\partial \left( \alpha\right)}{\partial \ln q^{2}}=\beta\left(\alpha\right)=-\beta_{0} \alpha^{2}-\beta_{1} \alpha^{3}-\beta_{2} \alpha^{4}-\beta_{3} \alpha^{5}+O\left(\alpha^{6}\right)
-\end{equation}
-and the coefficients are given by
-\begin{equation}
-\begin{aligned}
-\beta_{0}=&\left( \frac{1}{4\pi} \right)\left( 11-\frac{2}{3} N_{f} \right), \quad \beta_{1}=\left( \frac{1}{4\pi} \right)^2\left( 102-\frac{38}{3} N_{f} \right)\\ \beta_{2}=&\left( \frac{1}{4\pi} \right)^3\left( \frac{2857}{2}-\frac{5033}{18} N_{f}+\frac{325}{54} N_{f}^{2} \right)\\ \beta_{3}=&\left( \frac{1}{4\pi} \right)^4\left(\left(\frac{149753}{6}+3564 \zeta(3)\right)-\left(\frac{1078361}{162}+\frac{6508}{27} \zeta(3)\right) N_{f})\right.\\&\left.+\left(\frac{50065}{162}+\frac{6472}{81} \zeta(3)\right) N_{f}^{2}+\frac{1093}{729} N_{f}^{3}\right)
-\end{aligned}
-\end{equation}
-where $\zeta(x)$ is the Riemann-Zeta function which evaluates to $\zeta(3) = 1.202056903 \ldots$. One possible approximate 4-loop solution to the renormalization group equation (RGE) is given in \cite{AgasheK2016ROPP} in the $\overline{MS}$-scheme as
-\begin{equation}\label{eq:runningCouplingApprox}
-\begin{gathered}
-\alpha\left(q^{2}\right) \simeq \frac{1}{\beta_{0} t_Q}\left(1-\frac{\beta_{1}}{\beta_{0}^{2}} \frac{\ln t_Q}{t_Q}+\frac{\beta_{1}^{2}\left(\ln ^{2} t_Q-\ln t_Q-1\right)+\beta_{0} \beta_{2}}{\beta_{0}^{4} t_Q^{2}}\right. \\
-\left.-\frac{\beta_{1}^{3}\left(\ln ^{3} t_Q-\frac{5}{2} \ln ^{2} t_Q-2 \ln t_Q+\frac{1}{2}\right)+3 \beta_{0} \beta_{1} \beta_{2} \ln t_Q-\frac{1}{2} \beta_{0}^{2} \beta_{3}}{\beta_{0}^{6} t_Q^{3}}\right), \\
-t_Q \equiv \ln \frac{q^{2}}{\Lambda^{2}},
-\end{gathered}
-\end{equation}
-where $\Lambda$ is a constant of integration which corresponds to the scale at which the coupling diverges in perturbation theory. Because this is not a unique approximation, $\alpha\left(q^{2}\right)$ can only be defined from $\Lambda$ in conjunction with the appropriate approximation. For this reason and others, it is standard practice to state the value of $\alpha$ at a particular scale.\\\\Equation \eqref{eq:leadingOrder_pt_E} shows that, to leading order in perturbation theory, $t^{2}\langle E\rangle$ is proportional to the running coupling, picking up a non-trivial flow time dependence at next to leading order. Using $\Lambda$ at zero flavour in terms of the Sommer scale $r_0$ as calculated in \cite{CapitaniStefano1999Nqmr}
-\begin{equation}
-\Lambda_{\overline{MS}}=0.602(48) / r_{0}
-\end{equation}
-and equation \eqref{eq:runningCouplingApprox}, the perturbative expansion for $t^2\langle E \rangle$ can be calculated.\\\\Just as the Sommer parameter sets the scale through the static quark potential $V(r)$ through
-\begin{equation}
-r^2\left.\frac{d}{d r} V(r)\right|_{r=r0} = 1.65
-\end{equation}
-a reference scale $t_0$ can be defined by the equation
-\begin{equation}
-\left.t^{2}\langle E(t)\rangle\right|_{t=t_{0}}=0.3
-\end{equation}
-which has the advantage of not needing any fits or extrapolations and requiring relatively small statistics to achieve small statistical errors \cite{Luscher2010}.
-
-\subsection{The topological charge and Wilson flow}
-"""On a lattice, continuity (in space) is lost and any lattice gauge field $U(n, \mu)[3]$ can be continuously deformed to the trivial field $U(n, \mu)=1$ : there is apparently no topological structure. However, this argumentation overlooks the fact that ultimately one is only interested in lattice gauge theories with small values of the bare coupling constant $g$, i.e. in the region near the (quantum) continuum limit. In"""
-\subsubsection{Dynamical separation of topological sectors}
-file:///C:/Users/adria/Documents/Studier/Master/Special%20Syllabus/L%C3%BCscher1982_Topology_Of_Lattice_Gauge_Fields.pdf
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}
-    \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[scale = 1]{Top_sector_Illustration.png}};
-\node[anchor=south west,inner sep=0] at (2.5,2.5){$Q=-1$};
-\node[anchor=south west,inner sep=0] at (0.8,0.8){$Q=0$};
-\node[anchor=south west,inner sep=0] at (1.2,4.6){$Q=-2$};
-\node[anchor=south west,inner sep=0] at (3.9,4.5){$Q=1$};
-\node[anchor=south west,inner sep=0,rotate=80] at (4.7,1.0){$Q=2$};
-\draw [thick, ->] (-0.5,2.5) -- (1,2.0) node[near start,above left] {large $||F_{\mu\nu(x)}||$};
-\node[anchor=south,inner sep=0] at (2.6,-0.4){Field space};
-\end{tikzpicture}
-\caption[]{}\label{fig:topologicalSectors_illustration}
-\end{figure}
-\subsection{The strong CP problem}
 \subsection{Lattice field theory}
 To lay the theoretical ground work for lattice field theories, we start with the continuum field theory, then discretize it while justifying the transformation and finally, cover the novel issues that arise in lattice field theories.\\\\Starting with the central equations that are the origin of the main mathematical tool used to evaluate observables:\\
 The Euclidean correlation function is given by
@@ -419,7 +258,7 @@ where due to the property of the generators in the fundamental representation, $
 S_{G}[A]=\frac{1}{4} \sum_{i=1}^{n^2-1} \int \mathrm{d}^{4} x F_{\mu \nu}^{(i)}(x) F_{\mu \nu}^{(i)}(x)
 \end{equation}
 where the extra factor of $\frac{1}{2}$ is simply a manner of convention.
-\subsubsection{Lattice gauge theory}
+\subsubsection{Lattice gauge theory}\label{sec:lgt}
 In the continuum, we introduced the connection $A_\mu(x)$ as the algebra valued objects living in the tangent space of the space- time manifold $M$. From these, we can construct the parallel transporter
 \begin{equation}\label{eq:gauge_transporter}
 G(x, y)=P \exp \left(\mathrm{i} \int_{\mathcal{C}_{x y}} A \cdot \mathrm{d} s\right)
@@ -835,7 +674,7 @@ although it can also be defined through the spectral decomposition.\\$A$ can be 
 \left|D(n \mid m)_{\alpha \beta}\right| \leq C \exp (-\gamma\|n-m\|)
 \end{equation}
 By this criteria, we can recover locality in the continuum limit.\\\\The primary computational cost of the overlap operator is calculating the sign function, for which two main techniques have been explored, approximation with Chebyshev polynomials and with Zolotarev polynomials, which differ only slightly conceptually.
-\subsubsection{Phenomenology of chiral fermions}
+\subsubsection{Phenomenology of chiral fermions}\label{sec:chiral_fermions_topCharge}
 If a Dirac operator is $\gamma_5$-hermitian i.e.
 \begin{equation}
 \gamma_{5} D \gamma_{5}=D^{\dagger}
@@ -882,11 +721,11 @@ evidently, the kernel of $D$ is an invariant subspace of $\gamma_5$ and since th
 \end{aligned} 
 \end{equation}
 where the co-kernel of $D$ is the quotient space of the co- domain of $D$ by its image.\\On the lattice, the topological invariant in question is called the topological charge, and is expressed as 
-\begin{equation}
+\begin{equation}\label{eq:topCharge_DiracOperator_index}
 Q_{\mathrm{top}}=a^{4} \sum_{n \in \Lambda} \frac{1}{2 a^{3}} \operatorname{tr}_{C D}\left[\gamma_{5} D(n\mkern-5mu\mid\mkern-5mu n)\right]=\operatorname{Idx_A}(D)=n_{-}-n_{+}
 \end{equation}
 Where the trace is over the color- and Dirac- indices, and $n_-$ and $n_+$ denote the number of left- and right-handed zero modes of the Dirac operator.\\\\In the continuum, the existence of a non-vanishing topological charge
-\begin{equation}\label{eq:topological_charge}
+\begin{equation}\label{eq:topological_charge_continuum}
 Q_{\mathrm{top}}^{\mathrm{cont}}=\int \mathrm{d}^{4} x q(x)^{\mathrm{cont}}, \quad q(x)^{\mathrm{cont}}=\frac{1}{32 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} \operatorname{tr}_{C}\left[F_{\mu \nu}(x) F_{\rho \sigma}(x)\right]
 \end{equation}
 signals the existance of instantons, which are local minima of the Gauge action and thus  solutions to the classical equations of motion. These are of fundamental importance in the phenomenology of QFTs including the axial anomaly which we mentioned briefly earlier. So we want the lattice expression to approach the continuum expression in the $a\rightarrow 0$ limit in the RG-flow. In fact, this was shown to hold for the fixed point Dirac operator, even for a finite cut-off \cite{Hasenfratz_1998}.\par In actual calculations of course, we deal in expectation values. However this can't tell us whether the topological charge is zero or not since the path integral is invariant to gauge configurations with opposite topological charges. Instead, we can examine the topological susceptibility
@@ -1188,10 +1027,220 @@ Different methods have been proposed for matching these operators:
 \subitem Using short- ranged correlation functions of improved lattice correlators\cite{MARTINELLI1997141}.
 \end{itemize}
 
+\subsection{Yang- Mills gradient flow}
+The Yang- Mills gradient flow (We refer to the Wilson flow in the case of pure gauge theory using the Wilson action) is an essential tool in QCD phenomenology, with many diverse applications such as the determination of the topological susceptibility in lattice QCD \cite{Luscher2010}, the energy-momentum tensor\cite{10.1093/ptep/ptt059}, strong coupling constant \cite{Luscher2010} and chiral condensate\cite{L_scher_2013}\cite{SHINDLER201471}. As well as providing a reference scale for scale setting and an understanding of the separation of topological sectors at small lattice spacings\cite{Luscher2010}, to mention a few.\\Although the method has been extended to the quark fields \cite{L_scher_2013}, we only tackle the method applied to SU(3) gauge fields as described Lüscher in \cite{Luscher2010}. We will in particular look at its implications for topological observables.\\\\The Wilson flow in lattice QCD is defined by
+\begin{equation}\label{eq:flow1}
+\dot{B}_{\mu}=D_{\nu} G_{\nu \mu},\left.\quad B_{\mu}\right|_{t=0}=A_{\mu}
+\end{equation}
+\begin{equation}\label{eq:flow2}
+G_{\mu \nu}=\partial_{\mu} B_{\nu}-\partial_{\nu} B_{\mu}+\left[B_{\mu}, B_{\nu}\right], \quad D_{\mu}=\partial_{\mu}+\left[B_{\mu}, \cdot\right]
+\end{equation}
+where $A_\mu$ is the fundamental QCD gauge field which sets the boundary condition for the corresponding "flowed" gauge field $B_\mu$ at zero flow time $t$. The derivative with respect to this flow time is denoted by a dot.\\We can understand these equations as applying gauge-covariant transformations to the gauge fields, which drive the Yang-Mills action in the direction of steepest descent towards its stationary points.\\\\Preliminary investigations by Lüscher indicated that the flowed gauge fields were smooth and renormalized \cite{Luscher2010}. That these gauge fields were free of ultra-violet divergences was later proved with an all-order analysis of the perturbation theory of the flow in \cite{L_scher_2011}.
+\subsubsection{The Wilson flow in perturbation theory}
+The Wilson flow can be studied at small coupling using perturbation theory. For reasons that are thoroughly outlined in the not dissimilar case of the Langevin equation, not gauge fixing, introduces difficulties with renormalization, which the authors remedy by adding a gauge-fixing force term tangent to the gauge orbit of the gauge field \cite{Zinn-JustinJ1988Wift}.\\The flow equations \eqref{eq:flow1} and \eqref{eq:flow2} are at present invariant under gauge transformations which are not themselves functions of the flow time. Lüscher alters the existing flow equations by adding an extra term
+\begin{equation}\label{eq:mod_flow}
+\dot{B}_{\mu}=D_{\nu} G_{\nu \mu}+\lambda D_{\mu} \partial_{\nu} B_{\nu}
+\end{equation}
+which preserves the original evolution of gauge-invariant observables, as these are related at different values of $\lambda$ by a flow time- dependent gauge transformation
+\begin{equation}
+B_{\mu}=\left.\Lambda B_{\mu}\right|_{\lambda=0} \Lambda^{-1}+\Lambda \partial_{\mu} \Lambda^{-1}, \quad \dot{\Lambda}=-\lambda \partial_{\nu} B_{\nu} \Lambda,\left.\quad \Lambda\right|_{t=0}=1.
+\end{equation}
+Knowing this, we can proceed with the modified equation \eqref{eq:mod_flow}. By inserting the covariant derivative and field-strength tensor, 
+\begin{equation}
+\dot{B}_{\mu}=\left(\partial_{\nu}+\left[B_{\nu}, \cdot\right]\right)\left(\partial_{\nu} B_{\mu}-\partial_{\mu} B_{\nu}+\left[B_{\nu}, B_{\mu}\right]\right)+\lambda \left(\partial_{\mu}+\left[B_{\mu}, \cdot\right]\right) \partial_{\nu} B_{\nu}
+\end{equation}
+we see that this equation can be separated into a linear and a remainder term
 
+\begin{equation}
+\dot{B}_{\mu}=\partial_{\nu} \partial_{\nu} B_{\mu}+\left(\lambda-1\right) \partial_{\mu} \partial_{\nu} B_{\nu}+R_{\mu}
+\end{equation}
+with 
+\begin{equation}\label{eq:flow_R_expression}
+R_{\mu}=2\left[B_{\nu}, \partial_{\nu} B_{\mu}\right]-\left[B_{\nu}, \partial_{\mu} B_{\nu}\right]+\left(\lambda-1\right)\left[B_{\mu}, \partial_{\nu} B_{\nu}\right]+\left[B_{\nu},\left[B_{\nu}, B_{\mu}\right]\right].
+\end{equation}
+With the boundary condition in equation \eqref{eq:flow1}, the flow equation is expressed as the integral
+\begin{equation}\label{eq:flow_integral-form}
+B_{\mu}(t, x)=\int \mathrm{d}^{D} y\left\{K_{t}(x-y)_{\mu \nu} A_{\nu}(y)+\int_{0}^{t} \mathrm{~d} s K_{t-s}(x-y)_{\mu \nu} R_{\nu}(s, y)\right\}
+\end{equation}
+with $D$ denoting the dimension and $K_{t}(z)_{\mu \nu}$ denoting the heat kernel
+\begin{equation}\label{eq:flowKernel}
+K_{t}(z)_{\mu \nu} = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\frac{\mathrm{e}^{i p z}}{p^{2}}\left\{\left(\delta_{\mu \nu} p^{2}-p_{\mu} p_{\nu}\right) \mathrm{e}^{-t p^{2}}+p_{\mu} p_{\nu} \mathrm{e}^{-\lambda t p^{2}}\right\}
+\end{equation}
+\cite{L_scher_2011}.\\The higher order expressions in \eqref{eq:flow_integral-form} containing $R_\mu$ can be seen to contribute to $B_\mu (t,x)$ as tree diagrams, due to the terms $B_\mu$, $\partial_\nu B_\mu$ and so on. Their explicit calculation can be found in \cite{L_scher_2011}. Here we only consider the leading term. By scaling the gauge potential to $A_{\mu} \rightarrow g_{0} A_{\mu}$ and expanding the $B_\mu(t,x)$ in powers of the bare coupling as
+\begin{equation}\label{eq:flow_g_0expansion}
+B_{\mu}=\sum_{k=1}^{\infty} g_{0}^{k} B_{\mu, k},\left.\quad B_{\mu, k}\right|_{t=0}=\delta_{k 1} A_{\mu}
+\end{equation}
+we can see from equations \eqref{eq:flow_R_expression} and\eqref{eq:flowKernel} that $\lambda = 1$ provides a particularly nice expression with the first order solution reducing from \eqref{eq:flow_integral-form} to 
+\begin{equation}
+B_{\mu,1}(t, x)=\int \mathrm{d}^{D} y\left\{K_{t}(x-y) A_{\mu}(y)\right\}
+\end{equation}
+and from \eqref{eq:flowKernel} to 
+\begin{equation}
+K_{t}(z) = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\mathrm{e}^{i p z-t p^{2}} = \frac{\mathrm{e}^{-z^{2} / 4 t}}{(4 \pi t)^{D / 2}}
+\end{equation}
+where we have used a well known result for integrals over Gaussian functions.\\Figure \ref{fig:flowTimeMeanSquareRadius} illustrates the point that the flow smooths the gauge fields with increasing flow time, averaging the field values with a mean square radius which is some function of the flow time.  
+
+\begin{figure}[H]
+\centering
+
+\includegraphics[trim=0cm 0.2cm 0cm 1.0cm, clip=true,scale = 0.7]{smearRad.pdf}
+\caption[]{Plot of $K_t(0.5)$ and $\sqrt{8t}$ with flow time $t$ for $D=4$. We see that $K_t(z)$ peaks at the flow time corresponding to $\sqrt{8t}=z$ then slowly attenuates with increasing flow time. }\label{fig:flowTimeMeanSquareRadius}
+\end{figure}
+
+\subsubsection{Scale-setting with the Wilson flow}
+One observable of interest is the energy of the gauge fields, which is the contraction of two copies of the field strength tensor, summed over all generators $T^a$ of the gauge group 
+\begin{equation}
+E=\frac{1}{4} G_{\mu \nu}^{a} G_{\mu \nu}^{a}.
+\end{equation}
+We can expand this by inserting the expression for the flowed field strength tensor. Additionally, we show the corresponding generators without actually including them in the expression, they're there to keep track of which terms contribute and are removed in the final line. We get
+\begin{equation}
+\begin{aligned} 
+E&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+\left[B^{a}_{\mu}T^{a}, B^{b}_{\nu}T^{b}\right] \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+\left[B^{a}_{\mu}T^{a}, B^{b}_{\nu}T^{b}\right] \right)\\
+&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}\left[T^{a}, T^{b}\right] \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}\left[T^{a}, T^{b}\right] \right)\\
+&=\frac{1}{4} \left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}f^{a b c} T^{c} \right)\left( \partial_{\mu} B^{a}_{\nu}T^{a}-\partial_{\nu} B^{a}_{\mu}T^{a}+B^{a}_{\mu}B^{b}_{\nu}f^{a b c} T^{c} \right)\\
+&=\frac{1}{4}  \left( 2\left(\partial_{\mu} B^{a}_{\nu}\partial_{\mu} B^{a}_{\nu}-\partial_{\nu} B^{a}_{\mu}\partial_{\nu} B^{a}_{\mu}\right)+4f^{a b c}\partial_{\mu} B^{a}_{\nu} B^{b}_{\mu}B^{c}_{\nu}  + f^{a b e} f^{cde}  B^{a}_{\mu}B^{b}_{\nu} B^{c}_{\mu}B^{d}_{\nu} \right)
+\end{aligned}
+\end{equation}
+using the convention that $\left[T^{a}, T^{b}\right]=f^{a b c} T^{c}$ and $\operatorname{tr}\left\{T^{a} T^{b}\right\}=-\frac{1}{2} \delta^{a b}$ where $f^{a b c}$ are the structure constants.\\If we expand this expression in terms of powers of the bare coupling as in equation \eqref{eq:flow_g_0expansion}, we get a leading term
+\begin{equation}
+\mathcal{E}_{0}=\frac{1}{2} g_{0}^{2}\left\langle\partial_{\mu} B_{\nu, 1}^{a} \partial_{\mu} B_{\nu, 1}^{a}-\partial_{\mu} B_{\nu, 1}^{a} \partial_{\nu} B_{\mu, 1}^{a}\right\rangle
+\end{equation}
+and next order terms
+\begin{equation}
+\begin{aligned}
+&\mathcal{E}_{1}=g_{0}^{3} f^{a b c}\left\langle\partial_{\mu} B_{\nu, 1}^{a} B_{\mu, 1}^{b} B_{\nu, 1}^{c}\right\rangle \\
+&\mathcal{E}_{2}=g_{0}^{3}\left\langle\partial_{\mu} B_{\nu, 2}^{a} \partial_{\mu} B_{\nu, 1}^{a}-\partial_{\mu} B_{\nu, 2}^{a} \partial_{\nu} B_{\mu, 1}^{a}\right\rangle.
+\end{aligned}
+\end{equation}
+Each term can be solved in turn by passing to momentum space and inserting the expressions for $B_{\mu,k}^a$ as done by Lüscher in \cite{Luscher2010}. Here, we simply quote his result for the $g_0^4$ order expression for $\langle E \rangle$
+\begin{equation}
+\begin{aligned}
+&\langle E\rangle=\frac{1}{2} g_{0}^{2} \frac{N^{2}-1}{(8 \pi t)^{D / 2}}(D-1)\left\{1+c_{1} g_{0}^{2}+\mathrm{O}\left(g_{0}^{4}\right)\right\} \\
+&c_{1}=\frac{1}{16 \pi^{2}}(4 \pi)^{\epsilon}(8 t)^{\epsilon}\left\{N\left(\frac{11}{3 \epsilon}+\frac{52}{9}-3 \ln 3\right)-N_{\mathrm{f}}\left(\frac{2}{3 \epsilon}+\frac{4}{9}-\frac{4}{3} \ln 2\right)+\mathrm{O}(\epsilon)\right\}
+\end{aligned}
+\end{equation}
+where $N_f$ is the number of flavours and $\epsilon$ arises from the dimensional regularization $D=4-2\epsilon$. Evidently, this term contains ultraviolet singularities in the form of $\frac{1}{\epsilon}$ contributions, however once re-expressed in terms of the renormalized coupling $g$ and the normalization mass $\mu$ from \cite{BardeenWilliamA.1978Dsbt}:
+\begin{equation}
+\begin{aligned}
+g_{0}^{2} &=g^{2} \mu^{2 \epsilon}\left(4 \pi \mathrm{e}^{-\gamma_{\mathrm{E}}}\right)^{-\epsilon}\left\{1-\frac{1}{\epsilon} b_{0} g^{2}+\mathrm{O}\left(g^{4}\right)\right\} \\
+b_{0} &=\frac{1}{16 \pi^{2}}\left\{\frac{11}{3} N-\frac{2}{3} N_{\mathrm{f}}\right\}
+\end{aligned}
+\end{equation}
+the $\frac{1}{\epsilon}$ terms cancel and we're left with an expression for $\langle  E \rangle$ which at $\mathcal{O}(g^4)$, has no need for renormalization
+\begin{equation}
+\begin{aligned}
+&\langle E\rangle=\frac{3\left(N^{2}-1\right) g^{2}}{128 \pi^{2} t^{2}}\left\{1+\bar{c}_{1} g^{2}+\mathrm{O}\left(g^{4}\right)\right\} \\
+&\bar{c}_{1}=\frac{1}{16 \pi^{2}}\left\{N\left(\frac{11}{3} L+\frac{52}{9}-3 \ln 3\right)-N_{\mathrm{f}}\left(\frac{2}{3} L+\frac{4}{9}-\frac{4}{3} \ln 2\right)\right\}
+\end{aligned}
+\end{equation}
+where $L=\ln \left(8 \mu^{2} t\right)+\gamma_{\mathrm{E}}$ and $\gamma_{\mathrm{E}}=0.577\ldots$ is Euler's constant  \cite{Luscher2010}.\\For pure $SU(3)$ gauge theory, this can also be expressed in terms of the running coupling at the scale $q=\frac{1}{\sqrt{8t}}$ as
+\begin{equation}\label{eq:leadingOrder_pt_E}
+\langle E\rangle=\frac{3}{4 \pi t^{2}} \alpha(q)\left\{1+1.0978\alpha(q)+\mathrm{O}\left(\alpha^{2}\right)\right\}.
+\end{equation}
+Using the result for the four-loop QCD $\beta$-function calculated in the $\overline{MS}$-scheme in \cite{vanRitbergenT1997}, the $\beta$-function is given by
+\begin{equation}
+\frac{\partial \left( \alpha\right)}{\partial \ln q^{2}}=\beta\left(\alpha\right)=-\beta_{0} \alpha^{2}-\beta_{1} \alpha^{3}-\beta_{2} \alpha^{4}-\beta_{3} \alpha^{5}+O\left(\alpha^{6}\right)
+\end{equation}
+and the coefficients are given by
+\begin{equation}
+\begin{aligned}
+\beta_{0}=&\left( \frac{1}{4\pi} \right)\left( 11-\frac{2}{3} N_{f} \right), \quad \beta_{1}=\left( \frac{1}{4\pi} \right)^2\left( 102-\frac{38}{3} N_{f} \right)\\ \beta_{2}=&\left( \frac{1}{4\pi} \right)^3\left( \frac{2857}{2}-\frac{5033}{18} N_{f}+\frac{325}{54} N_{f}^{2} \right)\\ \beta_{3}=&\left( \frac{1}{4\pi} \right)^4\left(\left(\frac{149753}{6}+3564 \zeta(3)\right)-\left(\frac{1078361}{162}+\frac{6508}{27} \zeta(3)\right) N_{f})\right.\\&\left.+\left(\frac{50065}{162}+\frac{6472}{81} \zeta(3)\right) N_{f}^{2}+\frac{1093}{729} N_{f}^{3}\right)
+\end{aligned}
+\end{equation}
+where $\zeta(x)$ is the Riemann-Zeta function which evaluates to $\zeta(3) = 1.202056903 \ldots$. One possible approximate 4-loop solution to the renormalization group equation (RGE) is given in \cite{AgasheK2016ROPP} in the $\overline{MS}$-scheme as
+\begin{equation}\label{eq:runningCouplingApprox}
+\begin{gathered}
+\alpha\left(q^{2}\right) \simeq \frac{1}{\beta_{0} t_Q}\left(1-\frac{\beta_{1}}{\beta_{0}^{2}} \frac{\ln t_Q}{t_Q}+\frac{\beta_{1}^{2}\left(\ln ^{2} t_Q-\ln t_Q-1\right)+\beta_{0} \beta_{2}}{\beta_{0}^{4} t_Q^{2}}\right. \\
+\left.-\frac{\beta_{1}^{3}\left(\ln ^{3} t_Q-\frac{5}{2} \ln ^{2} t_Q-2 \ln t_Q+\frac{1}{2}\right)+3 \beta_{0} \beta_{1} \beta_{2} \ln t_Q-\frac{1}{2} \beta_{0}^{2} \beta_{3}}{\beta_{0}^{6} t_Q^{3}}\right), \\
+t_Q \equiv \ln \frac{q^{2}}{\Lambda^{2}},
+\end{gathered}
+\end{equation}
+where $\Lambda$ is a constant of integration which corresponds to the scale at which the coupling diverges in perturbation theory. Because this is not a unique approximation, $\alpha\left(q^{2}\right)$ can only be defined from $\Lambda$ in conjunction with the appropriate approximation. For this reason and others, it is standard practice to state the value of $\alpha$ at a particular scale.\\\\Equation \eqref{eq:leadingOrder_pt_E} shows that, to leading order in perturbation theory, $t^{2}\langle E\rangle$ is proportional to the running coupling, picking up a non-trivial flow time dependence at next to leading order. Using $\Lambda$ at zero flavour in terms of the Sommer scale $r_0$ as calculated in \cite{CapitaniStefano1999Nqmr}
+\begin{equation}
+\Lambda_{\overline{MS}}=0.602(48) / r_{0}
+\end{equation}
+and equation \eqref{eq:runningCouplingApprox}, the perturbative expansion for $t^2\langle E \rangle$ can be calculated.\\\\Just as the Sommer parameter sets the scale through the static quark potential $V(r)$ through
+\begin{equation}
+r^2\left.\frac{d}{d r} V(r)\right|_{r=r0} = 1.65
+\end{equation}
+a reference scale $t_0$ can be defined by the equation
+\begin{equation}
+\left.t^{2}\langle E(t)\rangle\right|_{t=t_{0}}=0.3
+\end{equation}
+which has the advantage of not needing any fits or extrapolations and requiring relatively small statistics to achieve small statistical errors \cite{Luscher2010}.
+
+\subsection{The topological charge and the Wilson flow}
+We last looked at the topological charge in the context of The Atiyah-Singer index theorem and the axial anomaly in section \ref{sec:chiral_fermions_topCharge}. There, the lattice formulation for the topological charge in equation \eqref{eq:topCharge_DiracOperator_index} was defined in terms of the massless Dirac operator and related to its analytical index through the index theorem. This is broadly known as the 'Fermionic' topological charge definition.\\\\In the continuum, it was shown \cite{BelavinA.A1975Psot} that differentiable gauge fields of compact gauge groups in 4-dimensional euclidean space have an associated topological index. Consider a $S^3$ sphere embedded in this 4-dimensional space and the set of $A_\mu(y)\,|\,y\in S^3$. The gauge fields $A_\mu(x)$ which satisfy the condition 
+\begin{equation}
+F_{\mu \nu}=\partial_{\mu} A_{\nu}-\partial_{\nu} A_{\mu}+\left[A_{\mu}, A_{\nu}\right] \underset{x \rightarrow \infty}{\rightarrow} 0
+\end{equation}
+will, assuming the sphere is sufficiently large, be approximately expressible by\footnote{Recall the definition for a parallel transporter}
+\begin{equation}
+A_{\mu}\left|_{S^{3}} \approx \Lambda^{-1}(x) \frac{\partial \Lambda(x)}{\partial x_{\mu}}\right|_{S^{3}}
+\end{equation}
+where $\Lambda(x)$ is an element of the gauge group $G$. This constitutes a map, $S^3\rightarrow G$ belonging to some homotopy class.\\ To explain homotopy classes briefly, consider the set of maps from a circle to a disc with a hole. If two maps cannot be continuously be deformed into the other, e.g. because in one map, the circle wraps around the hole in the disc while in the other map, it does not, the two maps are considered to belong to different homotopy classes.\\ For non-Abelian, simple Lie-groups \cite{bredon1993topology} it has been shown that there exists infinitely many distinct classes for this mapping \cite{BelavinA.A1975Psot}, meaning the phase space of Yang-Mills fields contain infinitely many subsets, each distinguished by a topological index $Q$.\\In our circle and disc analogy, we might think of $Q$ as the number of times the circle wraps around the hole in the disc, with the sign of $Q$ encodes some notion of clockwise- or anti- clockwise wrapping i.e. The index tells you which homotopy class you're in.\\\\This topological index is of course the topological charge, and the authors of \cite{BelavinA.A1975Psot} arrived at its continuum definition. This result is equally applicable to gauge fields on a 4-dimensional torus $T^4$ \footnote{Note that the torus encodes the periodic boundary conditions associated with many LQCD calculations.} and so we give the corresponding definition
+\begin{equation}\label{eq:topChargeCont}
+\begin{gathered}
+Q=-\frac{1}{16 \pi^{2}} \int_{T^{4}} d^{4} x \operatorname{Tr}\left\{F_{\mu \nu}{ }^{*} F_{\mu \nu}\right\} \\
+F_{\mu \nu}=\partial_{\mu} A_{\nu}-\partial_{v} A_{\mu}+\left[A_{\mu}, A_{\nu}\right] ; \quad ^* F_{\mu \nu}=\frac{1}{2} \varepsilon_{\mu \nu \varrho \sigma} F_{\varrho \sigma}
+\end{gathered}
+\end{equation}
+This was all in the continuum, so what happens when we try to extend this to the lattice? The link variables take values in the Lie group, not the Lie algebra as in the continuum. There is no continuity in group space between adjacent links, meaning every field can be continuously deformed into every other field: no homotopy classes. This issue was resolved by Lüscher in \cite{L_scherM1982Tolg} and we follow his derivation now.\\\\Because lattice gauge theories are ultimately concerned with the large $\beta = \frac{6}{g^2}$ limit, the fields which contribute to the functional integral
+\begin{equation*}
+\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]}
+\end{equation*}
+will only have a small action density, since the expectation value of the action density is given by
+\begin{equation}
+\langle\operatorname{Tr}\{1-U_{\mu \nu}(n)\}\rangle=\frac{3}{8} g^{2}+O\left(g^{4}\right).
+\end{equation}
+Therefore, in the continuum limit, in which $g\rightarrow 0$, all fields which do not satisfy some bound 
+\begin{equation}
+\operatorname{Tr}\{1-U_{\mu \nu}(n)\} < h
+\end{equation}
+can be excluded from the integration domain without affecting the continuum limit. This re-introduces some notion of continuity to the lattice gauge fields in that the parallel transporters around small closed loops (recall our discussion in section \ref{sec:lgt}) are close to the identity element, i.e. more loosely speaking; closer to being an element of the Lie algebra.\\We can immediately see how this construction will restore the notion of homotopy classes (and therefore the topological charge) for the gauge fields. If field configurations  for which $\operatorname{Tr}\{1-U_{\mu \nu}(n)\} > h$ have zero measure in the functional integral, then not all field configurations can be continuously deformed to the trivial configuration, since it may need to pass through such a configuration.\\\\The topological charge can be identified with the principle bundle\footnote{See e.g. \cite{diffGeom} p.50 for a definition} of the gauge group over the $T^4$  space-time manifold. The bundle is characterized by a set of unit cells 
+\begin{equation}
+c(n)=\left\{x \in \mathbb{R}^{4} \mid 0 \leqq\left(x_{\mu}-n_{\mu}\right) \leqq 1 \text { for } \mu\in\{0,1,2,3\},\,n \in \mathbb{Z}^{4}\right\}
+\end{equation}
+and transition matrices $v_{n,\mu}(x)$ defined on the face of each cell, denoted by
+\begin{equation}
+x\in f(n,\mu) = c(n) \cap c(n-\hat{\mu}),
+\end{equation}
+taking values in the gauge group such that $v_{n,\mu}$ obeys the periodicity of $T^4$ in addition to the condition 
+\begin{equation}
+v_{n-\hat{\mu}, v}(x) \cdot v_{n, \mu}(x)=v_{n-\hat{v}, \mu}(x) \cdot v_{n, v}(x)
+\end{equation}
+known as a cocycle condition.\\
+Such principle bundles in the case of $SU(2)$, as demonstrated by Lüscher \cite{L_scherM1982Tolg}, are differentiable into distinct topological classes with unique topological indices that are expressible in terms of the transition matrices $v_{n,\mu}$.\\Lüscher then extends this to the lattice by embedding the hypercubic lattice $\mathbb{Z}^{4}$ in $\mathbb{R}^{4}$ with the same periodic boundary conditions as $T^4$. He then smoothly interpolates the transition matrices, which now are only defined on the corners of the cells $c(n)$, to all $x\in f(n,\mu)$ such that the new transition matrices can be shown to be equivalent to the ones in the continuum. In this way, the final result for the lattice expression of the topological charge is shown to be
+\begin{equation}
+\begin{aligned} 
+Q=&\sum_{n} q(n)\\
+q(n)=&-\frac{a^{4}}{16 \pi^{2}} \operatorname{Tr}\left\{F_{\mu \nu}(a n) * F_{\mu \nu}(a n)\right\}+O\left(a^{5}\right)
+\end{aligned}
+\end{equation}
+which, for small values of the lattice constant $a$, is equal to the continuum expression \eqref{eq:topChargeCont}.
+\subsubsection{Dynamical separation of topological sectors}
+file:///C:/Users/adria/Documents/Studier/Master/Special%20Syllabus/L%C3%BCscher1982_Topology_Of_Lattice_Gauge_Fields.pdf
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+
+    \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[scale = 1]{Top_sector_Illustration.png}};
+\node[anchor=south west,inner sep=0] at (2.5,2.5){$Q=-1$};
+\node[anchor=south west,inner sep=0] at (0.8,0.8){$Q=0$};
+\node[anchor=south west,inner sep=0] at (1.2,4.6){$Q=-2$};
+\node[anchor=south west,inner sep=0] at (3.9,4.5){$Q=1$};
+\node[anchor=south west,inner sep=0,rotate=80] at (4.7,1.0){$Q=2$};
+\draw [thick, ->] (-0.5,2.5) -- (1,2.0) node[near start,above left] {large $||F_{\mu\nu(x)}||$};
+\node[anchor=south,inner sep=0] at (2.6,-0.4){Field space};
+\node[anchor=south,inner sep=0] at (7.7,-0.4){};
+\end{tikzpicture}
+\caption[]{}\label{fig:topologicalSectors_illustration}
+\end{figure}
+\subsection{The strong CP problem}
 
 \section{Computation}
-As of yet, we've neglected to mention how LQCD computations are solved. This section will cover the most general basis of LQCD computation but it will not go into detail on any specific method. It will instead attempt to cover the most popular and pedagogically clear examples while directing the reader to the relevant source material for some other methods.\\\\Recall, once again the expression for the expectation value of an observable from \eqref{eq:exp_val_collection} for a given choice of lattice action. If the observable is a function of the quark- and anti- quark fields, then performing the Grassmann integration will yield, in addition to the fermion determinant, any quark propagators arising from Wick's theorem \eqref{eq:new_Wick_Theorem}. \par The computation of gauge configurations including the quarks is conceptually difficult and would for the time being, distract from the relatively simple formalism. We therefore start by considering the case of a pure gauge action which has observables such as the Wilson loop expectation value, which is only dependent on the link variables.
+As of yet, we've neglected to mention how LQCD computations are solved.\textcolor{red}{This section will cover the most general basis of LQCD computation but it will not go into detail on any specific method. It will instead attempt to cover the most popular and pedagogically clear examples while directing the reader to the relevant source material for some other methods.} \\\\Recall, once again the expression for the expectation value of an observable from \eqref{eq:exp_val_collection} for a given choice of lattice action. If the observable is a function of the quark- and anti- quark fields, then performing the Grassmann integration will yield, in addition to the fermion determinant, any quark propagators arising from Wick's theorem \eqref{eq:new_Wick_Theorem}. \par The computation of gauge configurations including the quarks is conceptually difficult and would for the time being, distract from the relatively simple formalism. We therefore start by considering the case of a pure gauge action which has observables such as the Wilson loop expectation value, which is only dependent on the link variables.
 \subsection{Pure gauge theory}
 The expression we need to evaluate 
 \begin{equation}
@@ -2545,7 +2594,7 @@ pseudocode of the CM-OR- Even/odd program
 \section{Error Analysis}
 \section{Future Improvements}
 \subsection{SU(3) Over-Relaxation}
-
+\cite{diffGeom}
 \newpage
 \bibliographystyle{unsrt}
 \bibliography{references}
