@@ -1178,7 +1178,7 @@ will, assuming the sphere is sufficiently large, be approximately expressible by
 \begin{equation}
 A_{\mu}\left|_{S^{3}} \approx \Lambda^{-1}(x) \frac{\partial \Lambda(x)}{\partial x_{\mu}}\right|_{S^{3}}
 \end{equation}
-where $\Lambda(x)$ is an element of the gauge group $G$. This constitutes a map, $S^3\rightarrow G$ belonging to some homotopy class.\\ To explain homotopy classes briefly, consider the set of maps from a circle to a disc with a hole. If two maps cannot be continuously be deformed into the other, e.g. because in one map, the circle wraps around the hole in the disc while in the other map, it does not, the two maps are considered to belong to different homotopy classes.\\ For non-Abelian, simple Lie-groups \cite{bredon1993topology} it has been shown that there exists infinitely many distinct classes for this mapping \cite{BelavinA.A1975Psot}, meaning the phase space of Yang-Mills fields contain infinitely many subsets, each distinguished by a topological index $Q$.\\In our circle and disc analogy, we might think of $Q$ as the number of times the circle wraps around the hole in the disc, with the sign of $Q$ encodes some notion of clockwise- or anti- clockwise wrapping i.e. The index tells you which homotopy class you're in.\\\\This topological index is of course the topological charge, and the authors of \cite{BelavinA.A1975Psot} arrived at its continuum definition. This result is equally applicable to gauge fields on a 4-dimensional torus $T^4$ \footnote{Note that the torus encodes the periodic boundary conditions associated with many LQCD calculations.} and so we give the corresponding definition
+where $\Lambda(x)$ is an element of the gauge group $G$. This constitutes a map, $S^3\rightarrow G$ belonging to some homotopy class.\\ To explain homotopy classes briefly, consider the set of maps from a circle to a disc with a hole. If two maps cannot be continuously be deformed into the other, e.g. because in one map, the circle wraps around the hole in the disc while in the other map, it does not, the two maps are considered to belong to different homotopy classes.\\ For non-Abelian, simple Lie-groups \cite{bredon1993topology} it has been shown that there exists infinitely many distinct classes for this mapping \cite{BelavinA.A1975Psot}, meaning the phase space of Yang-Mills fields contain infinitely many subsets, each distinguished by a topological index $Q$.\\In our circle and disc analogy, we might think of $Q$ as the number of times the circle wraps around the hole in the disc, with the sign of $Q$ encoding some notion of clockwise- or anti- clockwise wrapping i.e. The index tells you which homotopy class you're in.\\\\This topological index is of course the topological charge, and the authors of \cite{BelavinA.A1975Psot} arrived at its continuum definition. This result is equally applicable to gauge fields on a 4-dimensional torus $T^4$ \footnote{Note that the torus encodes the periodic boundary conditions associated with many LQCD calculations.} and so we give the corresponding definition
 \begin{equation}\label{eq:topChargeCont}
 \begin{gathered}
 Q=-\frac{1}{16 \pi^{2}} \int_{T^{4}} d^{4} x \operatorname{Tr}\left\{F_{\mu \nu}{ }^{*} F_{\mu \nu}\right\} \\
@@ -1190,14 +1190,14 @@ This was all in the continuum, so what happens when we try to extend this to the
 \int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]}
 \end{equation*}
 will only have a small action density, since the expectation value of the action density is given by
-\begin{equation}
+\begin{equation}\label{eq:actionDensityExpVal}
 \langle\operatorname{Tr}\{1-U_{\mu \nu}(n)\}\rangle=\frac{3}{8} g^{2}+O\left(g^{4}\right).
 \end{equation}
 Therefore, in the continuum limit, in which $g\rightarrow 0$, all fields which do not satisfy some bound 
-\begin{equation}
+\begin{equation}\label{eq:SmoothnessBound_topCharge}
 \operatorname{Tr}\{1-U_{\mu \nu}(n)\} < h
 \end{equation}
-can be excluded from the integration domain without affecting the continuum limit. This re-introduces some notion of continuity to the lattice gauge fields in that the parallel transporters around small closed loops (recall our discussion in section \ref{sec:lgt}) are close to the identity element, i.e. more loosely speaking; closer to being an element of the Lie algebra.\\We can immediately see how this construction will restore the notion of homotopy classes (and therefore the topological charge) for the gauge fields. If field configurations  for which $\operatorname{Tr}\{1-U_{\mu \nu}(n)\} > h$ have zero measure in the functional integral, then not all field configurations can be continuously deformed to the trivial configuration, since it may need to pass through such a configuration.\\\\The topological charge can be identified with the principle bundle\footnote{See e.g. \cite{diffGeom} p.50 for a definition} of the gauge group over the $T^4$  space-time manifold. The bundle is characterized by a set of unit cells 
+can be excluded from the integration domain without affecting the continuum limit. This re-introduces some notion of continuity to the lattice gauge fields in that the parallel transporters around small closed loops (recall our discussion in section \ref{sec:lgt}) are close to the identity element, i.e. more loosely speaking; closer to being an element of the Lie algebra.\\We can immediately see how this construction will restore the notion of homotopy classes (and therefore the topological charge) for the gauge fields. If field configurations  for which $\operatorname{Tr}\{1-U_{\mu \nu}(n)\} > h$ have zero measure in the functional integral, then not all field configurations can be continuously deformed to the trivial configuration, since it may need to pass through such a configuration, which it obviously cannot since the functional integral gives those configurations zero probability weight.\\\\The topological charge can be identified with the principle bundle\footnote{See e.g. \cite{diffGeom} p.50 for a definition} of the gauge group over the $T^4$  space-time manifold. The bundle is characterized by a set of unit cells 
 \begin{equation}
 c(n)=\left\{x \in \mathbb{R}^{4} \mid 0 \leqq\left(x_{\mu}-n_{\mu}\right) \leqq 1 \text { for } \mu\in\{0,1,2,3\},\,n \in \mathbb{Z}^{4}\right\}
 \end{equation}
@@ -1214,13 +1214,52 @@ Such principle bundles in the case of $SU(2)$, as demonstrated by Lüscher \cite
 \begin{equation}
 \begin{aligned} 
 Q=&\sum_{n} q(n)\\
-q(n)=&-\frac{a^{4}}{16 \pi^{2}} \operatorname{Tr}\left\{F_{\mu \nu}(a n) * F_{\mu \nu}(a n)\right\}+O\left(a^{5}\right)
+q(n)=&-\frac{a^{4}}{16 \pi^{2}} \operatorname{Tr}\left\{F_{\mu \nu}(a n) ^* F_{\mu \nu}(a n)\right\}+O\left(a^{5}\right)
 \end{aligned}
 \end{equation}
-which, for small values of the lattice constant $a$, is equal to the continuum expression \eqref{eq:topChargeCont}.
-\subsubsection{Dynamical separation of topological sectors}
-file:///C:/Users/adria/Documents/Studier/Master/Special%20Syllabus/L%C3%BCscher1982_Topology_Of_Lattice_Gauge_Fields.pdf
-
+which, for small values of the lattice constant $a$, is equal to the continuum expression \eqref{eq:topChargeCont}. While the derivation briefly assumes the gauge group $SU(2)$, it is noted that the results are easily extended to any compact gauge group.\\\\The Wilson flow as applied to the lattice gauge fields turns out to be a diffeomorphism\footnote{An isomorphism on smooth manifolds} of the field space. This is important, because it means that the topological properties of the unflowed gauge fields are preserved under the Wilson flow. This will allow us to study the topological charge at finite values of the flow time, safe in the knowledge that the topological invariants remain untouched.\\ The current Monte Carlo methods which are used to generate gauge field configurations, in no way preserves the requirement of smoothness set by the bound in the inequality \eqref{eq:SmoothnessBound_topCharge}. This is a substantial issue, because as we saw, it disallows an unambiguous definition of the topological charge on the lattice. The Wilson flow at finite flow time $t>0$ has been shown to produce smooth, renormalized gauge fields.\\The quantitative measure which can be said to encode the smoothness of the gauge field, we've already seen, it's given by
+\begin{equation}
+h=\max _{U_{\mu \nu}(n)} s_{U_{\mu \nu}(n)}, \quad s_{U_{\mu \nu}(n)}=\operatorname{Re} \operatorname{tr}\{1-U_{\mu \nu}(n))\}
+\end{equation}
+and it should be reminiscent of the bound in \eqref{eq:SmoothnessBound_topCharge}.\\In \cite{LuescherMartin2009TMtW}, the transformation 
+\begin{equation}
+U \rightarrow V_{t}=\mathcal{F}_{t}(U)
+\end{equation}
+which the Wilson flow applies to field space, was shown to have a Jacobian 
+\begin{equation}
+\operatorname{det} \mathcal{F}_{t, *}(U),
+\end{equation}
+which could be helpfully expressed in terms, suitable for the functional integral, with the help of the equivalence 
+\begin{equation}
+\operatorname{det}[A]=\exp (\operatorname{tr}[\ln A])
+\end{equation}
+and
+\begin{equation}
+\frac{d}{dt}\operatorname{Tr}\left[ \operatorname{ln} A  \right]  = \operatorname{Tr}\left[ \frac{d}{dt}A A^{-1} \right]
+\end{equation}
+as
+\begin{equation}
+\operatorname{det} \mathcal{F}_{t, *}(U) = \exp\left( -\frac{16 g_{0}^{2}}{3 a^{2}} \int_{0}^{t} \mathrm{~d} t S_{G}\left(V_{t}\right) \right)
+\end{equation}
+where $S_{G}$ is the Wilson plaquette action. This means that the QCD functional integral, under a change of variables $U\rightarrow V_t$, becomes
+\begin{equation}
+\begin{aligned}
+&\frac{1}{\mathcal{Z}} \int \mathrm{D}[V] \mathrm{e}^{-\tilde{S}(V)} \\
+&\tilde{S}(V)=S(U)+\frac{16 g_{0}^{2}}{3 a^{2}} \int_{0}^{t_{0}} \mathrm{~d} t S_{\mathrm{w}}\left(V_{t}\right), \quad \mathrm{D}[V]=\prod_{x, \mu} \mathrm{d} V(x, \mu)
+\end{aligned}
+\end{equation}
+where $S(U)$ denotes the total action evaluated at zero flow time and the reference time $t_0$ has taken the place of $t$ as the integration bound.\\It's clear from this that the functional integral strongly favours smooth configurations.
+We then see how the properties of the Wilson flow allow us to measure the topological charge directly from the flowed gauge fields, and that at sufficiently large values of the flow time, those fields satisfy the bound and permit an unambiguous topological charge definition, thus settling into integer values.
+\subsubsection{Separation of topological sectors}
+In QCD, the set of fields which satisfy the bound \cite{PhillipsAnthony1986Lgfp}
+\begin{equation}\label{eq:topChargeDefinedBoundQCD}
+h<0.067
+\end{equation}
+admit a definition for the topological charge and so can be said to fall into topological sectors, while the fields for which 
+\begin{equation}
+h\geq 0.067
+\end{equation}
+admit no such definition, filling field space with boundaries between topological sectors, mimicking the behaviour of the continuum fields. An illustration of this is seen in figure \ref{fig:topologicalSectors_illustration}.
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
@@ -1231,12 +1270,37 @@ file:///C:/Users/adria/Documents/Studier/Master/Special%20Syllabus/L%C3%BCscher1
 \node[anchor=south west,inner sep=0] at (1.2,4.6){$Q=-2$};
 \node[anchor=south west,inner sep=0] at (3.9,4.5){$Q=1$};
 \node[anchor=south west,inner sep=0,rotate=80] at (4.7,1.0){$Q=2$};
-\draw [thick, ->] (-0.5,2.5) -- (1,2.0) node[near start,above left] {large $||F_{\mu\nu(x)}||$};
+\draw [thick, ->] (-0.5,2.5) -- (1,2.0) node[near start,above left] {large $h\geq 0.067$};
 \node[anchor=south,inner sep=0] at (2.6,-0.4){Field space};
 \node[anchor=south,inner sep=0] at (7.7,-0.4){};
 \end{tikzpicture}
-\caption[]{}\label{fig:topologicalSectors_illustration}
+\caption[]{The space of field configurations fall into topological sectors which satisfy the bound in \eqref{eq:topChargeDefinedBoundQCD}, separated by sectors with $h\geq 0.067$}\label{fig:topologicalSectors_illustration}
 \end{figure}
+
+As we saw in equation \eqref{eq:actionDensityExpVal}, when $a\rightarrow 0$ and thereby $g\rightarrow 0$ , the proportion of fields satisfying some bound $s_{U_{\mu \nu}(n)}<s_{max}$ quickly goes to $1$. This is seen in figure \ref{fig:latticeSpacingexceedingBound}, where the probability that the bound is exceeded is plotted along the value of the bound at three different lattice spacings.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[scale = 0.4]{plaquettesBelowBound.png}};
+    \node[anchor=south west,inner sep=0,fill=white] at (-1.25,6.81){$P(s_{U_{\mu \nu}(n)}\geq s_{max})$};
+    \node[anchor=south west,inner sep=0,fill=white] at (5,-0.01){$s_{max}$};
+     \node[anchor=south west,inner sep=0] at (12,-0.02){};
+\end{tikzpicture}
+
+
+\caption[]{Probability that a $s_{U_{\mu \nu}(n)}$ for any given plaquette equals or exceeds the bound $s_{max}$ as a function of the bound $s_{max}$, plotted from top to bottom the data for lattice spacing $a=0.1,\,0.07$ and $0.05$ fm in $SU(3)$ gauge theory. Figure courtesy of Martin Lüscher, from \cite{Luscher2010} distributed under a \href{https://creativecommons.org/licenses/by/4.0/}{\textbf{Creative commons lisence}}. The axis labels have been altered to match notation.}\label{fig:latticeSpacingexceedingBound}
+\end{figure}
+Lüscher reports in \cite{Luscher2010} that the percentage of gauge fields which satisfied the bound \eqref{eq:topChargeDefinedBoundQCD} went as
+$0\%\rightarrow 8\%\rightarrow 70\%$ as the lattice spacing was reduced from\\$0.1\rightarrow0.07\rightarrow0.05$.
+Thus, the emergence of topological sectors in the continuum limit is seen to arise dynamically from the rapidly decreasing weight in the functional integral of the large-$h$ configurations.
+\subsubsection{Universality}
+The hereto geometric construction for the topological charge density is computable. However for $t>0$, any definition for the topological charge density on the lattice which share in the same asymptotic behaviour in the classical continuum limit belong to the same universality class \cite{Luscher2010}\cite{L_scher_2011} and the same can be said of its cumulants. Thus, a simple, symmetric discretization of the Field strength tensor can be used to construct what is known as the 'naive' definition of the topological charge density 
+\begin{equation}
+q(n, t)=\frac{1}{64 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} G_{\mu \nu}^{a}(n, t) G_{\rho \sigma}^{a}(n, t)
+\end{equation}
+where $G_{\mu \nu}^{a}(n, t)$ is the discretized lattice field strength tensor at flow time $t$.
+
 \subsection{The strong CP problem}
 
 \section{Computation}
@@ -2591,6 +2655,10 @@ We see that the lattice must necessarily contain an even number of sites in ever
 \subsection{Algorithm for generating gauge configurations}
 pseudocode of the CM-OR- Even/odd program
 \section{Results}
+Need:
+\begin{enumerate}
+\item Q distribution at same flow time for three different lattice spacings
+\end{enumerate}
 \section{Error Analysis}
 \section{Future Improvements}
 \subsection{SU(3) Over-Relaxation}
