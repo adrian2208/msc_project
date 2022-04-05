@@ -12,11 +12,11 @@ int main(int argc, char** argv) {
 	int extdofs = 4;
 	int shape[] = {24,24,24,24};
 	double beta = 6.0;
-	int ConfigurationStart = 355;
-	int ConfigurationStop = 400;
+	int ConfigurationStart = 131;
+	int ConfigurationStop = 394;
 	//std::cout << getLatticeConstant(beta)<< std::endl;
 	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
-	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,1000);
+	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,300,5);
 
 	int ThermalizationSteps = 400;// 2000;//Every update constitutes N_or and N_hb updates, typically 4 and 1. So this number is multiplied by 5 in this case
 	int ConfigTimeSeparation = 60;//200;//Every update constitutes N_or and N_hb updates, typically 4 and 1. So this number is multiplied by 5 in this case
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 	//ResumeFlowedConfiguration(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200,16.0);
 
-	double measureAtFlowTime = 20.0;
+	double measureAtFlowTime = 8.02;
 	//MeasureFlowedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, measureAtFlowTime);
 
 	mpiWrapper::end_parallelSession();
@@ -86,11 +86,11 @@ void GenerateHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], d
 		U.saveSU3ToFile(beta, heatbath.getupdateMethod(), std::to_string(i));
 	}
 }
-void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps) {
+void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps, int measure_every_nth_step) {
 	//flow step size
-	double epsilon = 0.02;
+	double epsilon = 0.01;
 	//instantiate the lattice and action
-	Lattice lattice(NrDims, shape,false);
+	Lattice lattice(NrDims, shape,true);
 	Wilson action(beta);
 	//run through the saved gauge configurations
 	for (int i = ConfigurationStart; i <= ConfigurationStop; i++) {
@@ -99,10 +99,10 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 		std::string ensembleNum = std::to_string(i);
 		U.loadSU3FromFile(beta, "Heatbath_4_ORperHB", ensembleNum);
 		//instantiate the Gradient flow object
-		GradientFlow flowing(action, U, epsilon);
+		GradientFlow flowing(action, U, epsilon, measure_every_nth_step);
 		//instantiate and include the Topological Charge
-		//TopologicalCharge topCharge(U);
-		//flowing.Include_TopCharge(topCharge);
+		TopologicalCharge topCharge(U);
+		flowing.Include_TopCharge(topCharge);
 		//instantiate and include the Energy density
 		//EnergyDensity Edensity(U);
 		//flowing.Include_EnergyDensity(Edensity);
@@ -112,15 +112,18 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 		for (int i = 0; i < flowSteps; i++) {
 			flowing.flow();
 			flowTime = flowing.GetFlowTime();
-			if (mpiWrapper::id() == 0) {
-				std::cout << "flow step: " << i << std::endl;
-			}
-			if (i % SaveEveryNconfigs == 0 && (i>0) && (i<(flowSteps-1))) {
-				U.saveSU3ToFile(beta, flowing.getupdateMethod(), ensembleNum + "_Flowtime" + std::to_string(flowTime));
-			}
+			//if (i % 10 == 0) {
+			//	Edensity.calculate(flowTime);
+			//}
+			//if (mpiWrapper::id() == 0) {
+			//	std::cout << "flow step: " << i << std::endl;
+			//}
+			//if (i % SaveEveryNconfigs == 0 && (i>0) && (i<(flowSteps-1))) {
+			//	U.saveSU3ToFile(beta, flowing.getupdateMethod(), ensembleNum + "_Flowtime" + std::to_string(flowTime));
+			//}
 		}
 		//save the observables to files
-		//topCharge.saveTopologicalChargeToFile(beta,flowing.getupdateMethod() ,"Heatbath_4_ORperHB_Flowed" + ensembleNum + "_" + flowTime);
+		topCharge.saveTopologicalChargeToFile(beta,flowing.getupdateMethod() ,"_" + ensembleNum);
 		//Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
 		U.saveSU3ToFile(beta, flowing.getupdateMethod(), ensembleNum + "_Flowtime" + std::to_string(flowTime));
 	}

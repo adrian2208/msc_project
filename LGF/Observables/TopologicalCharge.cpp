@@ -52,6 +52,7 @@ void TopologicalCharge::calculate(double flowTime) {
 	totalSum *= 1.0 / (4.0 * PI2);
 	if (mpiWrapper::id() == 0) {
 		m_resultVector.push_back(totalSum);
+		m_FlowMeasurementTimeVector.push_back(flowTime);
 		std::cout << "Topological Charge = " << totalSum << "\n";
 		std::cout.flush();
 	}
@@ -155,7 +156,11 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 		//std::copy(beginByte, endByte, osi);
 
 		std::ofstream outFile(outPath_string,std::ios_base::app);
-		for (const auto& e : m_resultVector) outFile << e << "\n";
+		//for (const auto& e : m_resultVector) outFile << e << "\n";
+		int size = m_resultVector.size();
+		for (int i = 0; i < size; i++) {
+			outFile << m_FlowMeasurementTimeVector[i] << "," << m_resultVector[i] << "\n";
+		}
 	}
 	MPI_Barrier(mpiWrapper::comm());
 }

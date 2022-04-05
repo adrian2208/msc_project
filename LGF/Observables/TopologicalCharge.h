@@ -12,4 +12,5 @@ private:
 	int m_AutoCorrTime;
 	
 	std::vector<double> m_resultVector;
+	std::vector<double> m_FlowMeasurementTimeVector;
 };

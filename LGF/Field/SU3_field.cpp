@@ -580,6 +580,9 @@ su3_mat SU3_field::clover_avg(int internal_index, int mu, int nu) {
 
 	return out;
 }
+su3_mat SU3_field::FieldStrengthTensor(int internal_index, int mu, int nu) {
+	return clover_avg(internal_index, mu, nu);
+}
 su3_mat SU3_field::Improved_fieldStrengthTensor(int internal_index, int mu, int nu) {
 	//double k1 = 1.7341;
 	//double k3 = 0.0251;

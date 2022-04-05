@@ -6,7 +6,7 @@
 #include "../Observables/EnergyDensity.h"
 class GradientFlow {
 public:
-	GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon);
+	GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon, int FlowStepsPerMeasurement=1);
 	void flow();
 
 	void Include_TopCharge(TopologicalCharge& TopCharge);
@@ -23,6 +23,7 @@ private:
 	SU3_field* m_Z1;
 	SU3_field* m_Z2;
 	int m_NrSteps;
+	int m_FlowStepsPerMeasurement;
 	double m_epsilon;
 	double m_flowTime;
 

@@ -1,8 +1,6 @@
 \documentclass[a4paper,10pt]{article}
-
 \usepackage{graphicx}
 \usepackage{subcaption}
-% Variable enumeration
 \usepackage{enumerate}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -1089,7 +1087,7 @@ where we have used a well known result for integrals over Gaussian functions.\\F
 
 \subsubsection{Scale-setting with the Wilson flow}
 One observable of interest is the energy of the gauge fields, which is the contraction of two copies of the field strength tensor, summed over all generators $T^a$ of the gauge group 
-\begin{equation}
+\begin{equation}\label{eq:energyDensity_continuum}
 E=\frac{1}{4} G_{\mu \nu}^{a} G_{\mu \nu}^{a}.
 \end{equation}
 We can expand this by inserting the expression for the flowed field strength tensor. Additionally, we show the corresponding generators without actually including them in the expression, they're there to keep track of which terms contribute and are removed in the final line. We get
@@ -1144,7 +1142,7 @@ Using the result for the four-loop QCD $\beta$-function calculated in the $\over
 and the coefficients are given by
 \begin{equation}
 \begin{aligned}
-\beta_{0}=&\left( \frac{1}{4\pi} \right)\left( 11-\frac{2}{3} N_{f} \right), \quad \beta_{1}=\left( \frac{1}{4\pi} \right)^2\left( 102-\frac{38}{3} N_{f} \right)\\ \beta_{2}=&\left( \frac{1}{4\pi} \right)^3\left( \frac{2857}{2}-\frac{5033}{18} N_{f}+\frac{325}{54} N_{f}^{2} \right)\\ \beta_{3}=&\left( \frac{1}{4\pi} \right)^4\left(\left(\frac{149753}{6}+3564 \zeta(3)\right)-\left(\frac{1078361}{162}+\frac{6508}{27} \zeta(3)\right) N_{f})\right.\\&\left.+\left(\frac{50065}{162}+\frac{6472}{81} \zeta(3)\right) N_{f}^{2}+\frac{1093}{729} N_{f}^{3}\right)
+\beta_{0}=&\left( \frac{1}{4\pi} \right)\left( 11-\frac{2}{3} N_{f} \right), \quad \beta_{1}=\left( \frac{1}{4\pi} \right)^2\left( 102-\frac{38}{3} N_{f} \right)\\ \beta_{2}=&\left( \frac{1}{4\pi} \right)^3\left( \frac{2857}{2}-\frac{5033}{18} N_{f}+\frac{325}{54} N_{f}^{2} \right)\\ \beta_{3}=&\left( \frac{1}{4\pi} \right)^4\left(\left(\frac{149753}{6}+3564 \zeta(3)\right)-\left(\frac{1078361}{162}+\frac{6508}{27} \zeta(3)\right) N_{f}\right.\\&\left.+\left(\frac{50065}{162}+\frac{6472}{81} \zeta(3)\right) N_{f}^{2}+\frac{1093}{729} N_{f}^{3}\right)
 \end{aligned}
 \end{equation}
 where $\zeta(x)$ is the Riemann-Zeta function which evaluates to $\zeta(3) = 1.202056903 \ldots$. One possible approximate 4-loop solution to the renormalization group equation (RGE) is given in \cite{AgasheK2016ROPP} in the $\overline{MS}$-scheme as
@@ -1159,15 +1157,22 @@ where $\Lambda$ is a constant of integration which corresponds to the scale at w
 \begin{equation}
 \Lambda_{\overline{MS}}=0.602(48) / r_{0}
 \end{equation}
-and equation \eqref{eq:runningCouplingApprox}, the perturbative expansion for $t^2\langle E \rangle$ can be calculated.\\\\Just as the Sommer parameter sets the scale through the static quark potential $V(r)$ through
+and equation \eqref{eq:runningCouplingApprox}, the perturbative expansion for $t^2\langle E \rangle$ can be calculated upto some small value of the flow time. The result of this calculation as a function of the flow time is shown in figure \ref{fig:t_squared_E_perturbativeExpansion}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.7]{t_squaredE_pert_theory.pdf}
+\caption[]{Plot of $t^2\langle E\rangle$ as a function of the flow time for $\langle E\rangle$ in \eqref{eq:leadingOrder_pt_E},  $\alpha\left(q^{2}\right)$ in \eqref{eq:runningCouplingApprox}, $q=\frac{1}{\sqrt{8t}}$ and $\Lambda_{\overline{MS}}=0.602(48) / r_{0}$ at $N_f=0$. The error band arises from the error in $\Lambda_{\overline{MS}}$.}\label{fig:t_squared_E_perturbativeExpansion}
+\end{figure}
+Just as the Sommer parameter sets the scale through the static quark potential $V(r)$ through
 \begin{equation}
 r^2\left.\frac{d}{d r} V(r)\right|_{r=r0} = 1.65
 \end{equation}
 a reference scale $t_0$ can be defined by the equation
 \begin{equation}
-\left.t^{2}\langle E(t)\rangle\right|_{t=t_{0}}=0.3
+\left.t^{2}\langle E(t)\rangle\right|_{t=t_{0}}=0.3.
 \end{equation}
-which has the advantage of not needing any fits or extrapolations and requiring relatively small statistics to achieve small statistical errors \cite{Luscher2010}.
+For $\langle E\rangle$ to be a physical quantity of the theory, the dimensionless ratio of the reference scale defined from it, $\frac{t_0}{r0^2}$ cannot vary when the cut-off scale imposed by $a$ is removed barring a $\mathcal{O}(a)$ correction. When $E$ on the lattice is defined directly from the continuum expression \eqref{eq:energyDensity_continuum}, using a symmetric discretization of the field strength tensor using a clover term (see figure \ref{figure:Clovers} and discussion in section \ref{sec:improvedLatticeFieldStrengthTensor}), the scaling violations are seen to be particularly small. Of course, higher- order improved lattice field strength tensors could be used with presumably even smaller scaling violations.\\\\
+The reference scale $t_0$ has several distinct advantages over other reference scales such as the Sommer scale. It does not require any fits or extrapolations and require relatively small statistics in order to achieve small statistical errors \cite{Luscher2010}.
 
 \subsection{The topological charge and the Wilson flow}
 We last looked at the topological charge in the context of The Atiyah-Singer index theorem and the axial anomaly in section \ref{sec:chiral_fermions_topCharge}. There, the lattice formulation for the topological charge in equation \eqref{eq:topCharge_DiracOperator_index} was defined in terms of the massless Dirac operator and related to its analytical index through the index theorem. This is broadly known as the 'Fermionic' topological charge definition.\\\\In the continuum, it was shown \cite{BelavinA.A1975Psot} that differentiable gauge fields of compact gauge groups in 4-dimensional euclidean space have an associated topological index. Consider a $S^3$ sphere embedded in this 4-dimensional space and the set of $A_\mu(y)\,|\,y\in S^3$. The gauge fields $A_\mu(x)$ which satisfy the condition 
@@ -1299,7 +1304,39 @@ The hereto geometric construction for the topological charge density is computab
 \begin{equation}
 q(n, t)=\frac{1}{64 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} G_{\mu \nu}^{a}(n, t) G_{\rho \sigma}^{a}(n, t)
 \end{equation}
-where $G_{\mu \nu}^{a}(n, t)$ is the discretized lattice field strength tensor at flow time $t$.
+where $G_{\mu \nu}^{a}(n, t)$ is the discretized lattice field strength tensor at flow time $t$.\\\\It's notable that while the Neuberger topological charge definition in equation \eqref{eq:topCharge_DiracOperator_index} is of course calculable on the lattice, this new definition lends itself to much easier computation and much higher statistics \cite{PhysRevLett.94.032003}\cite{non_gaussianities2015}.
+
+\subsection{SOMETHING}
+\subsubsection{Witten-Veneziano mechanism}
+The flavour singlet pseudoscalar $\eta '$- meson has turned out to be a persistent source of bewilderment. As we saw in section \ref{sec:chiral_fermions_topCharge}, due to the Axial anomaly, $\eta '$ is not a pseudo Nambu-Goldstone boson. Whereas eight pseudoscalar mesons have light masses, attributable to them undergoing chiral symmetry breaking, the $\eta '$-meson is much heavier as the flavour singlet chiral symmetry $U(1)_A$ is broken explicitly by the axial anomaly.\\
+The Witten-Veneziano mechanism\cite{VenezianoG1979Uwi}\cite{WittenE1979Catf} is one solution to this problem. It is based on an observation and procedure stated by 't Hooft \cite{HOOFT1974461} that considers the large $N$ expansion where $N$ is the number of colours. In this limit where $N\rightarrow \infty$, the $U(1)_A$ symmetry of the theory is restored and thus the $\eta '$- meson undergoes chiral symmetry breaking, becoming massless in the chiral limit.\\\\ The Witten-Veneziano formula
+\begin{equation}
+m_{\eta^{\prime}}^{2}=\left.\frac{2 N_{\mathrm{f}}}{F_{\pi}^{2}} \chi_{t}\right|_{N_{\mathrm{f}}=0} + \mathcal{O}\left( 1/N^2) \right)
+\end{equation}
+relates the mass of the $\eta '$- meson to the topological susceptibility $\chi_{t}$ through the Pion- decay constant.\\It also makes another prediction, namely that the ratio of the fourth and second cumulants of the topological charge
+\begin{equation}
+R=\frac{\left\langle Q^{4}\right\rangle-3\left\langle Q^{2}\right\rangle^{2}}{\left\langle Q^{2}\right\rangle}
+\end{equation}
+should be of the order of $1/N^2$. A different model, proposed by 't Hooft based on the dilute instanton gas model predicts a value of $R=1$. A high statistics LQCD approach, based on the gradient flow \cite{non_gaussianities2015}, found a value of 
+\begin{equation}
+R = 0.233(45).
+\end{equation}
+This seems to massively disfavour the dilute instanton gas model.
+\subsubsection{Topological susceptibility}
+
+METHODS AND USES (LUSCHER) 
+""
+ Moreover, as shown in a forthcoming publication, the ratios of the
+fourth root of the second moments computed here and through a variant [18] of the
+universal formula proposed in [17] extrapolate to 1 in the continuum limit to within
+a statistical uncertainty of 3%.
+All these empirical results support the conjecture that the moments of the charge
+distribution in the functional integral (4.2) coincide with those obtained from the
+index theorem [15–18] and thus the ones appearing in the chiral Ward identities
+[19,20]. However, while highly plausible, the equality remains to be theoretically
+established.
+""
+
 
 \subsection{The strong CP problem}
 
@@ -1738,6 +1775,14 @@ Any simulation will happen at a finite lattice volume, and this impacts the outc
 
 \section{Implementation}
 \subsection{Generating Gauge Configurations}
+QUOTE FROM "Topological Susceptibility in SU(3) Gauge Theory"
+""Since the mass of the
+lightest glueball is around 1.5 GeV, finite-volume effects
+are expected to be far below our statistical errors as soon as
+L$\geq$1 fm""
+
+
+
 \subsubsection{Critical slowing down}
 
 \subsubsection{Local Hybrid Monte Carlo}
@@ -1812,7 +1857,7 @@ In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Ove
 
 
 \subsection{Observables}
-\subsubsection{Improved Lattice Field-Strength tensor}
+\subsubsection{Improved Lattice Field-Strength tensor}\ref{sec:improvedLatticeFieldStrengthTensor}
 For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:
 \begin{equation}
 W_{\mu \nu}^{(m \times n)}=\mathscr{P} \mathrm{e}^{\mathrm{ig} \oint A \mathrm{~d} x}
@@ -2655,6 +2700,17 @@ We see that the lattice must necessarily contain an even number of sites in ever
 \subsection{Algorithm for generating gauge configurations}
 pseudocode of the CM-OR- Even/odd program
 \section{Results}
+\subsection{Ensembles}
+SEE 
+https://journals-aps-org.ezproxy.uio.no/prd/pdf/10.1103/PhysRevD.92.074502
+FOR ERRORS IN TABLE
+\begin{tabular}{lccccc}
+\hline \hline Lattice & $\beta$ & $a$ & $N_{OR}/N_{HB}$&$t_{0} / a^{2}$ & $t_{0} / r_{0}^{2}$\\
+\hline$24^4$& & & &$2.995(4)$ & $0.1195(9)$ \\
+$X^4$ & & & &$2.7984(9)$ & $0.1117(9)$ \\
+$X^4$ & & & &$2.7908(5)$ & $0.1114(9)$
+\end{tabular}
+
 Need:
 \begin{enumerate}
 \item Q distribution at same flow time for three different lattice spacings

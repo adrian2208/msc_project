@@ -29,6 +29,7 @@ public:
 	inline su3_mat plaquette(int internal_index, int mu, int nu);
 	su3_mat Plaquette_FieldStrengthTensor(int internal_index, int mu, int nu);
 	su3_mat RectangleClover1x3_avg(int internal_index, int mu, int nu);
+	su3_mat FieldStrengthTensor(int internal_index, int mu, int nu);
 	su3_mat Improved_fieldStrengthTensor(int internal_index, int mu, int nu);
 	
 	void operator= (const SU3_field& field);

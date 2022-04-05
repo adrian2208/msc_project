@@ -1,7 +1,8 @@
 #include "GradientFlow.h"
 
-GradientFlow::GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon){
+GradientFlow::GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon, int FlowStepsPerMeasurement){
 	m_updateMethod = "GF";
+	m_FlowStepsPerMeasurement = FlowStepsPerMeasurement;
 	m_flowTime = 0.0;
 	m_NrSteps = 0;
 	m_GaugeAction = &GaugeAction;
@@ -47,7 +48,10 @@ void GradientFlow::flow(){
 	m_NrSteps++;
 	(*m_U).transfer_FieldValues();
 
-	MakeMeasurements();
+	if (m_NrSteps % m_FlowStepsPerMeasurement == 0) {
+		MakeMeasurements();
+	}
+
 }
 double GradientFlow::GetFlowTime() const{
 	return m_flowTime;

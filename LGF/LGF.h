@@ -31,7 +31,7 @@ void testLHMC(int argc, char** argv);
 void testGradientFlow(int argc, char** argv);
 void testSU3_Heatbath(int argc, char** argv);
 void GenerateGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int NrUpdates);
-void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps);
+void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps, int measure_every_nth_step);
 void ResumeFlowedConfiguration(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart,int ConfigurationStop, int extra_updates,double flowTime);
 void MeasureFlowedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, double flowTime);
 double getLatticeConstant(double beta);
