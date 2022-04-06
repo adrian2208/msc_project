@@ -779,7 +779,7 @@ We can determine the trace as follows
 \end{aligned}
 \end{equation}
 where we have decomposed the trace into space-time $n$, flavour, color and Dirac indices using the property of the trace of tensor products, exploited the triviality of $M$ and $\gamma_5$ in color space to get the factor of three. Then finally evaluated the Dirac trace of $\gamma_5$ to zero and identified the topological charge.\\We get that the measure transforms as 
-\begin{equation}
+\begin{equation}\label{eq:AxAnom_measure_transform}
 \mathcal{D}\left[\psi, \bar{\psi}\right]=\left( 1-2i\alpha\operatorname{tr}_{F}\left[M\right]Q_{\mathrm{top}} \right) \mathcal{D}\left[\psi^{\prime}, \bar{\psi}^{\prime}\right]
 \end{equation}
 meaning the anomaly- inducing term is due to the existence of the topological charge and whether or not the flavour mixing matrix $M$ is a generator of $SU(N_F)$ (which is traceless i.e. no anomaly) or trivial (the trace evaluates to $N_F$).\\\\For the approximate flavour symmetry $SU(2)$ we have three pseudo- Goldstone bosons corresponding to the three broken generators under SSB, the pions:\\
@@ -1310,8 +1310,8 @@ where $G_{\mu \nu}^{a}(n, t)$ is the discretized lattice field strength tensor a
 \subsubsection{Witten-Veneziano mechanism}
 The flavour singlet pseudoscalar $\eta '$- meson has turned out to be a persistent source of bewilderment. As we saw in section \ref{sec:chiral_fermions_topCharge}, due to the Axial anomaly, $\eta '$ is not a pseudo Nambu-Goldstone boson. Whereas eight pseudoscalar mesons have light masses, attributable to them undergoing chiral symmetry breaking, the $\eta '$-meson is much heavier as the flavour singlet chiral symmetry $U(1)_A$ is broken explicitly by the axial anomaly.\\
 The Witten-Veneziano mechanism\cite{VenezianoG1979Uwi}\cite{WittenE1979Catf} is one solution to this problem. It is based on an observation and procedure stated by 't Hooft \cite{HOOFT1974461} that considers the large $N$ expansion where $N$ is the number of colours. In this limit where $N\rightarrow \infty$, the $U(1)_A$ symmetry of the theory is restored and thus the $\eta '$- meson undergoes chiral symmetry breaking, becoming massless in the chiral limit.\\\\ The Witten-Veneziano formula
-\begin{equation}
-m_{\eta^{\prime}}^{2}=\left.\frac{2 N_{\mathrm{f}}}{F_{\pi}^{2}} \chi_{t}\right|_{N_{\mathrm{f}}=0} + \mathcal{O}\left( 1/N^2) \right)
+\begin{equation}\label{eq:etaPrimeMass}
+m_{\eta^{\prime}}^{2}=\frac{2 N_{\mathrm{f}}}{F_{\pi}^{2}} \chi_{t}\big|_{N_{\mathrm{f}}=0} + \mathcal{O}\left( 1/N^2) \right)
 \end{equation}
 relates the mass of the $\eta '$- meson to the topological susceptibility $\chi_{t}$ through the Pion- decay constant.\\It also makes another prediction, namely that the ratio of the fourth and second cumulants of the topological charge
 \begin{equation}
@@ -1321,7 +1321,21 @@ should be of the order of $1/N^2$. A different model, proposed by 't Hooft based
 \begin{equation}
 R = 0.233(45).
 \end{equation}
-This seems to massively disfavour the dilute instanton gas model.
+This seems to massively disfavour the dilute instanton gas model.\\\\In order for equation \eqref{eq:etaPrimeMass} to resolve the $U(1)_A$ problem, it would be necessary that
+\begin{equation}
+\frac{(957.78(6)MeV)^2(130.41(23)MeV)^2}{2\cdot 6} \approx (1.3\pm 0.005)\times10^9 MeV^4 = \chi_{t}\big|_{N_{\mathrm{f}}=0}
+\end{equation}
+and thus
+\begin{equation}
+\chi_{t}\big|_{N_{\mathrm{f}}=0} \simeq(190 \mathrm{MeV})^{4},
+\end{equation}
+using the result from the particle data group's 2008 edition, for the Pion decay constant of \cite{https://doi.org/10.48550/arxiv.0802.1043}
+\begin{equation}
+f_{\pi^{-}}=(130.41 \pm 0.03 \pm 0.20) \mathrm{MeV}.
+\end{equation}
+
+
+
 \subsubsection{Topological susceptibility}
 
 METHODS AND USES (LUSCHER) 
@@ -1339,6 +1353,21 @@ established.
 
 
 \subsection{The strong CP problem}
+EXPLAIN CP
+
+Several CP- violating processes have been discovered \cite{aaij2013first}\cite{aaij2019observation}, however no experiment has found CP-violation in the QCD sector of the standard model. This is puzzling, because the QCD Lagrangian contains CP-violating terms, e.g. for three dynamical quark flavours we have
+\begin{equation}
+\mathcal{L}_{\mathrm{QCD}} \supset -\frac{i\theta }{32\pi^2}\epsilon_{\mu \nu \rho \sigma} \operatorname{tr}\left[F_{\mu \nu}(x) F_{\rho \sigma}(x)\right]
+\end{equation}
+and
+\begin{equation}
+\mathcal{L}_{\mathrm{QCD}} \supset \bar{\psi}\left(i \gamma^{\mu} D_{\mu}-M \right) \psi
+\end{equation}
+where the complex phase $\alpha$ of the quark mass matrix $M$ is usually dealt with by a chiral transformation of the quark fields
+\begin{equation}
+\psi^{\prime}=e^{i \frac{\alpha}{2} \gamma_{5}\mathbb{1}} \psi, \quad \bar{\psi}^{\prime}=\bar{\psi} e^{-i \frac{\alpha}{2} \gamma_{5}\mathbb{1}}.
+\end{equation}
+This in turn alters the integration measure (see equation \eqref{eq:AxAnom_measure_transform}), as we've seen in the lattice case in section \ref{sec:chiral_fermions_topCharge}. This additional phase $\alpha$ is then included in the parameter $\theta$ such that all CP-violating interactions are seen to arise from the existence of the topological charge density.
 
 \section{Computation}
 As of yet, we've neglected to mention how LQCD computations are solved.\textcolor{red}{This section will cover the most general basis of LQCD computation but it will not go into detail on any specific method. It will instead attempt to cover the most popular and pedagogically clear examples while directing the reader to the relevant source material for some other methods.} \\\\Recall, once again the expression for the expectation value of an observable from \eqref{eq:exp_val_collection} for a given choice of lattice action. If the observable is a function of the quark- and anti- quark fields, then performing the Grassmann integration will yield, in addition to the fermion determinant, any quark propagators arising from Wick's theorem \eqref{eq:new_Wick_Theorem}. \par The computation of gauge configurations including the quarks is conceptually difficult and would for the time being, distract from the relatively simple formalism. We therefore start by considering the case of a pure gauge action which has observables such as the Wilson loop expectation value, which is only dependent on the link variables.
