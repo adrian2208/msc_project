@@ -1301,7 +1301,7 @@ $0\%\rightarrow 8\%\rightarrow 70\%$ as the lattice spacing was reduced from\\$0
 Thus, the emergence of topological sectors in the continuum limit is seen to arise dynamically from the rapidly decreasing weight in the functional integral of the large-$h$ configurations.
 \subsubsection{Universality}
 The hereto geometric construction for the topological charge density is computable. However for $t>0$, any definition for the topological charge density on the lattice which share in the same asymptotic behaviour in the classical continuum limit belong to the same universality class \cite{Luscher2010}\cite{L_scher_2011} and the same can be said of its cumulants. Thus, a simple, symmetric discretization of the Field strength tensor can be used to construct what is known as the 'naive' definition of the topological charge density 
-\begin{equation}
+\begin{equation}\label{eq:topChargeDensity_flowed_lattice}
 q(n, t)=\frac{1}{64 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} G_{\mu \nu}^{a}(n, t) G_{\rho \sigma}^{a}(n, t)
 \end{equation}
 where $G_{\mu \nu}^{a}(n, t)$ is the discretized lattice field strength tensor at flow time $t$.\\\\It's notable that while the Neuberger topological charge definition in equation \eqref{eq:topCharge_DiracOperator_index} is of course calculable on the lattice, this new definition lends itself to much easier computation and much higher statistics \cite{PhysRevLett.94.032003}\cite{non_gaussianities2015}.
@@ -1337,25 +1337,22 @@ f_{\pi^{-}}=(130.41 \pm 0.03 \pm 0.20) \mathrm{MeV}.
 
 
 \subsubsection{Topological susceptibility}
-
-METHODS AND USES (LUSCHER) 
-""
- Moreover, as shown in a forthcoming publication, the ratios of the
-fourth root of the second moments computed here and through a variant [18] of the
-universal formula proposed in [17] extrapolate to 1 in the continuum limit to within
-a statistical uncertainty of 3%.
-All these empirical results support the conjecture that the moments of the charge
-distribution in the functional integral (4.2) coincide with those obtained from the
-index theorem [15–18] and thus the ones appearing in the chiral Ward identities
-[19,20]. However, while highly plausible, the equality remains to be theoretically
-established.
-""
-
-
+In the Monte Carlo procedure, we sample gauge configurations from the functional integral, then flow those gauge configurations according to the Wilson flow. As we saw, the smoothness condition effectively disassociates different topological sectors in field space, meaning the topological susceptibility $\chi_t$ can be unambiguously derived from a representative sample of gauge configurations, each with a corresponding topological charge.
+The topological susceptibility as it is defined in equation \eqref{eq:topological_susc} diverges as $\frac{1}{a^4}$. However, at all non-vanishing flow times $t>0$, the topological susceptibility can be defined from the naive definition of the topological charge density in \eqref{eq:topChargeDensity_flowed_lattice} as
+\begin{equation}
+\chi_t = \lim\limits_{a\rightarrow0,\,V\rightarrow \infty}\frac{\langle Q^2 \rangle}{V}
+\end{equation}
+where the topological charge is given by
+\begin{equation}
+Q=\sum_{n} q(n).
+\end{equation}
+This definition has no divergences and requires no renormalization. Thus, to calculate the topological susceptibility on the lattice, an ensemble of uncorrelated gauge fields are generated for a range of lattice spacings $a$, keeping the simulation volume constant. These are then flowed to the same point in flow time $t$ in physical units and finally extrapolated to $a\rightarrow 0$.\\\\We should be careful in equating the moments of the distribution of topological charge defined here, to the ones arising from the Atiyah-Singer index theorem, as a theoretical bridge has yet to be found. However, taking the ratio of the fourth roots of the topological susceptibility defined from both definitions, using the results for $\chi_t^{naive}$ from \cite{non_gaussianities2015} and the result for $\chi_t^{Chiral\,Dirac \,operator}$ from \cite{PhysRevLett.94.032003}:
+\begin{equation}
+\left( \frac{\chi_t^{naive}}{\chi_t^{Chiral\,Dirac \,operator}} \right)^{\frac{1}{4}}=\frac{180.5(5)(43) \mathrm{MeV}}{191(5) \mathrm{MeV}} \approx 0.95(3)
+\end{equation}
+we see that they are in close agreement, providing some strong evidence of their equivalence.
 \subsection{The strong CP problem}
-EXPLAIN CP
-
-Several CP- violating processes have been discovered \cite{aaij2013first}\cite{aaij2019observation}, however no experiment has found CP-violation in the QCD sector of the standard model. This is puzzling, because the QCD Lagrangian contains CP-violating terms, e.g. for three dynamical quark flavours we have
+CP- symmetry is a discrete space-time symmetry which combines the action of a parity transformation (P) and a time reversal operation (T). Several CP- violating processes have been discovered \cite{aaij2013first}\cite{aaij2019observation}, however no experiment has found evidence of CP-violation in the QCD sector of the standard model. This is puzzling, because the QCD Lagrangian contains CP-violating terms, e.g. for three dynamical quark flavours we have
 \begin{equation}
 \mathcal{L}_{\mathrm{QCD}} \supset -\frac{i\theta }{32\pi^2}\epsilon_{\mu \nu \rho \sigma} \operatorname{tr}\left[F_{\mu \nu}(x) F_{\rho \sigma}(x)\right]
 \end{equation}
@@ -1367,7 +1364,7 @@ where the complex phase $\alpha$ of the quark mass matrix $M$ is usually dealt w
 \begin{equation}
 \psi^{\prime}=e^{i \frac{\alpha}{2} \gamma_{5}\mathbb{1}} \psi, \quad \bar{\psi}^{\prime}=\bar{\psi} e^{-i \frac{\alpha}{2} \gamma_{5}\mathbb{1}}.
 \end{equation}
-This in turn alters the integration measure (see equation \eqref{eq:AxAnom_measure_transform}), as we've seen in the lattice case in section \ref{sec:chiral_fermions_topCharge}. This additional phase $\alpha$ is then included in the parameter $\theta$ such that all CP-violating interactions are seen to arise from the existence of the topological charge density.
+This in turn alters the integration measure (see equation \eqref{eq:AxAnom_measure_transform}), as we've seen in the lattice case in section \ref{sec:chiral_fermions_topCharge}. This additional phase $\alpha$ is then included in the parameter $\theta$ such that all CP-violating interactions are seen to arise from the existence of the topological charge density.\\\\The value of the $\theta$-term is very tightly constrained by measurements of the neutron electric dipole moment \cite{PhysRevLett.97.131801}, to $\mathcal{O}(10^{-10})$. This raises a natural question: $\theta$ could be anything between $0$ and $2\pi$, why should it be so small? When questions like these arise in physics, they're called 'Fine tuning'- problems, and this one in particular is known as 'The strong CP-problem'. 
 
 \section{Computation}
 As of yet, we've neglected to mention how LQCD computations are solved.\textcolor{red}{This section will cover the most general basis of LQCD computation but it will not go into detail on any specific method. It will instead attempt to cover the most popular and pedagogically clear examples while directing the reader to the relevant source material for some other methods.} \\\\Recall, once again the expression for the expectation value of an observable from \eqref{eq:exp_val_collection} for a given choice of lattice action. If the observable is a function of the quark- and anti- quark fields, then performing the Grassmann integration will yield, in addition to the fermion determinant, any quark propagators arising from Wick's theorem \eqref{eq:new_Wick_Theorem}. \par The computation of gauge configurations including the quarks is conceptually difficult and would for the time being, distract from the relatively simple formalism. We therefore start by considering the case of a pure gauge action which has observables such as the Wilson loop expectation value, which is only dependent on the link variables.
@@ -1876,7 +1873,7 @@ x_0+ix_3 & x_2+ix_1 \\
 \end{equation}
 \subsubsection{Overrelaxation}
 Overrelaxation is a method which attempts to increase the distance in group space traversed between configurations. It does this by exploiting the symmetry of the action under certain operations, to propose new link variables which leave the action invariant and therefore are automatically accepted.
-Overrelaxation is not ergodic on it's own as it only traverses the configuration subspace of constant action. It is therefore necessary to include fully canonical update methods such as the Heatbath to achieve ergodicity.\\We proceed by examining the Overrelaxation method which works by updating the $SU(2)$ subgroups of $SU(3)$. Similar in vein to the scheme introduced for the Cabbibo- Marinari Heatbath.\\There exists overrelaxation algorithms for SU(N) gauge theories with $N>2$, and they have proven to be more efficient than SU(2) subgroup update- algorithms. Its implementation however, is more involved than the SU(2) subgroup algorithm, and for $N=3$, the improvement in the autocorrelation time of e.g. the Polyakov loop is very slight \cite{inbook}.\\\\For the Wilson action we see that the trace remains invariant if the proposed $U'$ has the property that $U' = V^\dagger U^\dagger V^\dagger$ where $V = \frac{A}{a}$ following the same convention as for the $SU(2)$ Heatbath. We get that
+Overrelaxation is not ergodic on it's own as it only traverses the configuration subspace of constant action. It is therefore necessary to include fully canonical update methods such as the Heatbath to achieve ergodicity.\\\\We proceed by examining the Overrelaxation method which works by updating the $SU(2)$ subgroups of $SU(3)$. Similar in vein to the scheme introduced for the Cabbibo- Marinari Heatbath.\\\\There exists overrelaxation algorithms for SU(N) gauge theories with $N>2$, and they have proven to be more efficient than SU(2) subgroup update- algorithms. Its implementation however, is more involved than the SU(2) subgroup algorithm, and for $N=3$, the improvement in the autocorrelation time of e.g. the Polyakov loop is very slight \cite{inbook}.\\\\For the Wilson action we see that the trace remains invariant if the proposed $U'$ has the property that $U' = V^\dagger U^\dagger V^\dagger$ where $V = \frac{A}{a}$ following the same convention as for the $SU(2)$ Heatbath. We get that
 
 \begin{equation}
 \operatorname{tr}\left[U^{\prime} A\right]=\operatorname{tr}\left[V^{\dagger} U^{\dagger} V^{\dagger} A\right]=a \operatorname{tr}\left[V^{\dagger} U^{\dagger}\right]=\operatorname{tr}\left[A^{\dagger} U^{\dagger}\right]=\operatorname{tr}[U A].
@@ -1884,7 +1881,45 @@ Overrelaxation is not ergodic on it's own as it only traverses the configuration
 
 In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Overrelaxation constitues a massive improvement when it comes to decorrelating measurements in Monte Carlo time \cite{PhysRevLett.58.2394} and its ease of implementation to pre-existing update algorithms makes it an obvious addition when generating gauge configurations.
 
+\subsubsection{•}
+\begin{algorithm}[H]
+\caption{Cabbibo- Marinari w/ Overrelaxation}\label{alg:HBplusOR}
+\begin{algorithmic}
 
+\Ensure 
+\State a
+
+\While{$n<\# iterations$}\Comment{}
+\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
+
+\For{$SU(2)$ subgroup $I$ of $SU(3)$ at $n$}
+
+\State $W = U_\mu(n)A_\mu(n)$\Comment{$A_\mu(n)$ is the sum of staples found in eq. \eqref{eq:sumOfStaples} }
+
+\EndFor
+
+
+\EndFor
+
+
+
+
+
+\While{$n_{OR}< N_{OR\,per\,HB}$}
+\EndWhile
+\EndWhile
+\State $U_{(n)}=\exp \left(\mathrm{i} \varepsilon P_{\left(n-\frac{1}{2}\right)}\right) U_{(n-1)}$
+\State $P_{\left(n\right)}=P_{\left(n-\frac{1}{2}\right)}-\frac{\varepsilon}{2} F\left[ U_{(n)},\phi \right]$\\
+\State Calculate $\exp (-\Delta H)$
+\State Generate a random, uniformly distributed number $r \in [0,1) $
+\If{$\exp (-\Delta H)\geq r$}
+    \State $U \gets U_{new}$
+\Else
+    \State $U \gets U_{old}$
+\EndIf
+
+\end{algorithmic}
+\end{algorithm}
 \subsection{Observables}
 \subsubsection{Improved Lattice Field-Strength tensor}\ref{sec:improvedLatticeFieldStrengthTensor}
 For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:
@@ -2414,7 +2449,7 @@ We get\footnote{The product rule turns out to be an incredibly general result, a
 \end{equation}
 
 From equation \eqref{eq:diffOponGaugeGroup} we see that any terms not contained in the set of links that make up the staples of the link being differentiated, give no contribution. We get, with the staples denoted by
-\begin{equation}
+\begin{equation}\label{eq:sumOfStaples}
 \begin{aligned}
 A=&\sum_{\nu \neq \mu}\left(U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu})\right.\\
 &\left.+U_{-\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}-\hat{\nu}) U_{\nu}(n-\hat{\nu})\right),
@@ -2433,7 +2468,35 @@ where we introduced the variable $\Omega = V_\mu(n)A - \left( V_\mu(n)A \right)^
 M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a^i = 2\operatorname{Tr}\left( T^iM \right)  
 \end{equation}
 \cite{borodulin1995core}.
+\subsubsection{•}
+\begin{algorithm}[H]
+\caption{Wilson flow w/ 4th order Runge-Kutta}\label{alg:Wilson_flow}
+\begin{algorithmic}
 
+\Ensure 
+\State $\chi \sim \exp\left(- \chi^{\dagger} \chi  \right)$
+\State $\phi = D\chi$
+\State $\left\{P_{\mu}^{i}(n)\, \mid \, P_{\mu}^{i}(n)\sim \exp \left(-\operatorname{tr}\left[P^{2}\right]\right)\,\forall\,\{\mu,n\}\in \Lambda \right\}$
+\State $F\left[ U_{(0)},\phi \right]$
+\State $P_{\left(\frac{1}{2}\right)}=P_{(0)}-\frac{\varepsilon}{2}F\left[ U_{(0)},\phi \right]$
+
+\While{$k\leq n-1$}\Comment{Full steps between half-steps, typically $n\approx 1/\varepsilon$}
+\State $U_{(k)}=\exp \left(\mathrm{i} \varepsilon P_{\left(k-\frac{1}{2}\right)}\right) U_{(k-1)}$
+\State $P_{\left(k+\frac{1}{2}\right)}=P_{\left(k-\frac{1}{2}\right)}-\varepsilon F\left[ U_{(k)},\phi \right]$
+\State $ k+=1$
+\EndWhile
+\State $U_{(n)}=\exp \left(\mathrm{i} \varepsilon P_{\left(n-\frac{1}{2}\right)}\right) U_{(n-1)}$
+\State $P_{\left(n\right)}=P_{\left(n-\frac{1}{2}\right)}-\frac{\varepsilon}{2} F\left[ U_{(n)},\phi \right]$\\
+\State Calculate $\exp (-\Delta H)$
+\State Generate a random, uniformly distributed number $r \in [0,1) $
+\If{$\exp (-\Delta H)\geq r$}
+    \State $U \gets U_{new}$
+\Else
+    \State $U \gets U_{old}$
+\EndIf
+
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Lattice Representation}
 Choosing a proper representation of the lattice on the computer is important for ease of implementation, use and efficiency. Using a four- dimensional coordinate system to address locations in memory would work, but would also incur very large performance penalties in caching, memory speed etc. Instead, at the beginning of the program, every site is assigned an index, identifying its location along a one-dimensional array in memory.\\The addition of parallellization will also require the introduction of two separate index systems. One global, shared by every process, and one local, unique to every process. It will also require a mapping between the two to facilitate unambiguous communication between processes. The choice of local and global index systems are from a paper by Massimo Di Pierro describing the workings of a MPI based lattice simulation library known as MDP \cite{MDP}.\\\\Each point on the $M$- dimensional lattice is assigned a global index based on its global coordinate, given by 
