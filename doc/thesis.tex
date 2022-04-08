@@ -20,6 +20,7 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+
 \algrenewcommand\algorithmicensure{\textbf{Initialize:}}
 
 \usepackage{xcolor}
@@ -1825,7 +1826,7 @@ A=&\sum_{\nu \neq \mu}\left(U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu})
 \end{aligned}
 \end{equation}
 While no Heatbath algorithms exist that sample directly from $SU(3)$ group space, the so- called pseudo- heatbath algorithm of Cabbibo and Marinari \cite{CABIBBO1982387} works by performing three $SU(2)$ heatbath updates on the $SU(2)$ subgroups of the link variables. Denote by 
-\begin{equation}
+\begin{equation}\label{eq:SU2_embeddingInSU3}
 R=\left(\begin{array}{ccc}
 r_{11} & r_{12} & 0 \\
 r_{21} & r_{22} & 0 \\
@@ -1883,43 +1884,97 @@ In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Ove
 
 \subsubsection{•}
 \begin{algorithm}[H]
-\caption{Cabbibo- Marinari w/ Overrelaxation}\label{alg:HBplusOR}
+\caption{$SU(3)$ Cabbibo- Marinari w/ Overrelaxation}\label{alg:HBplusOR}
 \begin{algorithmic}
 
-\Ensure 
-\State a
+\While{$n<\# iterations$}
+\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}\Comment{Start of Heatbath}
 
-\While{$n<\# iterations$}\Comment{}
-\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
-
-\For{$SU(2)$ subgroup $I$ of $SU(3)$ at $n$}
+\For{$SU(2)$ subgroup number $I$ of $SU(3)$ at $n$ for $I\in\{0,1,2\}$}
 
 \State $W = U_\mu(n)A_\mu(n)$\Comment{$A_\mu(n)$ is the sum of staples found in eq. \eqref{eq:sumOfStaples} }
+\Procedure{GetSU(2)submatrixIn$O_4$Rep}{$W$, $I$}
+  \State $k \gets I+1$\Comment{The combinations of $j$ and $k$}
+\State $j \gets k / 3$ \Comment{parametrizes the embedding onto the $SU(2)$ element}
+\State $k \gets k - j$ \Comment{in the $O_4$ representation according to \eqref{eq:SU2_embeddingInSU3}.}
+\State $Z_0 \gets \operatorname{Re}\left( W_{jj} + W_{kk} \right)$, $Z_1 \gets \operatorname{Im}\left( W_{jk} + W_{kj} \right)$
+\State $Z_2 \gets \operatorname{Re}\left( W_{jk} - W_{kj} \right)$, $Z_3\gets \operatorname{Im}\left( W_{jj} - W_{kk} \right)$
+\EndProcedure
+\State $Q \gets \mathsf{HB_{SU(2)}} \left( Z \right)$ \Comment{$Q\in SU(2)$}
 
+\State $X \gets \mathbb{1}_{3\times 3}$
+\State $X_{jj} \gets Q_{00},\,X_{jk} \gets Q_{01},\,X_{kj} \gets Q_{10},\,X_{kk} \gets Q_{11}$
+\State $U_\mu(n) \gets XU_\mu(n)$
+\EndFor
 \EndFor
 
 
-\EndFor
+\While{$n_{OR}< N_{OR\,per\,HB}$}\Comment{Start of Overrelaxation}
 
+\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
 
-
-
-
-\While{$n_{OR}< N_{OR\,per\,HB}$}
-\EndWhile
-\EndWhile
-\State $U_{(n)}=\exp \left(\mathrm{i} \varepsilon P_{\left(n-\frac{1}{2}\right)}\right) U_{(n-1)}$
-\State $P_{\left(n\right)}=P_{\left(n-\frac{1}{2}\right)}-\frac{\varepsilon}{2} F\left[ U_{(n)},\phi \right]$\\
-\State Calculate $\exp (-\Delta H)$
-\State Generate a random, uniformly distributed number $r \in [0,1) $
-\If{$\exp (-\Delta H)\geq r$}
-    \State $U \gets U_{new}$
+\For{$SU(2)$ subgroup number $I$ of $SU(3)$ at $n$ for $I\in\{0,1,2\}$}
+\State $W = U_\mu(n)A_\mu(n)$
+\State $Z \gets GetSU(2)submatrixInO_4Rep(W,\, I)$
+\State $a=\sqrt{Z\cdot Z}$
+\If{$a<\epsilon$}
+\State $Z \gets (1,0,0,0)$
 \Else
-    \State $U \gets U_{old}$
+\State $Z \gets \frac{1}{a}Z^\dagger = \frac{1}{a}\left( Z_0,-Z_1,-Z_2,-Z_3 \right)$
+\State\Comment{$\left( Z_0\mathbb{1}-i\vec{Z}\cdot\vec{\sigma} \right)^2 = (Z_0^2-\vec{Z}\cdot\vec{Z})\mathbb{1}-2iZ_0\vec{Z}\cdot\vec{\sigma}$}
+\State $V_0 \gets Z_0^2-(Z_1^2+Z_2^2+Z_3^2)$
+\State $V_1 \gets -2Z_0Z_1$
+\State $V_2 \gets -2Z_0Z_2$
+\State $V_3 \gets -2Z_0Z_3$
+\State $X \gets V_0\mathbb{1}+\vec{V}\cdot i\vec{\sigma}$
+\State $U_\mu(n) \gets XU_\mu(n)$
 \EndIf
-
+\EndFor
+\EndFor
+\EndWhile
+\EndWhile
 \end{algorithmic}
 \end{algorithm}
+
+
+
+
+\begin{algorithm}[H]
+\caption{$SU(2)$ Heatbath}\label{alg:SU2HB}
+\hspace*{\algorithmicindent} \textbf{Input: $Z$ in the $O4$ rep. of $SU(2)$} \\
+\hspace*{\algorithmicindent} \textbf{Output: $X$ in the $GL(2,\mathcal{C})$ rep. of $SU(2)$}
+\begin{algorithmic}
+\Ensure
+\State $Z \gets $ function input $(Z)$
+\State $\beta \gets $ ensemble $\beta$
+\State $a=\sqrt{Z\cdot Z}$
+\State $Z \gets \frac{1}{a}Z$
+
+\State $X \gets Z_0\mathbb{1}-\vec{Z}\cdot i\vec{\sigma}$
+
+\While{$R^2>1-\frac{1}{2}\bar{\delta}$}
+\State Generate uniform, random numbers $r_0,\,r_1 \in (0,1]$,  $r_2 \in [0,1)$ and $R \in [0,1)$
+\State $X = -\operatorname{ln}(r_0)$
+\State $X' = -\operatorname{ln}(r_1)$
+\State $C = \cos^2\left( 2\pi r_2 \right)$
+\State $A = XC$
+\State $\bar{\delta} = 3\frac{X'+A}{\beta a}$
+\EndWhile
+\State Generate uniform, random numbers $R'\in [-1,1)$ and $R'' \in [0,1)$
+
+\State $\theta_{cos} \gets R'$
+\State $\phi \gets 2\pi R''$
+\State $\theta_{sin} \gets \sqrt{1-\theta_{cos}^2}$
+\State $x_0 \gets 1-\bar{\delta}$
+\State $|x| \gets \sqrt{1-x_0^2}$
+\State $x_1 \gets |x|\theta_{sin}\cos{\phi}$
+\State $x_2 \gets |x|\theta_{sin}\sin{\phi}$
+\State $x_3 \gets |x|\theta_{cos}$
+\State $V \gets x_0\mathbb{1}+\vec{x}\cdot i\vec{\sigma}$
+\State $X\gets VX$
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Observables}
 \subsubsection{Improved Lattice Field-Strength tensor}\ref{sec:improvedLatticeFieldStrengthTensor}
 For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:

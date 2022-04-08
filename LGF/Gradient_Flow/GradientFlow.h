@@ -7,6 +7,7 @@
 class GradientFlow {
 public:
 	GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon, int FlowStepsPerMeasurement=1);
+	~GradientFlow();
 	void flow();
 
 	void Include_TopCharge(TopologicalCharge& TopCharge);

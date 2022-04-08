@@ -161,6 +161,7 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 		for (int i = 0; i < size; i++) {
 			outFile << m_FlowMeasurementTimeVector[i] << "," << m_resultVector[i] << "\n";
 		}
+		outFile.close();
 	}
 	MPI_Barrier(mpiWrapper::comm());
 }

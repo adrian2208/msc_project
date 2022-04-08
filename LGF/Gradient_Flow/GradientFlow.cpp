@@ -13,6 +13,11 @@ GradientFlow::GradientFlow(Action& GaugeAction, SU3_field& U, double epsilon, in
 	m_Z2 = new SU3_field(U.getLatticePtr(), U.getNrExtDOF());
 	(*m_U).transfer_FieldValues();
 }
+GradientFlow::~GradientFlow() {
+	delete m_Z0;
+	delete m_Z1;
+	delete m_Z2;
+}
 
 void GradientFlow::flow(){
 	

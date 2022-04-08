@@ -12,11 +12,11 @@ int main(int argc, char** argv) {
 	int extdofs = 4;
 	int shape[] = {24,24,24,24};
 	double beta = 6.0;
-	int ConfigurationStart = 198;
+	int ConfigurationStart = 240;
 	int ConfigurationStop = 394;
 	//std::cout << getLatticeConstant(beta)<< std::endl;
 	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
-	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,300,5);
+	FlowSavedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop,300,5);//300
 
 	int ThermalizationSteps = 400;// 2000;//Every update constitutes N_or and N_hb updates, typically 4 and 1. So this number is multiplied by 5 in this case
 	int ConfigTimeSeparation = 60;//200;//Every update constitutes N_or and N_hb updates, typically 4 and 1. So this number is multiplied by 5 in this case
