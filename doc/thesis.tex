@@ -1184,7 +1184,7 @@ will, assuming the sphere is sufficiently large, be approximately expressible by
 \begin{equation}
 A_{\mu}\left|_{S^{3}} \approx \Lambda^{-1}(x) \frac{\partial \Lambda(x)}{\partial x_{\mu}}\right|_{S^{3}}
 \end{equation}
-where $\Lambda(x)$ is an element of the gauge group $G$. This constitutes a map, $S^3\rightarrow G$ belonging to some homotopy class.\\ To explain homotopy classes briefly, consider the set of maps from a circle to a disc with a hole. If two maps cannot be continuously be deformed into the other, e.g. because in one map, the circle wraps around the hole in the disc while in the other map, it does not, the two maps are considered to belong to different homotopy classes.\\ For non-Abelian, simple Lie-groups \cite{bredon1993topology} it has been shown that there exists infinitely many distinct classes for this mapping \cite{BelavinA.A1975Psot}, meaning the phase space of Yang-Mills fields contain infinitely many subsets, each distinguished by a topological index $Q$.\\In our circle and disc analogy, we might think of $Q$ as the number of times the circle wraps around the hole in the disc, with the sign of $Q$ encoding some notion of clockwise- or anti- clockwise wrapping i.e. The index tells you which homotopy class you're in.\\\\This topological index is of course the topological charge, and the authors of \cite{BelavinA.A1975Psot} arrived at its continuum definition. This result is equally applicable to gauge fields on a 4-dimensional torus $T^4$ \footnote{Note that the torus encodes the periodic boundary conditions associated with many LQCD calculations.} and so we give the corresponding definition
+where $\Lambda(x)$ is an element of the gauge group $G$. This constitutes a map, $S^3\rightarrow G$ belonging to some homotopy class\footnote{Not to be confused with homotopy groups. These are denoted $\pi_n(X)$ and take the set of homotopy classes (base-point preserving maps from the n-sphere to a topological space $X$) and the group operation of $(f+g)\left(t_{1}, t_{2}, \ldots, t_{n}\right)= \begin{cases}f\left(2 t_{1}, t_{2}, \ldots, t_{n}\right) & t_{1} \in\left[0, \frac{1}{2}\right] \\ g\left(2 t_{1}-1, t_{2}, \ldots, t_{n}\right) & t_{1} \in\left[\frac{1}{2}, 1\right]\end{cases}$ understood for $n=1$ as ordered path composition. These can be used to classify topological spaces.}.\\\\ To explain homotopy classes briefly, consider the set of maps from a circle to a disc with a hole with a fixed base-point. Roughly, if two maps cannot be continuously deformed into the other, e.g. because in one map, the circle wraps around the hole in the disc while in the other map, it does not, the two maps are considered to belong to different homotopy classes.\\\\ For non-Abelian, simple Lie-groups \cite{bredon1993topology} it has been shown that there exists infinitely many distinct classes for this mapping \cite{BelavinA.A1975Psot}, meaning the phase space of Yang-Mills fields contain infinitely many subsets, each distinguished by a topological index $Q$.\\In our circle and disc analogy, we might think of $Q$ as the number of times the circle wraps around the hole in the disc, with the sign of $Q$ encodes some notion of clockwise- or anti- clockwise wrapping i.e. The index tells you which homotopy class you're in.\\\\This topological index is of course the topological charge, and the authors of \cite{BelavinA.A1975Psot} arrived at its continuum definition. This result is equally applicable to gauge fields on a 4-dimensional torus $T^4$ \footnote{Note that the torus encodes the periodic boundary conditions associated with many LQCD calculations.} and so we give the corresponding definition
 \begin{equation}\label{eq:topChargeCont}
 \begin{gathered}
 Q=-\frac{1}{16 \pi^{2}} \int_{T^{4}} d^{4} x \operatorname{Tr}\left\{F_{\mu \nu}{ }^{*} F_{\mu \nu}\right\} \\
@@ -1203,7 +1203,7 @@ Therefore, in the continuum limit, in which $g\rightarrow 0$, all fields which d
 \begin{equation}\label{eq:SmoothnessBound_topCharge}
 \operatorname{Tr}\{1-U_{\mu \nu}(n)\} < h
 \end{equation}
-can be excluded from the integration domain without affecting the continuum limit. This re-introduces some notion of continuity to the lattice gauge fields in that the parallel transporters around small closed loops (recall our discussion in section \ref{sec:lgt}) are close to the identity element, i.e. more loosely speaking; closer to being an element of the Lie algebra.\\We can immediately see how this construction will restore the notion of homotopy classes (and therefore the topological charge) for the gauge fields. If field configurations  for which $\operatorname{Tr}\{1-U_{\mu \nu}(n)\} > h$ have zero measure in the functional integral, then not all field configurations can be continuously deformed to the trivial configuration, since it may need to pass through such a configuration, which it obviously cannot since the functional integral gives those configurations zero probability weight.\\\\The topological charge can be identified with the principle bundle\footnote{See e.g. \cite{diffGeom} p.50 for a definition} of the gauge group over the $T^4$  space-time manifold. The bundle is characterized by a set of unit cells 
+can be excluded from the integration domain without affecting the continuum limit. This re-introduces some notion of continuity to the lattice gauge fields in that the parallel transporters around small closed loops (recall our discussion in section \ref{sec:lgt}) are close to the identity element, i.e. more loosely speaking; closer to being an element of the Lie algebra.\\We can immediately see how this construction will restore the notion of homotopy classes (and therefore the topological charge) for the gauge fields. If field configurations  for which $\operatorname{Tr}\{1-U_{\mu \nu}(n)\} > h$ have zero measure in the functional integral, then not all field configurations can be continuously deformed to the trivial configuration, since it may need to pass through such a configuration. This, it obviously cannot do since the functional integral gives those configurations zero probability weight.\\\\The topological charge can be identified with the principle bundle\footnote{See e.g. \cite{diffGeom} p.50 for a definition} of the gauge group over the $T^4$  space-time manifold. The bundle is characterized by a set of unit cells 
 \begin{equation}
 c(n)=\left\{x \in \mathbb{R}^{4} \mid 0 \leqq\left(x_{\mu}-n_{\mu}\right) \leqq 1 \text { for } \mu\in\{0,1,2,3\},\,n \in \mathbb{Z}^{4}\right\}
 \end{equation}
@@ -2528,13 +2528,6 @@ M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a
 \caption{Wilson flow w/ 4th order Runge-Kutta}\label{alg:Wilson_flow}
 \begin{algorithmic}
 
-\Ensure 
-\State $\chi \sim \exp\left(- \chi^{\dagger} \chi  \right)$
-\State $\phi = D\chi$
-\State $\left\{P_{\mu}^{i}(n)\, \mid \, P_{\mu}^{i}(n)\sim \exp \left(-\operatorname{tr}\left[P^{2}\right]\right)\,\forall\,\{\mu,n\}\in \Lambda \right\}$
-\State $F\left[ U_{(0)},\phi \right]$
-\State $P_{\left(\frac{1}{2}\right)}=P_{(0)}-\frac{\varepsilon}{2}F\left[ U_{(0)},\phi \right]$
-
 \While{$k\leq n-1$}\Comment{Full steps between half-steps, typically $n\approx 1/\varepsilon$}
 \State $U_{(k)}=\exp \left(\mathrm{i} \varepsilon P_{\left(k-\frac{1}{2}\right)}\right) U_{(k-1)}$
 \State $P_{\left(k+\frac{1}{2}\right)}=P_{\left(k-\frac{1}{2}\right)}-\varepsilon F\left[ U_{(k)},\phi \right]$
@@ -2772,7 +2765,7 @@ x\leq|\Lambda_x|,\,y\leq|\Lambda_y|,\,z\leq|\Lambda_z|,\,t\leq|\Lambda_t|
 
 Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be highly dependent on the ratio $\frac{|\Lambda|}{N_{procs}}$ and we can make sense of why that is. When the simulation volume of each process is small, the reduction in boundary 3-volume gained from setting any $x,\,y,\,z,\,t = |\Lambda_x|,\,|\Lambda_y|,\,|\Lambda_z|,\,\Lambda_t|$ is quite small, while the addition of boundary 3-volume by deviating from $x=y=z=t$ becomes quite large. Likewise, when each process' simulation volume is large, there is substantial reductions to be made from eliminating either of the terms in the above minimization problem.\\For instance, in many LQCD simulations the time extent of the lattice can be much larger than the spatial extent, and so all of the three terms that include $t$ could be completely removed by only subdividing the temporal dimension of the lattice, i.e. $x=|\Lambda_x|,\,y=|\Lambda_y|,\,z=|\Lambda_z|$.\\Another benefit of partitioning the lattice in this way is that there is a hardware-specific overhead associated with establishing communications between two processes, and eliminating process boundaries in a dimension will require fewer connections between processes.\\\\Ultimately this choice will depend on the number of processors that are available to you and the total simulation volume, as well as the relative difference in computer time associated with either establishing communications between processes or transceiving a certain amount of data between processes. Regardless, for all but the most modest core-counts, this minimization problem favours hyper-cubic process domains by a significant margin, especially when it comes to scaling, as subdivisions in more dimensions admit more processes to be used.
 
-\subsection{Checkerboard Update}\label{sec:Checkerboard_Update}
+\subsubsection{Checkerboard Update}\label{sec:Checkerboard_Update}
 Applying parallelization to the updating of link variables presents an issue. When a link is being updated it is necessary to ensure that none of the links required for its calculation are changed until the calculation is concluded.\\For the Wilson action, the set of links required to update a link are the links contained in the staples connected to it. One way to ensure that this requirement is met, is to assign to each lattice point either an even or odd parity according to its coordinate
 such that 
 \begin{equation}
@@ -2844,8 +2837,9 @@ Then by choosing either parity $0$ or $1$ and a direction $\mu$, every such link
 
 We see that the lattice must necessarily contain an even number of sites in every direction in order for the lattice to be correctly partitioned into even and odd sites for periodic boundary conditions.
 
-\subsection{Algorithm for generating gauge configurations}
-pseudocode of the CM-OR- Even/odd program
+\subsubsection{Field communication}
+SENDS AND RECEIVES AT THE SAME TIME
+
 \section{Results}
 \subsection{Ensembles}
 SEE 
@@ -2862,6 +2856,39 @@ Need:
 \begin{enumerate}
 \item Q distribution at same flow time for three different lattice spacings
 \end{enumerate}
+
+\subsection{Topological susceptibility}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{chi_fourthRoot_v_smearRad.pdf}
+\caption[]{PLACEHOLDER!!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]\label{figure:Clovers}
+\centering
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.00_a_0.093.pdf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.46_a_0.093.pdf}
+\end{subfigure}
+
+\bigskip
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.65_a_0.093.pdf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.92_a_0.093.pdf}
+\end{subfigure}
+\caption{PLACEHOLDER!!!!}\label{figure:PLACEHOLDER2}
+\end{figure}
+
 \section{Error Analysis}
 \section{Future Improvements}
 \subsection{SU(3) Over-Relaxation}

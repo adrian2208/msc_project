@@ -208,18 +208,18 @@ void SU3_Heatbath::SU2_Heatbath(C_double* TSR,su3_mat& W, int internIdx, int Sub
 	cos_theta = 2.0 * (*m_rand).Uniform_Double() - 1.0;
 	phi = TwoPI * (*m_rand).Uniform_Double();
      
-	 sin_theta = sqrt(1.0 - cos_theta * cos_theta);
-	 //Construct the SU(2) matrix V
-	 x[1] = abs_val_x * sin_theta * cos(phi);
-	 x[2] = abs_val_x * sin_theta * sin(phi);
-	 x[3] = abs_val_x * cos_theta;
-	 V[0] = C_double(x[0], x[3]);	V[1] = C_double(x[2], x[1]);
-	 V[2] = C_double(-x[2], x[1]);	V[3] = C_double(x[0], -x[3]);
-	 //update the subgroup by multiplication with V
-	 TSR[0] = V[0] * su2_sub[0] + V[1] * su2_sub[2];
-	 TSR[1] = V[0] * su2_sub[1] + V[1] * su2_sub[3];
-	 TSR[2] = V[2] * su2_sub[0] + V[3] * su2_sub[2];
-	 TSR[3] = V[2] * su2_sub[1] + V[3] * su2_sub[3];
+	sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+	//Construct the SU(2) matrix V
+	x[1] = abs_val_x * sin_theta * cos(phi);
+	x[2] = abs_val_x * sin_theta * sin(phi);
+	x[3] = abs_val_x * cos_theta;
+	V[0] = C_double(x[0], x[3]);	V[1] = C_double(x[2], x[1]);
+	V[2] = C_double(-x[2], x[1]);	V[3] = C_double(x[0], -x[3]);
+	//update the subgroup by multiplication with V
+	TSR[0] = V[0] * su2_sub[0] + V[1] * su2_sub[2];
+	TSR[1] = V[0] * su2_sub[1] + V[1] * su2_sub[3];
+	TSR[2] = V[2] * su2_sub[0] + V[3] * su2_sub[2];
+	TSR[3] = V[2] * su2_sub[1] + V[3] * su2_sub[3];
 }
 
 std::string SU3_Heatbath::getupdateMethod() const{

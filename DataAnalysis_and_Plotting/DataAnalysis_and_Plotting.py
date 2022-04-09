@@ -41,6 +41,10 @@ def DirectoryToDataframe(directory):
     result = pd.concat(frames, axis=1)
     return result
 
+
+
+
+
 #for entry in name_list:
 #   fig = sns.lineplot(x=range(0,3453), y=entry, data=result)
 #fig.set_yticks(range(-10,10,1))
@@ -84,15 +88,15 @@ def HistogramFromDataFrameRow(dataframe,row,x_min,x_max,Nr_bins):
 #print(mod.gamma(data,0))
 
 
-def TopSusc(dir,latticeSize,latticeConstant):
-    df = DirectoryToDataframe(dir).iloc[0]**2
+def TopSusc(topChargeArray):
+    df = topChargeArray**2
     result= stats.bootstrap([df.to_numpy()],np.mean,n_resamples = 1000,confidence_level=0.0)
     mean = result.confidence_interval[0]
     std_error = result.standard_error
     propagated_error = 197.3*0.25*mean**(-3.0/4.0)/((latticeConstant**4 * latticeSize)**(0.25))*std_error
     mean = (mean/(latticeConstant**4*latticeSize))**(1/4)*197.3
     print("Chi^1/4 = "+str(mean)+"("+str(propagated_error)+") Mev")
-TopSusc("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\",24**4,0.09314)
+#TopSusc("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\24X24X24X24\\GF\\",24**4,0.09314)
 
 
 #df1 = pd.read_csv("C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\beta6_000000\\8X8X8X8\\torus_extdof4ensemble_0LHMC.csv",names = [0], sep="\n", header=None)
@@ -143,5 +147,4 @@ def changeFileNames():
         for file in os.listdir(dir):
             tempFileName = file[:13]+"_"+file[13:]
             os.rename(dir+file,dir +tempFileName )
-
 
