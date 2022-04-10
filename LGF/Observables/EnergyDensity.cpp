@@ -2,7 +2,6 @@
 #include <fstream>
 
 EnergyDensity::EnergyDensity(SU3_field& U) {
-	m_AutoCorrTime = calculate_AutoCorrTime();
 	m_U = &U;
 	calculate(0);
 }
@@ -25,20 +24,15 @@ void EnergyDensity::calculate(double flowTime) {
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
 
 	totalSum *= 1.0 / ((*m_U).getLatticePtr().m_totalVolume);//  /4.0
-	//double avg_plaquette = (*m_U).Avg_Plaquette();
 	if (mpiWrapper::id() == 0) {
 		m_resultVector.push_back(totalSum);
+		m_FlowMeasurementTimeVector.push_back(flowTime);
 		std::cout << "Energy Density	   = "<< totalSum << "\n";
-		//std::cout << "Average Plaquette	 = " << avg_plaquette << "\n";
-		std::cout << "t = "<< flowTime << ", t^2<E> = " << totalSum*flowTime*flowTime << "\n";
 		std::cout.flush();
 	}
 
 }
 
-int EnergyDensity::calculate_AutoCorrTime() {
-	return 0;
-}
 
 void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
 	if (mpiWrapper::id() == 0) {
@@ -73,7 +67,14 @@ void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& upda
 		//std::copy(beginByte, endByte, osi);
 
 		std::ofstream outFile(outPath_string);
-		for (const auto& e : m_resultVector) outFile << e << "\n";
+
+		int size = m_resultVector.size();
+		for (int i = 0; i < size; i++) {
+			outFile << m_FlowMeasurementTimeVector[i] << "," << m_resultVector[i] << "\n";
+		}
+		outFile.close();
+
+
 	}
 	MPI_Barrier(mpiWrapper::comm());
 }

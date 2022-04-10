@@ -2,7 +2,13 @@
 *.d
 data/
 out/
-
+*.pdf
+doc/
+!doc/thesis.tex
+!doc/thesis.pdf
+!doc/thesis.tex
+!doc/references.bib
+DataAnalysis_and_Plotting/module1.py
 #tex makefiles
 *.gz
 *.aux

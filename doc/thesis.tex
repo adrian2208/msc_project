@@ -2527,6 +2527,8 @@ M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a
 \begin{algorithm}[H]
 \caption{Wilson flow w/ 4th order Runge-Kutta}\label{alg:Wilson_flow}
 \begin{algorithmic}
+\Ensure
+\State Load a thermalized gauge configuration into $U$
 
 \While{$k\leq n-1$}\Comment{Full steps between half-steps, typically $n\approx 1/\varepsilon$}
 \State $U_{(k)}=\exp \left(\mathrm{i} \varepsilon P_{\left(k-\frac{1}{2}\right)}\right) U_{(k-1)}$
@@ -2856,6 +2858,24 @@ Need:
 \begin{enumerate}
 \item Q distribution at same flow time for three different lattice spacings
 \end{enumerate}
+\subsection{Topological charge}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=36cm 4.0cm 0cm 4.0cm, clip=true,scale = 0.4]{q_density_2dSlice_a_0.093.pdf}
+\caption[]{PLACEHOLDER!! ZERO FLOW TIME}\label{fig:PLACEHOLDER}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=36cm 4.0cm 0cm 4.0cm, clip=true,scale = 0.4]{q_density_2dSlice_a_0.093.pdf}
+\caption[]{PLACEHOLDER!! T0/2 FLOW TIME}\label{fig:PLACEHOLDER}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=36cm 4.0cm 0cm 4.0cm, clip=true,scale = 0.4]{q_density_2dSlice_a_0.093.pdf}
+\caption[]{PLACEHOLDER!! T0 FLOW TIME}\label{fig:PLACEHOLDER}
+\end{figure}
+
+
 
 \subsection{Topological susceptibility}
 \begin{figure}[H]

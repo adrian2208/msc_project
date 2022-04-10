@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	int extdofs = 4;
 	int shape[] = {24,24,24,24};
 	double beta = 6.0;
-	int ConfigurationStart = 240;
+	int ConfigurationStart = 327;
 	int ConfigurationStop = 394;
 	//std::cout << getLatticeConstant(beta)<< std::endl;
 	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
@@ -30,10 +30,20 @@ int main(int argc, char** argv) {
 	double measureAtFlowTime = 8.02;
 	//MeasureFlowedGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, measureAtFlowTime);
 
+	//MEASURE Q_DENSITYDISTRIBUTION
+	//Lattice lattice(NrDims, shape);
+	//SU3_field U(lattice, extdofs);
+	//std::string ensembleNum = std::to_string(170);
+	//double flowTime = 20.0;
+	//U.loadSU3FromFile(beta, "GF", ensembleNum + "_Flowtime" + std::to_string(flowTime));
+	//QdensityDistribution Qdensity(U, beta, "GF", ensembleNum + "_Flowtime" + std::to_string(flowTime));
+	//Qdensity.calculate(flowTime);
+
 	mpiWrapper::end_parallelSession();
 
 	return 0;
 }
+
 void MeasureFlowedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, double flowTime) {
 	Lattice lattice(NrDims, shape);
 	Wilson action(beta);
@@ -104,8 +114,8 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 		TopologicalCharge topCharge(U);
 		flowing.Include_TopCharge(topCharge);
 		//instantiate and include the Energy density
-		//EnergyDensity Edensity(U);
-		//flowing.Include_EnergyDensity(Edensity);
+		EnergyDensity Edensity(U);
+		flowing.Include_EnergyDensity(Edensity);
 		double flowTime;
 		int SaveEveryNconfigs = 500;
 		//flow the configuration
@@ -124,7 +134,7 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 		}
 		//save the observables to files
 		topCharge.saveTopologicalChargeToFile(beta,flowing.getupdateMethod() ,"_" + ensembleNum);
-		//Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
+		Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
 		U.saveSU3ToFile(beta, flowing.getupdateMethod(), ensembleNum + "_Flowtime" + std::to_string(flowTime));
 	}
 }
@@ -188,7 +198,7 @@ void GenerateLHMCGaugeConfigurations(int NrDims, int extdofs, int shape[], doubl
 }
 void testGradientFlow(int argc, char** argv) {
 	mpiWrapper::begin_parallelSession(argc, argv);
-	mpi_debug_breakpoint
+	//mpi_debug_breakpoint
 	int NrDims = 4;
 	int extdofs = 4;
 	int shape[] = { 8,8,8,8 };
@@ -230,7 +240,7 @@ void testLHMC(int argc, char** argv) {
 	SU3_field U(lattice, extdofs);
 	U.InitializeHotStart();
 	Wilson action(beta);
-	mpi_debug_breakpoint
+	//mpi_debug_breakpoint
 	LHMC updater(U, action, epsilon,NrLeaps);
 	//TopologicalCharge topCharge(U);
 	//topCharge.calculate(0.0);

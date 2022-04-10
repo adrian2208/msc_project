@@ -1,39 +1,43 @@
-#include "TopologicalCharge.h"
+#include "ImprovedTopologicalCharge.h"
 #include <fstream>
 
-TopologicalCharge::TopologicalCharge(SU3_field& U) {
+ImprovedTopologicalCharge::ImprovedTopologicalCharge(SU3_field& U) {
+	m_AutoCorrTime = calculate_AutoCorrTime();
 	m_U = &U;
 	calculate(0);
 }
 
-void TopologicalCharge::calculate(double flowTime) {
+void ImprovedTopologicalCharge::calculate(double flowTime) {
 	static const double PI = 4.0 * atan(1.0);
 	static const double PI2 = PI * PI;
 	double localSum = 0.0;
 	for (int i = (*m_U).Responsible_Start(); i < (*m_U).Responsible_Stop(); i++) { //This loop, alongside the multiple of eight constitutes the 4D levi cevita, thanks to the cyclicity of the trace 
-		localSum += (((*m_U).Improved_fieldStrengthTensor(i, 3, 2)) * ((*m_U).Improved_fieldStrengthTensor(i, 0, 1))).ReTr();
-		localSum += (((*m_U).Improved_fieldStrengthTensor(i, 3, 1)) * ((*m_U).Improved_fieldStrengthTensor(i, 2, 0))).ReTr();
-		localSum += (((*m_U).Improved_fieldStrengthTensor(i, 3, 0)) * ((*m_U).Improved_fieldStrengthTensor(i, 1, 2))).ReTr();
+		localSum += ((*m_U).clover_avg(i, 0, 1) * (*m_U).clover_avg(i, 2, 3)).ReTr();
+		localSum -= ((*m_U).clover_avg(i, 0, 2) * (*m_U).clover_avg(i, 1, 3)).ReTr();
+		localSum += ((*m_U).clover_avg(i, 0, 3) * (*m_U).clover_avg(i, 1, 2)).ReTr();
+
 	}
 
 	double totalSum = 0.0;
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
-	/*totalSum *= 8.0 / (4.0*32.0 * PI2);*/
-	totalSum *= 1.0 / (4.0 * PI2);
+	totalSum *= 8.0 / (4.0 * 32.0 * PI2);
 	if (mpiWrapper::id() == 0) {
 		m_resultVector.push_back(totalSum);
-		m_FlowMeasurementTimeVector.push_back(flowTime);
-		std::cout << "Topological Charge = " << totalSum << "\n";
+		std::cout << "Improved Topological Charge = " << totalSum << "\n";
 		std::cout.flush();
 	}
 
 }
 
-void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::string& updateMethod,const std::string& identifier, const std::string& dataFolder) {
+int ImprovedTopologicalCharge::calculate_AutoCorrTime() {
+	return 0;
+}
+
+void ImprovedTopologicalCharge::saveTopologicalChargeToFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-		std::filesystem::path fieldType("/Topological_Charge/beta" + beta_str + "/");
+		std::filesystem::path fieldType("/ImprovedTopological_Charge/beta" + beta_str + "/");
 		//move to the ensembles directory
 		std::filesystem::path outPath(dataFolder + "Observables");
 		//if not existing, create a directory for the field type
@@ -42,7 +46,7 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 		for (i = 0; i < (*m_U).getLatticePtr().getNdims() - 1; i++) {
 			outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "X";
 		}
-		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/" + updateMethod +"/";
+		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/" + updateMethod + "/";
 		std::filesystem::create_directories(outPath);
 		//write the lattice shape to the filename
 
@@ -61,13 +65,8 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 		//const char* endByte = (char*)&m_resultVector.back() + sizeof(double);
 		//std::copy(beginByte, endByte, osi);
 
-		std::ofstream outFile(outPath_string,std::ios_base::app);
-		//for (const auto& e : m_resultVector) outFile << e << "\n";
-		int size = m_resultVector.size();
-		for (int i = 0; i < size; i++) {
-			outFile << m_FlowMeasurementTimeVector[i] << "," << m_resultVector[i] << "\n";
-		}
-		outFile.close();
+		std::ofstream outFile(outPath_string);
+		for (const auto& e : m_resultVector) outFile << e << "\n";
 	}
 	MPI_Barrier(mpiWrapper::comm());
 }

@@ -19,6 +19,8 @@
 #include "Math/SU3_gen.h"
 #include "Gradient_Flow/GradientFlow.h"
 #include "Observables/TopologicalCharge.h"
+#include "Observables/EnergyDensity.h"
+#include "Observables/QdensityDistribution.h"
 #include "SU3_Heatbath/SU3_Heatbath.h"
 
 void GenerateHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int ThermalizationSteps, int ConfigTimeSeparation);
@@ -36,4 +38,4 @@ void ResumeFlowedConfiguration(int NrDims, int extdofs, int shape[], double beta
 void MeasureFlowedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, double flowTime);
 double getLatticeConstant(double beta);
 
-#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
+//#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
