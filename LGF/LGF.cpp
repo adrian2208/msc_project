@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	int extdofs = 4;
 	int shape[] = {24,24,24,24};
 	double beta = 6.0;
-	int ConfigurationStart = 327;
+	int ConfigurationStart = 359;
 	int ConfigurationStop = 394;
 	//std::cout << getLatticeConstant(beta)<< std::endl;
 	//GenerateLHMCGaugeConfigurations(NrDims, extdofs, shape, beta, ConfigurationStart, ConfigurationStop, 200);
@@ -134,7 +134,7 @@ void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double b
 		}
 		//save the observables to files
 		topCharge.saveTopologicalChargeToFile(beta,flowing.getupdateMethod() ,"_" + ensembleNum);
-		Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
+		Edensity.saveEnergyDensityToFile(beta, flowing.getupdateMethod(), "_" + ensembleNum);
 		U.saveSU3ToFile(beta, flowing.getupdateMethod(), ensembleNum + "_Flowtime" + std::to_string(flowTime));
 	}
 }

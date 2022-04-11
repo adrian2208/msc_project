@@ -1802,6 +1802,24 @@ Any simulation will happen at a finite lattice volume, and this impacts the outc
 
 \section{Implementation}
 \subsection{Generating Gauge Configurations}
+
+
+
+
+
+
+
+
+
+To measure observables, it's necessary to generate a substantial amount of gauge configurations. There are several requirements that need to be met in order to produce valuable results.
+
+\begin{enumerate}
+\item autocorrelation time of topological observables
+\item negate finite-volume effects
+\item choosing $\beta$ to avoid critical slowing down
+\item constant volume, decreasing $a$ for continuum extrapolation
+\end{enumerate}
+
 QUOTE FROM "Topological Susceptibility in SU(3) Gauge Theory"
 ""Since the mass of the
 lightest glueball is around 1.5 GeV, finite-volume effects
@@ -1809,9 +1827,41 @@ are expected to be far below our statistical errors as soon as
 L$\geq$1 fm""
 
 
+To determine the lattice spacing $a$ from the inverse coupling $\beta$ we use an interpolation from \cite{Guagnelli_1998}, which is valid for $5.7 \leq \beta \leq 6.57$:
+\begin{equation}\label{eq:avBeta_interpolated}
+\ln \left(a / r_{0}\right)=-1.6805-1.7139(\beta-6)+0.8155(\beta-6)^{2}-0.6667(\beta-6)^{3}.
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.7]{ChoosingWhichvalsForNandBeta.pdf}
+\caption[]{$L=1.5fm$, $a(\beta)$ defined in \eqref{eq:avBeta_interpolated} }\label{fig:as}
+\end{figure}
+
+
+SEE 
+https://journals-aps-org.ezproxy.uio.no/prd/pdf/10.1103/PhysRevD.92.074502
+FOR ERRORS IN TABLE
+\begin{tabular}{lcccccc}
+\hline \hline Lattice & $\beta$ & $a[fm]$ & $L[fm]$ & $N_{OR}/N_{HB}$&$t_{0} / a^{2}$ & $t_{0} / r_{0}^{2}$\\
+\hline$16^4$ & $6.0$ & $0.093$ & $1.49$ & &$2.995(4)$  & $0.1195(9)$ \\
+	  $20^4$ & $6.13$& $0.076$ & $1.51$ & &$2.7984(9)$ & $0.1117(9)$ \\
+	  $24^4$ & $6.26$& $0.062$ & $1.50$ & &$2.7908(5)$ & $0.1114(9)$ \\
+	  $32^4$ & $6.46$& $0.047$ & $1.51$ & &$2.7908(5)$ & $0.1114(9)$
+\end{tabular}
+
+Need:
+\begin{enumerate}
+\item Q distribution at same flow time for three different lattice spacings
+\end{enumerate}
+
+
+
+
+
 
 \subsubsection{Critical slowing down}
-
+CORRELATION TIMES OF TOPOLOGICAL OBSERVABLES HEATBATH V. OTHERS
 \subsubsection{Local Hybrid Monte Carlo}
 \subsubsection{Cabbibo- Marinari Heatbath}
 Heatbath algorithms have proven invaluable tools for generating gauge configurations in pure gauge theory. It has been shown to be, in the case of SU(3), about three times more efficient than the metropolis algorithm \cite{CABIBBO1982387}. The heatbath algorithm combines the configuration proposal and acceptance steps of the Wilson gauge action- Metropolis algorithm by sampling gauge links directly from the distribution
@@ -2843,21 +2893,15 @@ We see that the lattice must necessarily contain an even number of sites in ever
 SENDS AND RECEIVES AT THE SAME TIME
 
 \section{Results}
-\subsection{Ensembles}
-SEE 
-https://journals-aps-org.ezproxy.uio.no/prd/pdf/10.1103/PhysRevD.92.074502
-FOR ERRORS IN TABLE
-\begin{tabular}{lccccc}
-\hline \hline Lattice & $\beta$ & $a$ & $N_{OR}/N_{HB}$&$t_{0} / a^{2}$ & $t_{0} / r_{0}^{2}$\\
-\hline$24^4$& & & &$2.995(4)$ & $0.1195(9)$ \\
-$X^4$ & & & &$2.7984(9)$ & $0.1117(9)$ \\
-$X^4$ & & & &$2.7908(5)$ & $0.1114(9)$
-\end{tabular}
 
-Need:
-\begin{enumerate}
-\item Q distribution at same flow time for three different lattice spacings
-\end{enumerate}
+\subsection{Scale setting with $t^2\langle E\rangle$}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{t_squared_v_tOverR_0_squared.pdf}
+\caption[]{PLACEHOLDER!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+
 \subsection{Topological charge}
 \begin{figure}[H]
 \centering
