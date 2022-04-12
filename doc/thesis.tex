@@ -2815,7 +2815,37 @@ and
 x\leq|\Lambda_x|,\,y\leq|\Lambda_y|,\,z\leq|\Lambda_z|,\,t\leq|\Lambda_t|
 \end{equation*}
 
-Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be highly dependent on the ratio $\frac{|\Lambda|}{N_{procs}}$ and we can make sense of why that is. When the simulation volume of each process is small, the reduction in boundary 3-volume gained from setting any $x,\,y,\,z,\,t = |\Lambda_x|,\,|\Lambda_y|,\,|\Lambda_z|,\,\Lambda_t|$ is quite small, while the addition of boundary 3-volume by deviating from $x=y=z=t$ becomes quite large. Likewise, when each process' simulation volume is large, there is substantial reductions to be made from eliminating either of the terms in the above minimization problem.\\For instance, in many LQCD simulations the time extent of the lattice can be much larger than the spatial extent, and so all of the three terms that include $t$ could be completely removed by only subdividing the temporal dimension of the lattice, i.e. $x=|\Lambda_x|,\,y=|\Lambda_y|,\,z=|\Lambda_z|$.\\Another benefit of partitioning the lattice in this way is that there is a hardware-specific overhead associated with establishing communications between two processes, and eliminating process boundaries in a dimension will require fewer connections between processes.\\\\Ultimately this choice will depend on the number of processors that are available to you and the total simulation volume, as well as the relative difference in computer time associated with either establishing communications between processes or transceiving a certain amount of data between processes. Regardless, for all but the most modest core-counts, this minimization problem favours hyper-cubic process domains by a significant margin, especially when it comes to scaling, as subdivisions in more dimensions admit more processes to be used.
+Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be highly dependent on the ratio $\frac{|\Lambda|}{N_{procs}}$ and we can make sense of why that is. When the simulation volume of each process is small, the reduction in boundary 3-volume gained from setting any $x,\,y,\,z,\,t = |\Lambda_x|,\,|\Lambda_y|,\,|\Lambda_z|,\,\Lambda_t|$ is quite small, while the addition of boundary 3-volume by deviating from $x=y=z=t$ becomes quite large. Likewise, when each process' simulation volume is large, there is substantial reductions to be made from eliminating either of the terms in the above minimization problem.\\For instance, in many LQCD simulations the time extent of the lattice can be much larger than the spatial extent, and so all of the three terms that include $t$ could be completely removed by only subdividing the temporal dimension of the lattice, i.e. $x=|\Lambda_x|,\,y=|\Lambda_y|,\,z=|\Lambda_z|$.\\Another benefit of partitioning the lattice in this way is that there is a hardware-specific overhead associated with establishing communications between two processes, and eliminating process boundaries in a dimension will require fewer connections between processes.\\\\Ultimately this choice will depend on the number of processors that are available to you and the total simulation volume, as well as the relative difference in computer time associated with either establishing communications between processes or transceiving a certain amount of data between processes. Regardless, for all but the most modest core-counts, this minimization problem favours hyper-cubic process domains by a significant margin, especially when it comes to scaling, as subdivisions in more dimensions admit more processes to be used.\\\\But what if you had access to a specific amount of processors and you want to use as many of them as possible, as efficiently as possible? If we ignore the issue of face elimination, which we tackled above, and restrict ourselves to 4 dimensional hyper-cubic latices $\Lambda_x=\Lambda_y=\Lambda_z=\Lambda_t$ (this isn't necessary, but it makes the equations easier to work with) we can look at the problem this way: We want process domains that are as close as possible to hyper-cubic, fulfilling two demands: $\Lambda_x$ must be divisible by the number of "cuts" $n^\mu_c$ in that dimension and
+\begin{equation}
+(n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)= N_{procs}.
+\end{equation}
+Where $N_{procs}$ is the number of processors available to you. It can be solved by an algorithm like this
+\begin{algorithm}[H]
+\caption{Create Partition}\label{alg:Create_partition}
+\hspace*{\algorithmicindent} \textbf{Input: $N_{procs}$, $\Lambda_x$} \\
+\hspace*{\algorithmicindent} \textbf{Output: $n^0_c$, $n^1_c$, $n^2_c$, $n^3_c$, $N^{usable}_{procs}$ }
+\begin{algorithmic}
+\Ensure
+\State $n^0_c=n^1_c=n^2_c=n^3_c=0$
+\State $i=0$
+\While{$(n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)< N_{procs}$}
+\State $N^{attempted}_{procs} \gets (n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)$
+
+\While{$n^i_c$ is not wholly divisible by $\Lambda_x$}
+\State $n^i_c \gets n^i_c+1$
+\EndWhile
+\State $i\gets (i+1)\, \operatorname{mod}(4)$
+\EndWhile
+\If{$(n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1) = N_{procs}$}
+\State  $N^{usable}_{procs} \gets N_{procs}$
+\Else
+\State  $N^{usable}_{procs} \gets N^{attempted}_{procs} $
+\State $i\gets (i-1)\, \operatorname{mod}(4)$
+\State $n^i_c \gets n^i_c-1$
+\EndIf
+
+\end{algorithmic}
+\end{algorithm}
 
 \subsubsection{Checkerboard Update}\label{sec:Checkerboard_Update}
 Applying parallelization to the updating of link variables presents an issue. When a link is being updated it is necessary to ensure that none of the links required for its calculation are changed until the calculation is concluded.\\For the Wilson action, the set of links required to update a link are the links contained in the staples connected to it. One way to ensure that this requirement is met, is to assign to each lattice point either an even or odd parity according to its coordinate
