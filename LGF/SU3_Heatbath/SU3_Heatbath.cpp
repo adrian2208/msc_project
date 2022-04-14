@@ -15,6 +15,7 @@ SU3_Heatbath::SU3_Heatbath(SU3_field& U,double beta, int OR_per_HB) {
 
 void SU3_Heatbath::update(int n_iter) {
 	for (int i = 0; i < n_iter; i++) {
+		
 		Cabibbo_Marinari((*m_U));
 		OverRelaxation((*m_U));
 		if (mpiWrapper::id() == 0) {

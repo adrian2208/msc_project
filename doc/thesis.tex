@@ -2823,26 +2823,37 @@ Where $N_{procs}$ is the number of processors available to you. It can be solved
 \begin{algorithm}[H]
 \caption{Create Partition}\label{alg:Create_partition}
 \hspace*{\algorithmicindent} \textbf{Input: $N_{procs}$, $\Lambda_x$} \\
-\hspace*{\algorithmicindent} \textbf{Output: $n^0_c$, $n^1_c$, $n^2_c$, $n^3_c$, $N^{usable}_{procs}$ }
+\hspace*{\algorithmicindent} \textbf{Output: $n^0_c$, $n^1_c$, $n^2_c$, $n^3_c$, $N^{usable}_{procs}$}
+\begin{algorithmic}
+\State $n^0_c,\,n^1_c,\,n^2_c,\,n^3_c$
+\For{$n^0_c,\,n^1_c,\,n^2_c,\,n^3_c \,\forall$ combinations of divisors of $\Lambda_x$ with replacement $-1$}
+\If{$(n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1) = N^{usable}_{procs} \leq N_{procs}$}
+\State append $n^0_c,\,n^1_c,\,n^2_c,\,n^3_c$ and $N^{usable}_{procs}$ to output
+\EndIf
+\EndFor
+
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+\caption{Partition lattice}\label{alg:Partition_Lattice}
+\hspace*{\algorithmicindent} \textbf{Input: $n^0_c$, $n^1_c$, $n^2_c$, $n^3_c$}
 \begin{algorithmic}
 \Ensure
-\State $n^0_c=n^1_c=n^2_c=n^3_c=0$
-\State $i=0$
-\While{$(n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)< N_{procs}$}
-\State $N^{attempted}_{procs} \gets (n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)$
+\State $proc_{id} = 0$
+\For{$\forall\,\vec{n} \in \Lambda$}
 
-\While{$n^i_c$ is not wholly divisible by $\Lambda_x$}
-\State $n^i_c \gets n^i_c+1$
-\EndWhile
-\State $i\gets (i+1)\, \operatorname{mod}(4)$
-\EndWhile
-\If{$(n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1) = N_{procs}$}
-\State  $N^{usable}_{procs} \gets N_{procs}$
-\Else
-\State  $N^{usable}_{procs} \gets N^{attempted}_{procs} $
-\State $i\gets (i-1)\, \operatorname{mod}(4)$
-\State $n^i_c \gets n^i_c-1$
-\EndIf
+\For{$i \in \{0,1,\ldots,\}$}
+\State $temp \gets \vec{n}_i/(\Lambda_i/n^i_c+1)$
+\For{$j<i$}
+\State $temp \gets temp\cdot(n^j_c+1)$
+\EndFor
+\State $proc_{id} \gets proc_{id}+ temp$
+\EndFor
+\State \Return Process id of $\vec{n}$ is $proc_{id}$
+\State $proc_{id}\gets 0$
+\EndFor
 
 \end{algorithmic}
 \end{algorithm}

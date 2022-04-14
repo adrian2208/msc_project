@@ -362,6 +362,7 @@ void SU3_field::transfer_FieldValues(){
 	bool Receiving = false;
 	C_double* Package;
 	C_double* Package_recv;
+
 	for (int i = 1; i < mpiWrapper::nProcs(); i++) {
 		Send_id = (mpiWrapper::id() + i) % mpiWrapper::nProcs();
 		Recv_id = (mpiWrapper::id() + mpiWrapper::nProcs() - i) % mpiWrapper::nProcs();
@@ -382,6 +383,7 @@ void SU3_field::transfer_FieldValues(){
 					}
 				}
 			}
+
 			result = MPI_Isend(Package, Nr_C_doubles_toSend * sizeof(C_double) / sizeof(char), MPI_CHAR, Send_id, mpiWrapper::id() * mpiWrapper::nProcs() + Send_id, mpiWrapper::comm(), &request);
 			if (result != MPI_SUCCESS) {
 				std::cout << "Error: " << result << "-> MPI_Isend	[FIELDVALUES]  From: "<<mpiWrapper::id() << " To: "<<Send_id << "\n";
@@ -393,6 +395,7 @@ void SU3_field::transfer_FieldValues(){
 				std::cout << Error_class << " Error: " << Error_string << std::endl;
 			}
 		}
+		
 
 		Nr_sites_toRecv = m_lattice->m_InternalIdx_stop[Recv_id][1] - m_lattice->m_InternalIdx_start[Recv_id][0];
 		if (Nr_sites_toRecv > 0) {
@@ -419,7 +422,6 @@ void SU3_field::transfer_FieldValues(){
 				idx++;
 			}
 		}
-
 		if (Sending) {
 			MPI_Status status_waiting;
 			MPI_Wait(&request, &status_waiting);
@@ -599,32 +601,36 @@ su3_mat SU3_field::clover2x2_avg(int internal_index, int mu, int nu) {
 	int displacedIdx2;
 	int displacedIdx3;
 
+	
+
 	displacedIdx = m_lattice->m_fwd[internal_index][nu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][mu];
 	displacedIdx3 = m_lattice->m_fwd[internal_index][mu];
-	out = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx3, mu, nu).dagger() * (*this)(displacedIdx3, mu).dagger()*(*this)(internal_index, mu).dagger();
-
+	//out = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx3, mu, nu).dagger() * (*this)(displacedIdx3, mu).dagger()*(*this)(internal_index, mu).dagger();
+	out = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * ( (*this)(internal_index, mu) * (*this)(displacedIdx3, mu) * this->fwd_fieldVal(displacedIdx3, mu, nu) * this->fwd_fieldVal(displacedIdx2, mu, nu)).dagger();
+	
 	
 	displacedIdx = m_lattice->m_back[internal_index][nu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][mu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx2][nu];
-	out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx3, mu, nu).dagger() * (*this)(displacedIdx3, mu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(displacedIdx, nu, nu) * (*this)(displacedIdx, nu);
-
+	//out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx3, mu, nu).dagger() * (*this)(displacedIdx3, mu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(displacedIdx, nu, nu) * (*this)(displacedIdx, nu);
+	out = out + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * (this->back_fieldVal(displacedIdx, nu, mu) * (*this)(displacedIdx3, mu) * this->fwd_fieldVal(displacedIdx3, mu, nu)  * this->fwd_fieldVal(displacedIdx2, mu, nu)).dagger() * this->back_fieldVal(displacedIdx, nu, nu) * (*this)(displacedIdx, nu);
 	
 	
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][nu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx2][mu];
-	out = out + (*this)(displacedIdx, mu).dagger() * this->back_fieldVal(displacedIdx, mu, mu).dagger() * this->back_fieldVal(displacedIdx, mu, nu) * (*this)(displacedIdx3, nu)	* this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu)	* this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(internal_index, nu).dagger();
-
+	//out = out + (*this)(displacedIdx, mu).dagger() * this->back_fieldVal(displacedIdx, mu, mu).dagger() * this->back_fieldVal(displacedIdx, mu, nu) * (*this)(displacedIdx3, nu)	* this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu)	* this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(internal_index, nu).dagger();
+	out = out + (this->back_fieldVal(displacedIdx, mu, mu)* (*this)(displacedIdx, mu)).dagger() * this->back_fieldVal(displacedIdx, mu, nu) * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * ( (*this)(internal_index, nu)* this->fwd_fieldVal(displacedIdx2, mu, nu)).dagger();
 
 
 	displacedIdx = m_lattice->m_back[displacedIdx][nu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][nu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx][mu];
-	out = out + this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, nu) * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu);
-
-
+	//out = out + this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, nu) * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu);
+	out = out + (this->back_fieldVal(displacedIdx3, nu, mu) * (*this)(displacedIdx2, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu) * this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * this->back_fieldVal(displacedIdx3, nu, nu) * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu);
+	
+	
 	out = 0.25 * out;
 
 	// // TESTING
@@ -646,20 +652,23 @@ su3_mat SU3_field::RectangleClover_avg(int internal_index, int mu, int nu) {
 	int displacedIdx2;
 
 	displacedIdx = m_lattice->m_fwd[internal_index][nu];
-	tall_rectangle = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu,mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(internal_index, mu, nu).dagger()* (*this)(internal_index, mu).dagger();
+	//tall_rectangle = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu,mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(internal_index, mu, nu).dagger()* (*this)(internal_index, mu).dagger();
+	tall_rectangle = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * this->fwd_fieldVal(displacedIdx, nu, mu) * ((*this)(internal_index, mu)* this->fwd_fieldVal(internal_index, mu, nu) * this->fwd_fieldVal(displacedIdx, mu, nu)).dagger();
 	
 	displacedIdx = m_lattice->m_back[internal_index][nu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][nu];
-	tall_rectangle = tall_rectangle + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu);
+	//tall_rectangle = tall_rectangle + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu);
+	tall_rectangle = tall_rectangle + (*this)(internal_index, mu) * ((*this)(displacedIdx2, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu) * this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu);
 	
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][nu];
-	tall_rectangle = tall_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(internal_index, nu).dagger();
+	//tall_rectangle = tall_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(internal_index, nu).dagger();
+	tall_rectangle = tall_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu) * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * ((*this)(internal_index, nu) *this->fwd_fieldVal(displacedIdx2, mu, nu) ).dagger();
 
 	displacedIdx = m_lattice->m_back[displacedIdx][nu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][nu];
-	tall_rectangle = tall_rectangle + this->back_fieldVal(internal_index, nu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
-	
+	//tall_rectangle = tall_rectangle + this->back_fieldVal(internal_index, nu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
+	tall_rectangle = tall_rectangle + ((*this)(displacedIdx2, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(internal_index, nu, nu)).dagger() * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu) * this->back_fieldVal(internal_index, mu, mu);
 	tall_rectangle = (1.0/8.0) * tall_rectangle;
 
 
@@ -667,21 +676,26 @@ su3_mat SU3_field::RectangleClover_avg(int internal_index, int mu, int nu) {
 
 	displacedIdx = m_lattice->m_back[internal_index][nu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][mu];
-	wide_rectangle = (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() *(*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+	//wide_rectangle = (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * (*this)(displacedIdx2, mu).dagger() *(*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx, nu);
+	wide_rectangle = (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, mu) * ( (*this)(displacedIdx, mu) * (*this)(displacedIdx2, mu) * this->fwd_fieldVal(displacedIdx2, mu, nu)).dagger() * (*this)(displacedIdx, nu);
 
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][mu];
-	wide_rectangle = wide_rectangle + this->back_fieldVal(internal_index, nu, nu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(displacedIdx2, nu, mu).dagger() * this->back_fieldVal(displacedIdx2, nu, nu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx, mu);
+	//wide_rectangle = wide_rectangle + this->back_fieldVal(internal_index, nu, nu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(displacedIdx2, nu, mu).dagger() * this->back_fieldVal(displacedIdx2, nu, nu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx, mu);
+	wide_rectangle = wide_rectangle + (this->back_fieldVal(displacedIdx2, nu, mu) * this->back_fieldVal(displacedIdx, nu, mu) * this->back_fieldVal(internal_index, nu, nu)).dagger() * this->back_fieldVal(displacedIdx2, nu, nu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx, mu);
 
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][mu];
-	wide_rectangle = wide_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu)* this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+	//wide_rectangle = wide_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu)* this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+	wide_rectangle = wide_rectangle + ((*this)(displacedIdx2, mu)*(*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
 
 	displacedIdx = m_lattice->m_fwd[internal_index][mu];
-	wide_rectangle = wide_rectangle + (*this)(internal_index, nu) * this->fwd_fieldVal(internal_index, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(internal_index, mu).dagger();
+	//wide_rectangle = wide_rectangle + (*this)(internal_index, nu) * this->fwd_fieldVal(internal_index, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(internal_index, mu).dagger();
+	wide_rectangle = wide_rectangle + (*this)(internal_index, nu) * this->fwd_fieldVal(internal_index, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * ((*this)(internal_index, mu) * (*this)(displacedIdx, mu) * this->fwd_fieldVal(displacedIdx, mu, nu)).dagger();
 
 	wide_rectangle = (1.0 / 8.0) * wide_rectangle;
 
+	
 
 	out = tall_rectangle + wide_rectangle;
 
@@ -704,57 +718,62 @@ su3_mat SU3_field::RectangleClover1x3_avg(int internal_index, int mu, int nu) {
 	int displacedIdx2;
 	int displacedIdx3;
 
+	
+
 	displacedIdx = m_lattice->m_fwd[internal_index][nu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][nu];
-	tall_rectangle = (*this)(internal_index, nu) * (*this)(displacedIdx, nu)* (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu) *	this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() *  this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
-
+	//tall_rectangle = (*this)(internal_index, nu) * (*this)(displacedIdx, nu)* (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu) *	this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() *  this->fwd_fieldVal(internal_index, mu, nu).dagger() * (*this)(internal_index, mu).dagger();
+	tall_rectangle = (*this)(internal_index, nu) * (*this)(displacedIdx, nu) * (*this)(displacedIdx2, nu) * this->fwd_fieldVal(displacedIdx2, nu, mu)  * ((*this)(internal_index, mu)* this->fwd_fieldVal(internal_index, mu, nu)* this->fwd_fieldVal(displacedIdx, mu, nu)* this->fwd_fieldVal(displacedIdx2, mu, nu)).dagger();
 
 	displacedIdx = m_lattice->m_back[internal_index][nu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][nu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx2][nu];
-	tall_rectangle = tall_rectangle + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx3, mu, nu).dagger()	* (*this)(displacedIdx3, mu).dagger() * (*this)(displacedIdx3, nu) * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu);
-
+	//tall_rectangle = tall_rectangle + (*this)(internal_index, mu) * this->fwd_fieldVal(displacedIdx, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx2, mu, nu).dagger() * this->fwd_fieldVal(displacedIdx3, mu, nu).dagger()	* (*this)(displacedIdx3, mu).dagger() * (*this)(displacedIdx3, nu) * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu);
+	tall_rectangle = tall_rectangle + (*this)(internal_index, mu) * ((*this)(displacedIdx3, mu) * this->fwd_fieldVal(displacedIdx3, mu, nu) * this->fwd_fieldVal(displacedIdx2, mu, nu)* this->fwd_fieldVal(displacedIdx, mu, nu)).dagger() * (*this)(displacedIdx3, nu) * (*this)(displacedIdx2, nu) * (*this)(displacedIdx, nu);
+	
 
 	displacedIdx = m_lattice->m_fwd[internal_index][nu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][nu];
 	displacedIdx3 = m_lattice->m_fwd[displacedIdx2][nu];
-	tall_rectangle = tall_rectangle + this->back_fieldVal(internal_index, mu, mu).dagger() * this->back_fieldVal(internal_index, mu, nu) * this->back_fieldVal(displacedIdx, mu, nu) * this->back_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(displacedIdx3, mu, mu) * (*this)(displacedIdx2, nu).dagger() * (*this)(displacedIdx, nu).dagger() * (*this)(internal_index, nu).dagger();
-
+	//tall_rectangle = tall_rectangle + this->back_fieldVal(internal_index, mu, mu).dagger() * this->back_fieldVal(internal_index, mu, nu) * this->back_fieldVal(displacedIdx, mu, nu) * this->back_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(displacedIdx3, mu, mu) * (*this)(displacedIdx2, nu).dagger() * (*this)(displacedIdx, nu).dagger() * (*this)(internal_index, nu).dagger();
+	tall_rectangle = tall_rectangle + this->back_fieldVal(internal_index, mu, mu).dagger() * this->back_fieldVal(internal_index, mu, nu) * this->back_fieldVal(displacedIdx, mu, nu) * this->back_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(displacedIdx3, mu, mu) * ((*this)(internal_index, nu) * (*this)(displacedIdx, nu) * (*this)(displacedIdx2, nu)).dagger();
+	
 
 	displacedIdx = m_lattice->m_back[internal_index][nu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][nu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx2][nu];
-	tall_rectangle = tall_rectangle + (*this)(displacedIdx, nu).dagger() * (*this)(displacedIdx2, nu).dagger() * (*this)(displacedIdx3, nu).dagger() * this->back_fieldVal(displacedIdx3, mu, mu).dagger() * this->back_fieldVal(displacedIdx3, mu, nu) * this->back_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(displacedIdx, mu, nu) * this->back_fieldVal(internal_index, mu, mu);
-
-
+	//tall_rectangle = tall_rectangle + (*this)(displacedIdx, nu).dagger() * (*this)(displacedIdx2, nu).dagger() * (*this)(displacedIdx3, nu).dagger() * this->back_fieldVal(displacedIdx3, mu, mu).dagger() * this->back_fieldVal(displacedIdx3, mu, nu) * this->back_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(displacedIdx, mu, nu) * this->back_fieldVal(internal_index, mu, mu);
+	tall_rectangle = tall_rectangle + (this->back_fieldVal(displacedIdx3, mu, mu) * (*this)(displacedIdx3, nu) * (*this)(displacedIdx2, nu)* (*this)(displacedIdx, nu)).dagger() * this->back_fieldVal(displacedIdx3, mu, nu) * this->back_fieldVal(displacedIdx2, mu, nu) * this->back_fieldVal(displacedIdx, mu, nu) * this->back_fieldVal(internal_index, mu, mu);
+	
 	tall_rectangle = (1.0 / 8.0) * tall_rectangle;
 
-
-
-
-	displacedIdx = m_lattice->m_fwd[internal_index][mu];
-	displacedIdx2 = m_lattice->m_fwd[displacedIdx][mu];
-	displacedIdx3 = m_lattice->m_fwd[displacedIdx2][mu];
-	wide_rectangle = (*this)(internal_index, nu) * this->fwd_fieldVal(internal_index, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * (*this)(displacedIdx3, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(internal_index, mu).dagger();
+	
 
 
 	displacedIdx = m_lattice->m_fwd[internal_index][mu];
 	displacedIdx2 = m_lattice->m_fwd[displacedIdx][mu];
 	displacedIdx3 = m_lattice->m_fwd[displacedIdx2][mu];
-	wide_rectangle = wide_rectangle + (*this)(internal_index, mu) * (*this)(displacedIdx, mu) * (*this)(displacedIdx2, mu) * this->back_fieldVal(displacedIdx3, nu, nu).dagger() * this->back_fieldVal(displacedIdx2, nu, mu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(internal_index, nu, mu).dagger() * this->back_fieldVal(internal_index, nu, nu);
+	//wide_rectangle = (*this)(internal_index, nu) * this->fwd_fieldVal(internal_index, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * (*this)(displacedIdx3, nu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx, mu).dagger() * (*this)(internal_index, mu).dagger();
+	wide_rectangle = (*this)(internal_index, nu) * this->fwd_fieldVal(internal_index, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * ((*this)(internal_index, mu) * (*this)(displacedIdx, mu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx3, nu)).dagger();
 
+	displacedIdx = m_lattice->m_fwd[internal_index][mu];
+	displacedIdx2 = m_lattice->m_fwd[displacedIdx][mu];
+	displacedIdx3 = m_lattice->m_fwd[displacedIdx2][mu];
+	//wide_rectangle = wide_rectangle + (*this)(internal_index, mu) * (*this)(displacedIdx, mu) * (*this)(displacedIdx2, mu) * this->back_fieldVal(displacedIdx3, nu, nu).dagger() * this->back_fieldVal(displacedIdx2, nu, mu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(internal_index, nu, mu).dagger() * this->back_fieldVal(internal_index, nu, nu);
+	wide_rectangle = wide_rectangle + (*this)(internal_index, mu) * (*this)(displacedIdx, mu) * (*this)(displacedIdx2, mu) * (this->back_fieldVal(internal_index, nu, mu) * this->back_fieldVal(displacedIdx, nu, mu) * this->back_fieldVal(displacedIdx2, nu, mu) * this->back_fieldVal(displacedIdx3, nu, nu)).dagger() * this->back_fieldVal(internal_index, nu, nu);
 
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][mu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx2][mu];
-	wide_rectangle = wide_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx3, mu).dagger() * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
-
+	//wide_rectangle = wide_rectangle + (*this)(displacedIdx, mu).dagger() * (*this)(displacedIdx2, mu).dagger() * (*this)(displacedIdx3, mu).dagger() * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
+	wide_rectangle = wide_rectangle + ((*this)(displacedIdx3, mu) * (*this)(displacedIdx2, mu)* (*this)(displacedIdx, mu)).dagger() * (*this)(displacedIdx3, nu) * this->fwd_fieldVal(displacedIdx3, nu, mu) * this->fwd_fieldVal(displacedIdx2, nu, mu) * this->fwd_fieldVal(displacedIdx, nu, mu) * (*this)(internal_index, nu).dagger();
 
 	displacedIdx = m_lattice->m_back[internal_index][mu];
 	displacedIdx2 = m_lattice->m_back[displacedIdx][mu];
 	displacedIdx3 = m_lattice->m_back[displacedIdx2][mu];
-	wide_rectangle = wide_rectangle + this->back_fieldVal(internal_index, nu, nu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(displacedIdx2, nu, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, nu) * (*this)(displacedIdx3, mu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx, mu);
-
+	//wide_rectangle = wide_rectangle + this->back_fieldVal(internal_index, nu, nu).dagger() * this->back_fieldVal(displacedIdx, nu, mu).dagger() * this->back_fieldVal(displacedIdx2, nu, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, mu).dagger() * this->back_fieldVal(displacedIdx3, nu, nu) * (*this)(displacedIdx3, mu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx, mu);
+	wide_rectangle = wide_rectangle + (this->back_fieldVal(displacedIdx3, nu, mu) * this->back_fieldVal(displacedIdx2, nu, mu) * this->back_fieldVal(displacedIdx, nu, mu)*this->back_fieldVal(internal_index, nu, nu)).dagger() * this->back_fieldVal(displacedIdx3, nu, nu) * (*this)(displacedIdx3, mu) * (*this)(displacedIdx2, mu) * (*this)(displacedIdx, mu);
+	
 
 	wide_rectangle = (1.0 / 8.0) * wide_rectangle;
 
@@ -774,8 +793,7 @@ su3_mat SU3_field::RectangleClover1x3_avg(int internal_index, int mu, int nu) {
 
 inline su3_mat SU3_field::plaquette(int internal_index, int mu, int nu){
 	su3_mat out;
-	out = (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu) * this->fwd_fieldVal(internal_index, nu, mu).dagger() * (*this)(internal_index, nu).dagger();
-	//isSpecialUnitary(out);
+	out = (*this)(internal_index, mu) * this->fwd_fieldVal(internal_index, mu, nu) * ((*this)(internal_index, nu)*this->fwd_fieldVal(internal_index, nu, mu)).dagger();
 	return out;
 }
 

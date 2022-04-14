@@ -15,7 +15,7 @@ void TopologicalCharge::calculate(double flowTime) {
 		localSum += (((*m_U).Improved_fieldStrengthTensor(i, 3, 1)) * ((*m_U).Improved_fieldStrengthTensor(i, 2, 0))).ReTr();
 		localSum += (((*m_U).Improved_fieldStrengthTensor(i, 3, 0)) * ((*m_U).Improved_fieldStrengthTensor(i, 1, 2))).ReTr();
 	}
-
+	
 	double totalSum = 0.0;
 	MPI_Allreduce(&localSum, &totalSum, 1, MPI_DOUBLE, MPI_SUM, mpiWrapper::comm());
 	/*totalSum *= 8.0 / (4.0*32.0 * PI2);*/

@@ -1,11 +1,12 @@
 #pragma once 
 #include "../mpiWrapper.h"
+#include "../SimulationParameters.h"
 #include <string>
 
 
 class Lattice {
 public:
-	Lattice(int Ndims, int shape[], bool cloversRequired= true);
+	Lattice(SimulationParameters &params, bool cloversRequired = true);
 
 	void partition_lattice();
 	//Tells each process which sites (in its own internal index) are shared with which neighbouring processes
@@ -67,12 +68,13 @@ public:
 
 protected:
 	bool m_cloversRequired;
-	bool Trivial_Flag;
+	//bool Trivial_Flag;
 	bool TPancake_Flag;
-	bool STFF_Flag;
+	//bool STFF_Flag;
 	void CheckPartitioning();
-
+	int* m_cuts;
 	int* m_shape;//The size of the lattice for each dimension
+	
 	int m_Ndims;//The number of lattice dimensions
 
 	int* m_coordinate;//stores the current working coordinate 
@@ -87,10 +89,18 @@ protected:
 	int* m_coorFwdFwdBack;
 	int* m_coorBackBackFwd;
 
-	int* m_coorFwdFwdFwdFwd;
+	int* m_coorBackFwdFwd;
+	int* m_coorBackFwdBack;
+	int* m_coorBackFwdBackFwd;
+	int* m_coorFwdFwdFwdFwd;//NOT IN USE
+	int* m_coorBackFwdBackBack;//NOT IN USE
 	int* m_coorBackBackBackBack;
 	int* m_coorFwdFwdFwdBack;
 	int* m_coorBackBackBackFwd;
+
 	std::string type;
+
+
+
 
 };

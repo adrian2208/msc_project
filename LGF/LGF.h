@@ -23,19 +23,11 @@
 #include "Observables/QdensityDistribution.h"
 #include "SU3_Heatbath/SU3_Heatbath.h"
 
-void GenerateHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int ThermalizationSteps, int ConfigTimeSeparation);
-void ResumeHeatBathGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationResumeFrom, int ConfigurationStop, int ConfigTimeSeparation);
-
-void testSaveLoad(int argc, char** argv);
-void testHMC(int argc, char** argv);
-void testLMC(int argc, char** argv);
-void testLHMC(int argc, char** argv);
-void testGradientFlow(int argc, char** argv);
-void testSU3_Heatbath(int argc, char** argv);
-void GenerateGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int NrUpdates);
-void FlowSavedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, int flowSteps, int measure_every_nth_step);
-void ResumeFlowedConfiguration(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart,int ConfigurationStop, int extra_updates,double flowTime);
-void MeasureFlowedGaugeConfigurations(int NrDims, int extdofs, int shape[], double beta, int ConfigurationStart, int ConfigurationStop, double flowTime);
-double getLatticeConstant(double beta);
+void GenerateHeatBathGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, int ThermalizationSteps, int ConfigTimeSeparation);
+void ResumeHeatBathGaugeConfigurations(SimulationParameters& params, int ConfigurationResumeFrom, int ConfigurationStop, int ConfigTimeSeparation);
+void FlowSavedGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, int flowSteps, int measure_every_nth_step);
+void ResumeFlowedConfiguration(SimulationParameters& params, int ConfigurationStart,int ConfigurationStop, int extra_updates,double flowTime);
+void MeasureFlowedGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, double flowTime);
 
 //#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
+
