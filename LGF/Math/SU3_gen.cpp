@@ -1,5 +1,5 @@
 #include "SU3_gen.h"
-
+#include <cmath>
 SU3_gen::SU3_gen(){
 	su3_mat GM;
 	GM.setToZeros();

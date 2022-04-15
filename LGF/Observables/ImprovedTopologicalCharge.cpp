@@ -1,6 +1,6 @@
 #include "ImprovedTopologicalCharge.h"
 #include <fstream>
-
+#include <algorithm>
 ImprovedTopologicalCharge::ImprovedTopologicalCharge(SU3_field& U) {
 	m_AutoCorrTime = calculate_AutoCorrTime();
 	m_U = &U;
@@ -37,9 +37,9 @@ void ImprovedTopologicalCharge::saveTopologicalChargeToFile(double beta, const s
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-		std::filesystem::path fieldType("/ImprovedTopological_Charge/beta" + beta_str + "/");
+		n_fs::path fieldType("/ImprovedTopological_Charge/beta" + beta_str + "/");
 		//move to the ensembles directory
-		std::filesystem::path outPath(dataFolder + "Observables");
+		n_fs::path outPath(dataFolder + "Observables");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
 		int i;
@@ -47,7 +47,7 @@ void ImprovedTopologicalCharge::saveTopologicalChargeToFile(double beta, const s
 			outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "X";
 		}
 		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/" + updateMethod + "/";
-		std::filesystem::create_directories(outPath);
+		n_fs::create_directories(outPath);
 		//write the lattice shape to the filename
 
 		//write the lattice type and the .bin extension to the filename

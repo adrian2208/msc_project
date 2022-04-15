@@ -9,13 +9,13 @@ void SU3_field::saveSU3ToFileDEPRECATED(double beta, const std::string& updateMe
 	(*this).transfer_FieldValues();
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-	std::filesystem::path fieldType("/su3/beta"+beta_str+"/");
+	n_fs::path fieldType("/su3/beta"+beta_str+"/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath(dataFolder+"ensembles");
+	n_fs::path outPath(dataFolder+"ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -23,7 +23,7 @@ void SU3_field::saveSU3ToFileDEPRECATED(double beta, const std::string& updateMe
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
 	outPath += std::to_string(m_lattice->getShape()[i]) + "/" + updateMethod + "/";
-	std::filesystem::create_directories(outPath);
+	n_fs::create_directories(outPath);
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename
@@ -90,13 +90,13 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, cons
 	(*this).transfer_FieldValues();
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-	std::filesystem::path fieldType("/su3/beta" + beta_str + "/");
+	n_fs::path fieldType("/su3/beta" + beta_str + "/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath(dataFolder + "ensembles");
+	n_fs::path outPath(dataFolder + "ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -104,7 +104,7 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, cons
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
 	outPath += std::to_string(m_lattice->getShape()[i]) + "/" + updateMethod + "/";
-	std::filesystem::create_directories(outPath);
+	n_fs::create_directories(outPath);
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename
@@ -174,13 +174,13 @@ void SU3_field::loadSU3FromFileDEPRECATED(double beta, const std::string& update
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-	std::filesystem::path fieldType("/su3/beta" + beta_str + "/");
+	n_fs::path fieldType("/su3/beta" + beta_str + "/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath(dataFolder+"ensembles");
+	n_fs::path outPath(dataFolder+"ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -188,7 +188,7 @@ void SU3_field::loadSU3FromFileDEPRECATED(double beta, const std::string& update
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
 	outPath += std::to_string(m_lattice->getShape()[i]) + "/" + updateMethod + "/";
-	std::filesystem::create_directories(outPath);
+	n_fs::create_directories(outPath);
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename
@@ -261,13 +261,13 @@ void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, co
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-	std::filesystem::path fieldType("/su3/beta" + beta_str + "/");
+	n_fs::path fieldType("/su3/beta" + beta_str + "/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath(dataFolder + "ensembles");
+	n_fs::path outPath(dataFolder + "ensembles");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -275,7 +275,7 @@ void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, co
 		outPath += std::to_string(m_lattice->getShape()[i]) + "X";
 	}
 	outPath += std::to_string(m_lattice->getShape()[i]) + "/" + updateMethod + "/";
-	std::filesystem::create_directories(outPath);
+	n_fs::create_directories(outPath);
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename

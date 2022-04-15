@@ -1,6 +1,6 @@
 #include "TopologicalCharge.h"
 #include <fstream>
-
+#include <algorithm>
 TopologicalCharge::TopologicalCharge(SU3_field& U) {
 	m_U = &U;
 	calculate(0);
@@ -33,9 +33,9 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-		std::filesystem::path fieldType("/Topological_Charge/beta" + beta_str + "/");
+		n_fs::path fieldType("/Topological_Charge/beta" + beta_str + "/");
 		//move to the ensembles directory
-		std::filesystem::path outPath(dataFolder + "Observables");
+		n_fs::path outPath(dataFolder + "Observables");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
 		int i;
@@ -43,7 +43,7 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 			outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "X";
 		}
 		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/" + updateMethod +"/";
-		std::filesystem::create_directories(outPath);
+		n_fs::create_directories(outPath);
 		//write the lattice shape to the filename
 
 		//write the lattice type and the .bin extension to the filename

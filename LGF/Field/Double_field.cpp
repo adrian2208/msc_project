@@ -1,5 +1,5 @@
 #include "Double_field.h"
-
+#include <algorithm>
 Double_field::Double_field(Lattice& lattice, int NrExtDOF) : Field(lattice, NrExtDOF) {
 	for (int i = (*this).Responsible_Start(); i < (*this).Responsible_Stop(); i++) {
 		for (int mu = 0; mu < m_NrExtDOF; mu++) {
@@ -18,13 +18,13 @@ void Double_field::saveDoubleToFile(double beta, const std::string& updateMethod
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
-	std::filesystem::path fieldType("/Qdensity/beta" + beta_str + "/");
+	n_fs::path fieldType("/Qdensity/beta" + beta_str + "/");
 	int result;
 	MPI_File file;
 	MPI_Status status;
 	MPI_Offset displacement = 0;
 	//move to the ensembles directory
-	std::filesystem::path outPath(dataFolder + "Observables");
+	n_fs::path outPath(dataFolder + "Observables");
 	//if not existing, create a directory for the field type
 	outPath += fieldType;
 	int i;
@@ -32,7 +32,7 @@ void Double_field::saveDoubleToFile(double beta, const std::string& updateMethod
 		outPath += std::to_string((*this).getLatticePtr().getShape()[i]) + "X";
 	}
 	outPath += std::to_string((*this).getLatticePtr().getShape()[i]) + "/" + updateMethod + "/";
-	std::filesystem::create_directories(outPath);
+	n_fs::create_directories(outPath);
 	//write the lattice shape to the filename
 
 	//write the lattice type and the .bin extension to the filename

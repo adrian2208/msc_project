@@ -1,6 +1,12 @@
 #pragma once
+#ifdef LEGACY_CXX
+#include <experimental/filesystem>
+namespace n_fs = ::std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace n_fs = ::std::filesystem;
+#endif
 #include "../Lattice/Lattice.h"
-#include "../filesystem.h"
 #include <string>
 
 template<class T>
@@ -50,16 +56,16 @@ public:
 
 	//Writes a binary file containing the FieldArray of each process
 	//ordered by their rank. Contained in data- directory
-	void saveToFile(const std::filesystem::path& fieldType = "/generic/", const std::filesystem::path& identifier = "") {
+	void saveToFile(const n_fs::path& fieldType = "/generic/", const n_fs::path& identifier = "") {
 		int result;
 		MPI_File file;
 		MPI_Status status;
 		MPI_Offset displacement = 0;
 		//move to the ensembles directory
-		std::filesystem::path outPath("../../../../data/ensembles");
+		n_fs::path outPath("../../../../data/ensembles");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
-		std::filesystem::create_directories(outPath);
+		n_fs::create_directories(outPath);
 		//write the lattice shape to the filename
 		int i;
 		for (i = 0; i < m_lattice->getNdims()-1; i++) {
@@ -106,16 +112,16 @@ public:
 	//same process allocation used when that file was created.
 	//The file is not configured by spatial position, but by
 	//the rank of the process that contained the field
-	void loadFromFile(const std::filesystem::path& fieldType = "/generic/", const std::filesystem::path& identifier = "") {
+	void loadFromFile(const n_fs::path& fieldType = "/generic/", const n_fs::path& identifier = "") {
 		int result;
 		MPI_File file;
 		MPI_Status status;
 		MPI_Offset displacement = 0;
 		//move to the ensembles directory
-		std::filesystem::path outPath("../../../../data/ensembles");
+		n_fs::path outPath("../../../../data/ensembles");
 		//if not existing, create a directory for the field type
 		outPath += fieldType;
-		//std::filesystem::create_directories(outPath);
+		//n_fs::create_directories(outPath);
 		//write the lattice shape to the filename
 		int i;
 		for (i = 0; i < m_lattice->getNdims() - 1; i++) {
