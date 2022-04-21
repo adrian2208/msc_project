@@ -4,7 +4,7 @@
 class QdensityDistribution {
 
 public:
-	QdensityDistribution(SU3_field& U, double beta, const std::string& updateMethod, const std::string& identifier = "", const std::string& dataFolder = "C:/Users/adria/Documents/msc_project/data/");
+	QdensityDistribution(SU3_field& U, double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier = "");
 	~QdensityDistribution();
 	void calculate(double flowTime);
 private:

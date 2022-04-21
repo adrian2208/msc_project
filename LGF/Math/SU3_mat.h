@@ -19,7 +19,13 @@ public:
 	inline C_double& operator[] (int i) const {
 		return mat[i];
 	}
-	const su3_mat& operator=(const su3_mat& a);
+	//const su3_mat& operator=(const su3_mat& a);
+	inline const su3_mat& operator=(const su3_mat& a) {
+		for (int i = 0; i < 9; i++) {
+			mat[i] = a[i];
+		}
+		return *this;
+	}
 	
 	su3_mat operator+=(const su3_mat& a);
 

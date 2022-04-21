@@ -61,6 +61,9 @@ void GradientFlow::flow(){
 double GradientFlow::GetFlowTime() const{
 	return m_flowTime;
 }
+void GradientFlow::SetFlowTime(double flowTime){
+	m_flowTime = flowTime;
+}
 
 void GradientFlow::Include_TopCharge(TopologicalCharge& TopCharge){
 	(*m_U).transfer_FieldValues();

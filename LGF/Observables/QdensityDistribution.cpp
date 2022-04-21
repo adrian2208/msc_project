@@ -1,7 +1,7 @@
 #include "QdensityDistribution.h"
 #include <fstream>
 
-QdensityDistribution::QdensityDistribution(SU3_field& U,double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
+QdensityDistribution::QdensityDistribution(SU3_field& U,double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier) {
 	m_updateMethod = updateMethod;
 	m_identifier = identifier;
 	m_dataFolder = dataFolder;

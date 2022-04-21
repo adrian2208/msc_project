@@ -3,6 +3,7 @@
 data/
 out/
 *.pdf
+*.png
 doc/
 !doc/thesis.tex
 !doc/thesis.pdf

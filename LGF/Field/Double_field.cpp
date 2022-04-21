@@ -14,7 +14,7 @@ void Double_field::operator=(const Double_field& field) {
 	}
 }
 
-void Double_field::saveDoubleToFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
+void Double_field::saveDoubleToFile(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier) {
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');

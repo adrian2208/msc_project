@@ -29,7 +29,7 @@ void TopologicalCharge::calculate(double flowTime) {
 
 }
 
-void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::string& updateMethod,const std::string& identifier, const std::string& dataFolder) {
+void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::string& updateMethod, const std::string& dataFolder,const std::string& identifier) {
 	if (mpiWrapper::id() == 0) {
 		std::string beta_str = std::to_string(beta);
 		std::replace(beta_str.begin(), beta_str.end(), '.', '_');

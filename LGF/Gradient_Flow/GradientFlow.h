@@ -16,6 +16,7 @@ public:
 	void MakeMeasurements();
 	std::string getupdateMethod() const;
 	double GetFlowTime() const;
+	void SetFlowTime(double flowTime);
 private: 
 	std::string m_updateMethod;
 	Action* m_GaugeAction;

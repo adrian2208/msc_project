@@ -5,7 +5,7 @@ SU3_field::SU3_field(Lattice& lattice, int NrExtDOF) : Field(lattice, NrExtDOF){
 	m_FieldArray_NrBytes = 8*2*9 * NrExtDOF * lattice.m_thisProc_Volume;//9 entries of C_double each containing 16 bytes
 }
 
-void SU3_field::saveSU3ToFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
+void SU3_field::saveSU3ToFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier) {
 	(*this).transfer_FieldValues();
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -86,7 +86,7 @@ void SU3_field::saveSU3ToFileDEPRECATED(double beta, const std::string& updateMe
 
 	MPI_File_close(&file);
 }
-void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
+void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier) {
 	(*this).transfer_FieldValues();
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -170,7 +170,7 @@ void SU3_field::saveSU3ToFile(double beta, const std::string& updateMethod, cons
 
 	MPI_File_close(&file);
 }
-void SU3_field::loadSU3FromFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
+void SU3_field::loadSU3FromFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier) {
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');
@@ -257,7 +257,7 @@ void SU3_field::loadSU3FromFileDEPRECATED(double beta, const std::string& update
 	}
 	(*this).transfer_FieldValues();
 }
-void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, const std::string& identifier, const std::string& dataFolder) {
+void SU3_field::loadSU3FromFile(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier) {
 
 	std::string beta_str = std::to_string(beta);
 	std::replace(beta_str.begin(), beta_str.end(), '.', '_');

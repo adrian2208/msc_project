@@ -1,5 +1,6 @@
 #include "Lattice.h"
 #include <assert.h>
+#include <climits>
 Lattice::Lattice(SimulationParameters& params,bool cloversRequired) {
 	
 	//Storing local variables
@@ -35,7 +36,6 @@ Lattice::Lattice(SimulationParameters& params,bool cloversRequired) {
 	m_totalVolume = 1;
 	m_thisProc_Volume = 0;
 	m_responsible_Volume = 0;
-
 	for (int i = 0; i < m_Ndims; i++) {
 		m_shape[i] = params.getshape(i);
 		m_cuts[i] = params.getcuts(i);

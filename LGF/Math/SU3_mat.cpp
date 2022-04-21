@@ -20,13 +20,6 @@ inline void su3_mat::allocate_matrix(){
 }
 
 
-inline const su3_mat& su3_mat::operator=(const su3_mat& a) {
-	for (int i = 0; i < 9; i++) {
-		mat[i] = a[i];
-	}
-	return *this;
-}
-
 su3_mat su3_mat::operator+=(const su3_mat& a){
 	(*this)[0] = a[0] + (*this)[0];
 	(*this)[1] = a[1] + (*this)[1];

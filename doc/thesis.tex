@@ -1802,16 +1802,7 @@ Any simulation will happen at a finite lattice volume, and this impacts the outc
 
 \section{Implementation}
 \subsection{Generating Gauge Configurations}
-
-
-
-
-
-
-
-
-
-To measure observables, it's necessary to generate a substantial amount of gauge configurations. There are several requirements that need to be met in order to produce valuable results.
+To measure observables, it's necessary to generate a substantial amount of statistically independent gauge configurations. There are several factors which determine the efficiency of the generation and the quality of the measurement outcomes.
 
 \begin{enumerate}
 \item autocorrelation time of topological observables
@@ -1819,6 +1810,39 @@ To measure observables, it's necessary to generate a substantial amount of gauge
 \item choosing $\beta$ to avoid critical slowing down
 \item constant volume, decreasing $a$ for continuum extrapolation
 \end{enumerate}
+\paragraph{autocorrelation time of topological observables}
+INCLUDE AUTOCORRELATION TIMES FOR THE LOCAL HYBRID MONTE CARLO ALGORITHM AND RELATE IT TO THE PARAGRAPH BELOW, TALK ABOUT WHY WE CAN'T USE IT FOR TOPOLOGICAL OBSERVABLES. MENTION THAT THIS PROBLEM COULD BE MITIGATED WITH OPEN TEMPORAL BOUNDARY CONDITIONS.
+
+
+
+""It is well known that in hybrid Monte Carlo (HMC) simulations of lattice
+QCD the autocorrelation time of the topological charge increases very rapidly
+as the lattice spacing is reduced [1, 2, 3, 4]. This is understood to be a
+consequence of the fact that in a periodic volume the topological charge of a
+continuum gauge field cannot change by any continuous deformation, while the topological charge of a lattice gauge field can only change by passing
+through non-continuum-like configurations with large values of the action. As
+the coupling is made weaker such configurations are more and more strongly
+suppressed, so that eventually “tunneling” between the topological sectors
+of field space becomes very rare.
+The resulting increase in the autocorrelation time of the topological charge
+is dangerous, because when autocorrelation times become comparable to or
+longer than the total length of a simulation there is no guarantee that the statistical errors on measured quantities can be reliably estimated. The whole
+calculation then becomes suspect. Modern simulations of QCD are being
+performed at lattice spacings fine enough that this problem is a real and
+pressing one.
+In [5], it was proposed that switching from periodic to open boundary
+conditions for the Euclidean time direction should slow the increase of the
+autocorrelation time of the topological charge. The reason is that when open
+boundary conditions are used topological charge can flow into or out of the
+lattice through the boundaries and thus the topological charge can change
+continuously without the need for rare tunneling events. Ref. [5] provided
+evidence for this hypothesis by studying the dependence of autocorrelation
+times on the lattice spacing a in simulations of pure SU(3) gauge theory with
+open boundary conditions. Autocorrelation times were observed to scale like
+1/a2 at fine enough lattice spacings, which is a slower increase than expected
+with periodic boundary conditions. However, that work was not able to make
+a direct comparison between periodic and open boundary conditions because
+only open boundaries were simulated""\cite{PhysRevD.90.074502}
 
 QUOTE FROM "Topological Susceptibility in SU(3) Gauge Theory"
 ""Since the mass of the
@@ -2815,7 +2839,7 @@ and
 x\leq|\Lambda_x|,\,y\leq|\Lambda_y|,\,z\leq|\Lambda_z|,\,t\leq|\Lambda_t|
 \end{equation*}
 
-Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be highly dependent on the ratio $\frac{|\Lambda|}{N_{procs}}$ and we can make sense of why that is. When the simulation volume of each process is small, the reduction in boundary 3-volume gained from setting any $x,\,y,\,z,\,t = |\Lambda_x|,\,|\Lambda_y|,\,|\Lambda_z|,\,\Lambda_t|$ is quite small, while the addition of boundary 3-volume by deviating from $x=y=z=t$ becomes quite large. Likewise, when each process' simulation volume is large, there is substantial reductions to be made from eliminating either of the terms in the above minimization problem.\\For instance, in many LQCD simulations the time extent of the lattice can be much larger than the spatial extent, and so all of the three terms that include $t$ could be completely removed by only subdividing the temporal dimension of the lattice, i.e. $x=|\Lambda_x|,\,y=|\Lambda_y|,\,z=|\Lambda_z|$.\\Another benefit of partitioning the lattice in this way is that there is a hardware-specific overhead associated with establishing communications between two processes, and eliminating process boundaries in a dimension will require fewer connections between processes.\\\\Ultimately this choice will depend on the number of processors that are available to you and the total simulation volume, as well as the relative difference in computer time associated with either establishing communications between processes or transceiving a certain amount of data between processes. Regardless, for all but the most modest core-counts, this minimization problem favours hyper-cubic process domains by a significant margin, especially when it comes to scaling, as subdivisions in more dimensions admit more processes to be used.\\\\But what if you had access to a specific amount of processors and you want to use as many of them as possible, as efficiently as possible? If we ignore the issue of face elimination, which we tackled above, and restrict ourselves to 4 dimensional hyper-cubic latices $\Lambda_x=\Lambda_y=\Lambda_z=\Lambda_t$ (this isn't necessary, but it makes the equations easier to work with) we can look at the problem this way: We want process domains that are as close as possible to hyper-cubic, fulfilling two demands: $\Lambda_x$ must be divisible by the number of "cuts" $n^\mu_c$ in that dimension and
+Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be highly dependent on the ratio $\frac{|\Lambda|}{N_{procs}}$ and we can make sense of why that is. When the simulation volume of each process is small, the reduction in boundary 3-volume gained from setting any $x,\,y,\,z,\,t = |\Lambda_x|,\,|\Lambda_y|,\,|\Lambda_z|,\,\Lambda_t|$ is quite small, while the addition of boundary 3-volume by deviating from $x=y=z=t$ becomes quite large. Likewise, when each process' simulation volume is large, there is substantial reductions to be made from eliminating either of the terms in the above minimization problem.\\For instance, in many LQCD simulations the time extent of the lattice can be much larger than the spatial extent, and so all of the three terms that include $t$ could be completely removed by only subdividing the temporal dimension of the lattice, i.e. $x=|\Lambda_x|,\,y=|\Lambda_y|,\,z=|\Lambda_z|$.\\Another benefit of partitioning the lattice in this way is that there is a hardware-specific overhead associated with establishing communications between two processes, and eliminating process boundaries in a dimension will require fewer connections between processes.\\\\Ultimately this choice will depend on the number of processors that are available to you and the total simulation volume, as well as the relative difference in computer time associated with either establishing communications between processes or transceiving a certain amount of data between processes. Regardless, for all but the most modest core-counts, this minimization problem favours hyper-cubic process domains by a significant margin, especially when it comes to scaling, as subdivisions in more dimensions admit more processes to be used.\\\\But what if you had access to a specific amount of processors and you want to use as many of them as possible? If we ignore the issue of face elimination, which we tackled above, and restrict ourselves to 4 dimensional hyper-cubic latices $\Lambda_x=\Lambda_y=\Lambda_z=\Lambda_t$ (this isn't necessary, but it makes the equations easier to work with) we can look at the demands this way: $\Lambda_x$ must be divisible by the number of "cuts" $n^\mu_c$ in that dimension and 
 \begin{equation}
 (n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)= N_{procs}.
 \end{equation}
@@ -2844,8 +2868,8 @@ Where $N_{procs}$ is the number of processors available to you. It can be solved
 \State $proc_{id} = 0$
 \For{$\forall\,\vec{n} \in \Lambda$}
 
-\For{$i \in \{0,1,\ldots,\}$}
-\State $temp \gets \vec{n}_i/(\Lambda_i/n^i_c+1)$
+\For{$i \in \{0,1,\ldots,N_{dims}\}$}
+x\State $temp \gets \vec{n}_i/(\Lambda_i/n^i_c+1)$
 \For{$j<i$}
 \State $temp \gets temp\cdot(n^j_c+1)$
 \EndFor
@@ -2941,6 +2965,11 @@ SENDS AND RECEIVES AT THE SAME TIME
 \includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{t_squared_v_tOverR_0_squared.pdf}
 \caption[]{PLACEHOLDER!}\label{fig:PLACEHOLDER}
 \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{t_0_linearExtrapolation.pdf}
+\caption[]{LinearFit to get t0/r0 -- PLACEHOLDER!}\label{fig:PLACEHOLDER}
+\end{figure}
 
 
 \subsection{Topological charge}
@@ -2995,7 +3024,15 @@ SENDS AND RECEIVES AT THE SAME TIME
 \end{figure}
 
 \section{Error Analysis}
-\section{Future Improvements}
+
+\begin{figure}[H]
+\centering
+\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{IntAutoCorrTime_v_Flowtime.pdf}
+\caption[]{Integrated Auto correlation time -- PLACEHOLDER!}\label{fig:PLACEHOLDER}
+\end{figure}
+\section{Future analysis and improvements}
+\subsection{Topological susceptibility dependence on topological charge definition}
+everything is implemented to do this analysis, it just hasn't been done
 \subsection{SU(3) Over-Relaxation}
 \cite{diffGeom}
 \newpage

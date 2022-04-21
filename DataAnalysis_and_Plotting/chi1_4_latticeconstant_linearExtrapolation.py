@@ -29,11 +29,13 @@ def CompFlowTime_to_SmearingRadius(t_comp,latticeConstant):
 #RIGHT CLICK FILENAME AND RUN WITHOUT DEBUGGING (VS)
 
 #Take files from this directory
-directory = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\16X16X16X16\\GF\\"#change
-fileStart = 0 #change
-fileEnd = 324#change
-a = 0.0934 #change
-V = 16**4 #change
+directory = ["C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\16X16X16X16\\GF\\",
+             "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_130000\\20X20X20X20\\GF\\",
+             "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_260000\\24X24X24X24\\GF\\",
+             "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_460000\\32X32X32X32\\GF\\"]
+fileEnd = [100,100,100,100]#CHANGE
+a = [0.093,0.076,0.062,0.047]
+V = [16**4,20**4,24**4,32**4]
 
 #Turn the files into a single dataframe
 frames = []
@@ -61,11 +63,7 @@ plt.errorbar(Smear_rad,topological_susceptibility,error,markersize = 2.0,
             markeredgewidth=1,label = r'$a =$'+ "{:.3f}".format(a))
 plt.xlim(0)
 plt.ylim(100,350)
-plt.xlabel(r'$\frac{\sqrt{8t}}{r_0}$')
+plt.xlabel(r'$\frac{a^2}{r_0^2}$')
 plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
 
 plt.savefig('chi_fourthRoot_v_smearRad.pdf', bbox_inches="tight")
-
-
-
-

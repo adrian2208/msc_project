@@ -8,10 +8,10 @@ class SU3_field : public Field<su3_mat> {
 public:
 	SU3_field(Lattice& lattice, int NrExtDOF);//NrExtDOF corresponds to e.g. mu={0,1,2,3}
 	~SU3_field() {};
-	void saveSU3ToFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& identifier = "", const std::string& dataFolder = "C:/Users/adria/Documents/msc_project/data/");
-	void saveSU3ToFile(double beta, const std::string& updateMethod, const std::string& identifier = "", const std::string& dataFolder = "C:/Users/adria/Documents/msc_project/data/");
-	void loadSU3FromFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& identifier = "", const std::string& dataFolder = "C:/Users/adria/Documents/msc_project/data/");
-	void loadSU3FromFile(double beta, const std::string& updateMethod,const std::string& identifier = "", const std::string& dataFolder = "C:/Users/adria/Documents/msc_project/data/");
+	void saveSU3ToFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier = "");
+	void saveSU3ToFile(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier = "");
+	void loadSU3FromFileDEPRECATED(double beta, const std::string& updateMethod, const std::string& dataFolder, const std::string& identifier = "");
+	void loadSU3FromFile(double beta, const std::string& updateMethod, const std::string& dataFolder,const std::string& identifier = "");
 	void transfer_FieldValues();
 	void InitializeHotStart();
 	void InitializeColdStart();
