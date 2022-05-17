@@ -3,7 +3,6 @@
 #include <algorithm>
 TopologicalCharge::TopologicalCharge(SU3_field& U) {
 	m_U = &U;
-	calculate(0);
 }
 
 void TopologicalCharge::calculate(double flowTime) {
@@ -43,9 +42,9 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 			outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "X";
 		}
 		outPath += std::to_string((*m_U).getLatticePtr().getShape()[i]) + "/" + updateMethod +"/";
+		
 		n_fs::create_directories(outPath);
 		//write the lattice shape to the filename
-
 		//write the lattice type and the .bin extension to the filename
 		outPath += (*m_U).getLatticePtr().getType() + "_extdof" + std::to_string((*m_U).getNrExtDOF());
 		outPath += identifier;
@@ -60,7 +59,6 @@ void TopologicalCharge::saveTopologicalChargeToFile(double beta, const std::stri
 
 		//const char* endByte = (char*)&m_resultVector.back() + sizeof(double);
 		//std::copy(beginByte, endByte, osi);
-
 		std::ofstream outFile(outPath_string,std::ios_base::app);
 		//for (const auto& e : m_resultVector) outFile << e << "\n";
 		int size = m_resultVector.size();

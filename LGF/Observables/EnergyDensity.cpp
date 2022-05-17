@@ -4,7 +4,6 @@
 
 EnergyDensity::EnergyDensity(SU3_field& U) {
 	m_U = &U;
-	calculate(0);
 }
 
 void EnergyDensity::calculate(double flowTime) {
@@ -67,7 +66,7 @@ void EnergyDensity::saveEnergyDensityToFile(double beta, const std::string& upda
 		//const char* endByte = (char*)&m_resultVector.back() + sizeof(double);
 		//std::copy(beginByte, endByte, osi);
 
-		std::ofstream outFile(outPath_string);
+		std::ofstream outFile(outPath_string, std::ios_base::app);
 
 		int size = m_resultVector.size();
 		for (int i = 0; i < size; i++) {

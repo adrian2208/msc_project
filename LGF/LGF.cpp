@@ -42,20 +42,40 @@ int main(int argc, char** argv) {
 		ParseCLargs(argc, argv, NrDims, extdofs, beta, shape, cuts, ConfigStart, ConfigStop, flowSteps, epsilon, measureInterval, ThermSteps, OR_per_HB, configSep, dataFolder);
 	}
 	else {
-		//Physical Parameters
+		////Physical Parameters
+		//NrDims = 4;
+		//extdofs = 4;
+		//beta = 6.26;
+		//shape = { 24,24,24,24 };
+		////Partition Parameter
+		//cuts = { 2,1,1,0 }; // shape_x must be divisible by (cut_x + 1)
+		////File Parameters
+		//ConfigStart =0;
+		//ConfigStop = 0;
+		////Flow Parameters
+		//flowSteps = 10;
+		//epsilon = 0.01;
+		//measureInterval = 10;
+		////Heatbath Parameters
+		//ThermSteps = 1000;
+		//OR_per_HB = 4;
+		//configSep = 1;
+		////output folder for observables and configurations
+		//dataFolder = "C:/Users/adria/Documents/msc_project/data/";
+				//Physical Parameters
 		NrDims = 4;
 		extdofs = 4;
-		beta = 6.26;
-		shape = { 16,16,16,16 };
+		beta = 6.00;
+		shape = { 8,8,8,8 };
 		//Partition Parameter
-		cuts = { 7,0,0,0 }; // shape_x must be divisible by (cut_x + 1)
+		cuts = { 1,1,1,0 }; // shape_x must be divisible by (cut_x + 1)
 		//File Parameters
-		ConfigStart = 121;
-		ConfigStop = 500;
+		ConfigStart = 1;
+		ConfigStop = 1;
 		//Flow Parameters
-		flowSteps = 650;
+		flowSteps = 40;
 		epsilon = 0.01;
-		measureInterval = 50;
+		measureInterval = 10;
 		//Heatbath Parameters
 		ThermSteps = 1000;
 		OR_per_HB = 4;
@@ -67,10 +87,12 @@ int main(int argc, char** argv) {
 	FlowParameters flowParams(ConfigStart, ConfigStop, flowSteps, epsilon, measureInterval, dataFolder);
 	HBParameters HBparams(ConfigStart, ConfigStop, ThermSteps, OR_per_HB, configSep, dataFolder);
 
-	FlowSavedGaugeConfigurations(params, flowParams);
+	//FlowSavedGaugeConfigurations(params, flowParams);
 
+	double flowTime_pickup = 0.4;
+	//ResumeFlowedConfiguration(params, flowParams, flowTime_pickup);
 
-	//GenerateHeatBathGaugeConfigurations(params, HBparams);
+	GenerateHeatBathGaugeConfigurations(params, HBparams);
 
 
 	//ResumeFlowedConfiguration(params, ConfigurationStart, ConfigurationStop, 200,16.0);
@@ -115,7 +137,7 @@ void GenerateHeatBathGaugeConfigurations(SimulationParameters& params, HBParamet
 		U.loadSU3FromFile(params.getbeta(), "Heatbath_" + std::to_string(HBparams.getOR_per_HB()) + "_ORperHB", HBparams.getdataFolder(), std::to_string(HBparams.getConfigurationStart()));
 	}
 	//initialize the update program
-	SU3_Heatbath heatbath(U, params.getbeta(), 4);
+	SU3_Heatbath heatbath(U, params.getbeta(), HBparams.getOR_per_HB());
 	//update the field either for thermalization or configuration separation depending on what the user is doing
 	if (NewEnsemble) {
 		heatbath.update(HBparams.getThermSteps());
@@ -142,10 +164,11 @@ void FlowSavedGaugeConfigurations(SimulationParameters& params, FlowParameters& 
 		//instantiate and include the Topological Charge
 		TopologicalCharge topCharge(U);
 		flowing.Include_TopCharge(topCharge);
+		topCharge.calculate(0.0);
 		//instantiate and include the Energy density
 		EnergyDensity Edensity(U);
 		flowing.Include_EnergyDensity(Edensity);
-
+		Edensity.calculate(0.0);
 		//flow the configuration
 		for (int i = 0; i < flowParams.getflowSteps(); i++) {
 			flowing.flow();
@@ -168,7 +191,7 @@ void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flo
 		std::string ensembleNum = std::to_string(i);
 		U.loadSU3FromFile(params.getbeta(), "GF", flowParams.getdataFolder(), ensembleNum + "_Flowtime" + std::to_string(flowTime_pickup));
 		//instantiate the Gradient flow object
-		GradientFlow flowing(action, U, flowParams.getepsilon());
+		GradientFlow flowing(action, U, flowParams.getepsilon(), flowParams.getMeasuringInterval());
 		flowing.SetFlowTime(flowTime_pickup);
 		//instantiate and include the Topological Charge
 		TopologicalCharge topCharge(U);
@@ -182,8 +205,8 @@ void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flo
 			flowing.flow();
 		}
 		//save the observables to files
-		topCharge.saveTopologicalChargeToFile(params.getbeta(), flowParams.getdataFolder(), flowing.getupdateMethod(), "_" + ensembleNum);
-		Edensity.saveEnergyDensityToFile(params.getbeta(), flowParams.getdataFolder(), flowing.getupdateMethod(), "_" + ensembleNum);
+		topCharge.saveTopologicalChargeToFile(params.getbeta(), flowing.getupdateMethod(), flowParams.getdataFolder(), "_" + ensembleNum);
+		Edensity.saveEnergyDensityToFile(params.getbeta(), flowing.getupdateMethod(), flowParams.getdataFolder(), "_" + ensembleNum);
 		double NewflowTime = flowing.GetFlowTime();
 		U.saveSU3ToFile(params.getbeta(), flowing.getupdateMethod(), flowParams.getdataFolder(), ensembleNum + "_Flowtime" + std::to_string(NewflowTime));
 	}
@@ -261,8 +284,6 @@ void ParseCLargs(int argc, char** argv, int& NrDims, int& extdofs, double& beta,
 	i += 1;
 	std::size_t temp;
 	std::stoi(argv[i], &temp);
-	std::cout << std::to_string(temp) << std::endl;
-	std::cout << std::to_string(std::strlen(argv[i])) << std::endl;
 	if (temp == std::strlen(argv[i])) {
 		OR_per_HB = std::stoi(argv[i]);
 		epsilon = INT_MAX;

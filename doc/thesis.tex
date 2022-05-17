@@ -1865,13 +1865,17 @@ To determine the lattice spacing $a$ from the inverse coupling $\beta$ we use an
 
 SEE 
 https://journals-aps-org.ezproxy.uio.no/prd/pdf/10.1103/PhysRevD.92.074502
-FOR ERRORS IN TABLE
-\begin{tabular}{lcccccc}
-\hline \hline Lattice & $\beta$ & $a[fm]$ & $L[fm]$ & $N_{OR}/N_{HB}$&$t_{0} / a^{2}$ & $t_{0} / r_{0}^{2}$\\
-\hline$16^4$ & $6.0$ & $0.093$ & $1.49$ & &$2.995(4)$  & $0.1195(9)$ \\
-	  $20^4$ & $6.13$& $0.076$ & $1.51$ & &$2.7984(9)$ & $0.1117(9)$ \\
-	  $24^4$ & $6.26$& $0.062$ & $1.50$ & &$2.7908(5)$ & $0.1114(9)$ \\
-	  $32^4$ & $6.46$& $0.047$ & $1.51$ & &$2.7908(5)$ & $0.1114(9)$
+FOR ERRORS IN TABLE\\
+\begin{tabular}{lccccccccc}
+\hline \hline Lattice & $\beta$ & $a[fm]$ & $L[fm]$ & $\frac{N_{OR}}{N_{HB}}$&$N_{therm}$ & $N_{decorr}^E$ & $N_{decorr}^Q$& $N_{meas}^E$& $N_{meas}^Q$\\
+\hline		   $16^4$ &   $6.0$ & $0.093$ & $1.49$  & 		4		 		 &$2000$  	  & $200$		   & $200$		   & $X$		 & $X$ \\	  
+	  		   $12^4$ & 		&     	  & $1.12$  & 		4		 		 &$2000$ 	  & $1$		   	   & $1$  		   & $X$		 & $X$\\ \hline 
+	  		   $20^4$ &   $6.13$& $0.075$ & $1.51$  & 		4		 		 &$2000$ 	  & $200$		   & $200$		   & $X$		 & $X$ \\
+	  		   $14^4$ & 		&  	 	  & $1.06$  & 		4		 		 &$2000$ 	  & $1$		       & $1$  		   & $X$		 & $X$\\ \hline
+	  		   $24^4$ &   $6.26$& $0.062$ & $1.50$  & 		4		 		 &$2000$ 	  & $400$		   & $800$		   & $X$		 & $X$ \\
+	  		   $16^4$ & 		&  	 	  & $1.00$  & 		4		 		 &$2000$ 	  & $1$		       & $1$  		   & $X$		 & $X$\\ \hline
+	  		   $32^4$ &   $6.46$& $0.047$ & $1.51$  & 		4		 		 &$2000$ 	  & $1350$		   & $4050$		   & $X$		 & $X$ \\
+	  		   $22^4$ & 		&  	 	  & $1.04$  & 		4		 		 &$2000$ 	  & $1$		       & $1$  		   & $X$		 & $X$
 \end{tabular}
 
 Need:
@@ -2958,71 +2962,139 @@ We see that the lattice must necessarily contain an even number of sites in ever
 SENDS AND RECEIVES AT THE SAME TIME
 
 \section{Results}
+6.46 ENERGY DENSITY - uses 200 + updates between uncorrelated measurements\\
+6.46 Q - uses 2700-2800 ish updates between uncorrelated measurements(0.6 pm 0.19 at 2800) (0.58 pm 0.2 at 3200) (0.4 pm 0.15 at 3600)\\
+6.46 $Q^2$ - uses 2000-2400 ish updates between uncorrelated measurements (0.48 pm 0.15 at 2400) (0.6 pm 0.2 at 2000)\\\\6.0: 200 updates for Q, 200 updates for E\\6.13: 200 updates for Q, 200 updates for E\\6.26: 800 updates for Q, 400 updates for E 
 
 \subsection{Scale setting with $t^2\langle E\rangle$}
 \begin{figure}[H]
 \centering
-\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{t_squared_v_tOverR_0_squared.pdf}
-\caption[]{PLACEHOLDER!}\label{fig:PLACEHOLDER}
-\end{figure}
-\begin{figure}[H]
-\centering
-\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{t_0_linearExtrapolation.pdf}
-\caption[]{LinearFit to get t0/r0 -- PLACEHOLDER!}\label{fig:PLACEHOLDER}
+\includegraphics{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
+\caption[]{FINAL}\label{fig:PLACEHOLDER}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/t0_extrapolate_with_errors.pdf}
+\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/smearRad_cont_limit.pdf}
+\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\subsection{Estimating $\Lambda_{YM}$}
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/t_squared_v_q_contLimit.pdf}
+\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution_HIST.pdf}
+\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\end{figure}
 
 \subsection{Topological charge}
 \begin{figure}[H]
 \centering
-\includegraphics[trim=36cm 4.0cm 0cm 4.0cm, clip=true,scale = 0.4]{q_density_2dSlice_a_0.093.pdf}
+\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.0.pdf}
+\caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.13.pdf}
+\caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.26.pdf}
+\caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.46.pdf}
+\caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
+\end{figure}
+
+
+WHY LOOK AT THE SPATIAL DISTRIBUTION OF TOPOLOGICAL CHARGE? MAKING A QUALITATIVE ANALYSIS ABOUT THE DISTRIBUTION OF TOPOLOGICAL CHARGE DENSITY IS IMPORTANT, DOES IT CLUMP TOGETHER? IS IT EVENLY DISTRIBUTED? IT SUMS UP TO AN INTEGER, BASED ON ITS DISTRIBUTION WHY DO WE EXPECT THAT (THIS ONE i PROBABLY CAN'T ANSWER :p)? 
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/QdensityPlots/QdensityDistribution_beta_6_00_658.pdf}
 \caption[]{PLACEHOLDER!! ZERO FLOW TIME}\label{fig:PLACEHOLDER}
 \end{figure}
 \begin{figure}[H]
 \centering
-\includegraphics[trim=36cm 4.0cm 0cm 4.0cm, clip=true,scale = 0.4]{q_density_2dSlice_a_0.093.pdf}
+\includegraphics{FINALPLOTS/QdensityPlots/QdensityDistribution_beta_6_13_1582.pdf}
 \caption[]{PLACEHOLDER!! T0/2 FLOW TIME}\label{fig:PLACEHOLDER}
 \end{figure}
 \begin{figure}[H]
 \centering
-\includegraphics[trim=36cm 4.0cm 0cm 4.0cm, clip=true,scale = 0.4]{q_density_2dSlice_a_0.093.pdf}
+\includegraphics{FINALPLOTS/QdensityPlots/QdensityDistribution_beta_6_26_1804.pdf}
 \caption[]{PLACEHOLDER!! T0 FLOW TIME}\label{fig:PLACEHOLDER}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/QdensityPlots/QdensityDistribution_beta_6_46_5.pdf}
+\caption[]{PLACEHOLDER!! T0 FLOW TIME}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[trim=37cm 0.0cm 35cm 8.0cm, clip=true,scale=0.3]{FINALPLOTS/QdensityPlots/3D/3d_q_densityPlot.pdf}
+\caption[]{FROM ENSEMBLE2}\label{fig:PLACEHOLDER}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[trim=37cm 0.0cm 35cm 8.0cm, clip=true,scale=0.3]{FINALPLOTS/QdensityPlots/3D/3d_q_densityPlot2.pdf}
+\caption[]{FROM ENSEMBLE3}\label{fig:PLACEHOLDER}
+\end{figure}
 
 
 \subsection{Topological susceptibility}
 \begin{figure}[H]
 \centering
-\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{chi_fourthRoot_v_smearRad.pdf}
-\caption[]{PLACEHOLDER!!}\label{fig:PLACEHOLDER}
+\includegraphics{FINALPLOTS/chi_fourthRoot_v_smearRad.pdf}
+\caption[]{FINAL!!}\label{fig:PLACEHOLDER}
 \end{figure}
 
-\begin{figure}[H]\label{figure:Clovers}
+\begin{figure}[H]
 \centering
-\begin{subfigure}[b]{0.49\textwidth}
-\centering
-\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.00_a_0.093.pdf}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.49\textwidth}
-\centering
-\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.46_a_0.093.pdf}
-\end{subfigure}
-
-\bigskip
-\begin{subfigure}[b]{0.49\textwidth}
-\centering
-\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.65_a_0.093.pdf}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.49\textwidth}
-\centering
-\includegraphics[trim=0cm 0.0cm 0cm 0.0cm, width=1.15\textwidth]{Q_histogram_SmearRad_0.92_a_0.093.pdf}
-\end{subfigure}
-\caption{PLACEHOLDER!!!!}\label{figure:PLACEHOLDER2}
+\includegraphics[trim=1.5cm 0.0cm 0cm 1.0cm, clip=true]{FINALPLOTS/Q_histogram_at_t0_over12.pdf}
+\caption[]{FINAL!! $t_0/12$}\label{fig:PLACEHOLDER}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\includegraphics[trim=1.5cm 0.0cm 0cm 1.0cm, clip=true]{FINALPLOTS/Q_histogram_at_t0.pdf}
+\caption[]{FINAL!!$t_0$}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\subsubsection{Continuum limit}
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/chi_fourthRoot_continuum_extrapolation.pdf}
+\caption[]{FINAL!!}\label{fig:PLACEHOLDER}
+\end{figure}
+\subsubsection{Flow time independence in the continuum limit}
+compare results from "non-gaussianities". since they used an un-improved definition of the field strength tensor, your trajectories should be flatter with respect to the lattice spacing.
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/chi_flowTime_independence.pdf}
+\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quartic function in $a^2/r_0^2$. A result of $1.0$ would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:PLACEHOLDER}
+\end{figure}
 \section{Error Analysis}
 
 \begin{figure}[H]
@@ -3031,6 +3103,7 @@ SENDS AND RECEIVES AT THE SAME TIME
 \caption[]{Integrated Auto correlation time -- PLACEHOLDER!}\label{fig:PLACEHOLDER}
 \end{figure}
 \section{Future analysis and improvements}
+\subsection{Optimizing OR-HB ratio for autocorrelation of topological observables}
 \subsection{Topological susceptibility dependence on topological charge definition}
 everything is implemented to do this analysis, it just hasn't been done
 \subsection{SU(3) Over-Relaxation}

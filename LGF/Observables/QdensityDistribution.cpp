@@ -24,5 +24,5 @@ void QdensityDistribution::calculate(double flowTime) {
 		(*m_q)(i, 0) = (1.0/4.0*PI2)*localSum;
 	}
 
-	(*m_q).saveDoubleToFile(m_beta, m_updateMethod, m_identifier, m_dataFolder);
+	(*m_q).saveDoubleToFile(m_beta, m_updateMethod, m_dataFolder, m_identifier);
 }
