@@ -3085,7 +3085,7 @@ WHY LOOK AT THE SPATIAL DISTRIBUTION OF TOPOLOGICAL CHARGE? MAKING A QUALITATIVE
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/chi_fourthRoot_continuum_extrapolation.pdf}
-\caption[]{FINAL!!}\label{fig:PLACEHOLDER}
+\caption[]{FINAL!!196.35909331003572+/-1.6081484704334992}\label{fig:PLACEHOLDER}
 \end{figure}
 \subsubsection{Flow time independence in the continuum limit}
 compare results from "non-gaussianities". since they used an un-improved definition of the field strength tensor, your trajectories should be flatter with respect to the lattice spacing.
@@ -3095,12 +3095,52 @@ compare results from "non-gaussianities". since they used an un-improved definit
 \includegraphics{FINALPLOTS/chi_flowTime_independence.pdf}
 \caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quartic function in $a^2/r_0^2$. A result of $1.0$ would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:PLACEHOLDER}
 \end{figure}
+\subsubsection{Non-Gaussianities}
+\begin{equation}
+R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+\left\langle Q^2 \right\rangle &=\frac{1}{N} \sum_{i=1}^{N} q_{i}^{2} \\
+\left\langle Q^4 \right\rangle_c &=\frac{1}{N} \sum_{i=1}^{N} q_{i}^{4}-3\left\langle Q^2 \right\rangle^{2},
+\end{aligned}
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/R_continuum_extrapolation.pdf}
+\caption[]{FINAL!!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+
 \section{Error Analysis}
 
 \begin{figure}[H]
 \centering
 \includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.9]{IntAutoCorrTime_v_Flowtime.pdf}
 \caption[]{Integrated Auto correlation time -- PLACEHOLDER!}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
+\caption[]{Integrated Auto correlation time -- Q}\label{fig:PLACEHOLDER}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q_squared.pdf}
+\caption[]{Integrated Auto correlation time -- Q squared}\label{fig:PLACEHOLDER}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/IntegratedAutoCorrTime_E.pdf}
+\caption[]{Integrated Auto correlation time -- E}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/ProofOfStatisticalIndependence.pdf}
+\caption[]{Integrated Auto correlation time of the data used}\label{fig:PLACEHOLDER}
 \end{figure}
 \section{Future analysis and improvements}
 \subsection{Optimizing OR-HB ratio for autocorrelation of topological observables}

@@ -58,6 +58,8 @@ fileEnd_list = [1703,1323,613,214]#CHANGE
 beta = [6.0,6.13,6.26,6.46]
 V = [16**4,20**4,24**4,32**4]
 extrapolate_at_t_comp = [3.2,4.85,7.1,12.2]
+t_extrList = [[3.1,3.15,3.2,3.25,3.3],[4.7,4.75,4.8,4.85,4.9,4.95,5],[6.8,6.9,7,7.1,7.2,7.3,7.4],[11.9,12,12.1,12.2,12.3,12.4,12.5]]
+t0OverR_squared = np.array([ufloat(0.1115,0.0009),ufloat(0.1112,0.0010),ufloat(0.1110,0.0011),ufloat(0.1117,0.0013)])
 #directory_list = ["C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\16X16X16X16\\GF\\"]
 #fileStart_list = [0]
 #fileEnd_list = [500]#CHANGE
@@ -83,6 +85,25 @@ for j in range(len(directory_list)):
         except:
             print("Warning: file with name " + file + " is absent. Skipping it...")
             continue
+
+
+    #df2 = pd.concat(frames,axis=1)
+    #extrapolList = []
+    #for t in t_extrList[j]:
+    #    temp = df2.loc[t]
+    #    mean, std = TopSusc_for_regplot(temp,aOverR0_list[j]*0.5,V[j])
+    #    extrapolList.append(ufloat(mean,std))
+    #tOverR_squared = aOverR0_list[j]**2*np.array(t_extrList[j])
+    #x_fit = unumpy.uarray(np.c_[np.array([item.nominal_value for item in tOverR_squared]),np.ones_like(tOverR_squared)],np.c_[np.array([item.std_dev for item in tOverR_squared]),np.zeros_like(tOverR_squared)])
+    #y_fit = unumpy.uarray([item.nominal_value for item in extrapolList],[item.std_dev for item in extrapolList])
+    #inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
+
+    #fit_a, fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
+    #chi1over4AtT0_extrapolated = fit_a*t0OverR_squared[j]+fit_b
+    #mean_list.append(chi1over4AtT0_extrapolated.nominal_value)
+    #std_list.append(chi1over4AtT0_extrapolated.std_dev)
+
+
     df2 = pd.concat(frames,axis=1).loc[t_comp]
 
     mean, std = TopSusc_for_regplot(df2,aOverR0_list[j]*0.5,V[j])
@@ -122,13 +143,13 @@ plt.errorbar(0.0,fit_b.nominal_value,fit_b.std_dev,markersize = 2.0,
                 fmt='o',ecolor = red,color = red,capsize=2,elinewidth=1,
             markeredgewidth=1)
 
-x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list[1:])],np.c_[np.zeros_like(aOverR0_list[1:])])
-y_fit = unumpy.uarray(mean_list[1:],std_list[1:])
+x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list)],np.c_[np.zeros_like(aOverR0_list)])
+y_fit = unumpy.uarray(mean_list,std_list)
 inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
 
 fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
 print(fit_b)
-a_axis = np.linspace(-0.0005,a[1]**2/(0.5**2),100)
+a_axis = np.linspace(-0.0005,a[0]**2/(0.5**2),100)
 plt.plot(a_axis,np.full_like(a_axis,fit_b[0].nominal_value),color="black")
 plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
                 fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,

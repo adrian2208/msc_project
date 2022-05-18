@@ -23,12 +23,15 @@
 #include "Observables/EnergyDensity.h"
 #include "Observables/QdensityDistribution.h"
 #include "SU3_Heatbath/SU3_Heatbath.h"
+#include "Observables/UnImprovedTopologicalCharge.h"
+#include "Observables/ImprovedEnergyDensity.h"
 
 void GenerateHeatBathGaugeConfigurations(SimulationParameters& params, HBParameters& HBparams);
 void FlowSavedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams);
 void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup);
 
-//void MeasureFlowedGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, double flowTime);
+void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup);
+
 //void ResumeHeatBathGaugeConfigurations(SimulationParameters& params, int ConfigurationResumeFrom, int ConfigurationStop, int ConfigTimeSeparation);
 //#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
 

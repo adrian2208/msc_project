@@ -38,20 +38,23 @@ r_0 = 0.5
 #                   topE_dir+ "beta6_460000\\32X32X32X32\\GF\\1350Updates_forAutocorr\\temp3\\",
 #                   topE_dir+ "beta6_460000\\32X32X32X32\\GF\\1350Updates_forAutocorr\\temp4\\"]]
 
-topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\"
-directory_list = [[topC_dir+ "beta6_000000\\12X12X12X12\\GF\\"],
-                  [topC_dir+ "beta6_130000\\14X14X14X14\\GF\\"],
-                  [topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr0\\"],
-                  [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\"]]
-#topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\"
+#topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\"
 #directory_list = [[topC_dir+ "beta6_000000\\12X12X12X12\\GF\\"],
 #                  [topC_dir+ "beta6_130000\\14X14X14X14\\GF\\"],
 #                  [topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr0\\",
 #                   topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr1\\"],
-#                  [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\"]]
+#                  [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\",
+#                   topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr1\\"]]
+topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\"
+directory_list = [[topC_dir+ "beta6_000000\\12X12X12X12\\GF\\"],
+                  [topC_dir+ "beta6_130000\\14X14X14X14\\GF\\"],
+                  [topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr0\\",
+                   topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr1\\"],
+                  [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\",
+                   topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr1\\"]]
 
 fileStart_list = [0,0,0,0]#50
-fileEnd_list = [2000,2000,2000,2000]#CHANGE
+fileEnd_list = [2000,2000,2000,3000]#CHANGE
 colorList = [green,orange,blue,purple]
 marker_list = ['^','o','s','p']
 #fileStart_list_E = [0,0,0,0]#50
@@ -79,12 +82,12 @@ for j in range(len(fileStart_list)):
     for k in range(len(directory)):
         frames = []
         dir = directory[k]
-        for i in range(fileStart,fileEnd+1,1):#4
+        for i in range(fileStart,fileEnd+1,1):
             file = 'torus_extdof4_'+str(i)+'.csv'
             df1 = pd.read_csv(dir+file,index_col='t',names = ['t','Q'+str(i)], sep=",", header=None)
             frames.append(df1)
         df2 = pd.concat(frames,axis=1)
-        autocorrArray.append(df2)
+        autocorrArray.append(df2**2)
 
     t0_overR_0Squared.append(a[j]/(r_0))
     t_comp_list = []
@@ -115,4 +118,4 @@ plt.xlabel(r'$t/a^2$')
 plt.ylabel(r'$\tau_{int}$')
 plt.legend()
 
-plt.savefig('Statistical_independece.pdf', bbox_inches="tight")
+plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\IntegratedAutoCorrTime_E.pdf', bbox_inches="tight")

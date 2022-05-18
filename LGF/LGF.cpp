@@ -89,13 +89,11 @@ int main(int argc, char** argv) {
 
 	//FlowSavedGaugeConfigurations(params, flowParams);
 
-	double flowTime_pickup = 0.4;
+	double flowTime_pickup = 20;
 	//ResumeFlowedConfiguration(params, flowParams, flowTime_pickup);
+	MeasureFlowedGaugeConfigurations(params, flowParams, flowTime_pickup);
+	//GenerateHeatBathGaugeConfigurations(params, HBparams);
 
-	GenerateHeatBathGaugeConfigurations(params, HBparams);
-
-
-	//ResumeFlowedConfiguration(params, ConfigurationStart, ConfigurationStop, 200,16.0);
 
 	//MEASURE Q_DENSITYDISTRIBUTION
 	//Lattice lattice(NrDims, shape);
@@ -212,27 +210,33 @@ void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flo
 	}
 }
 
-//void MeasureFlowedGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, double flowTime) {
-//	Lattice lattice(params, true);
-//	Wilson action(params.getbeta());
-//	//run through the saved gauge configurations
-//	for (int i = ConfigurationStart; i <= ConfigurationStop; i++) {
-//		//load the gauge configuration into U
-//		SU3_field U(lattice, params.getextdofs());
-//		std::string ensembleNum = std::to_string(i);
-//		U.loadSU3FromFile(params.getbeta(), "GF", ensembleNum + "_Flowtime" + std::to_string(flowTime));
-//
-//		//instantiate and include the Topological Charge
-//		TopologicalCharge topCharge(U);
-//		//topCharge.calculate(0.0);
-//		//instantiate and include the Energy density
-//		//EnergyDensity Edensity(U);
-//
-//		//save the observables to files
-//		topCharge.saveTopologicalChargeToFile(params.getbeta(), "GF", ensembleNum + "_Flowtime" + std::to_string(flowTime));
-//		//Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
-//	}
-//}
+void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup) {
+	Lattice lattice(params, true);
+	Wilson action(params.getbeta());
+	//run through the saved gauge configurations
+	for (int i = flowParams.getConfigurationStart(); i <= flowParams.getConfigurationStop(); i++) {
+		//load the gauge configuration into U
+		SU3_field U(lattice, params.getextdofs());
+		std::string ensembleNum = std::to_string(i);
+		U.loadSU3FromFile(params.getbeta(), "GF", flowParams.getdataFolder(), ensembleNum + "_Flowtime" + std::to_string(flowTime_pickup));
+
+		//instantiate and include the Topological Charge
+		UnImprovedTopologicalCharge unimprovedTopCharge(U);
+		unimprovedTopCharge.calculate(flowTime_pickup);
+		//TopologicalCharge topCharge(U);
+		//topCharge.calculate(0.0);
+		//instantiate and include the Energy density
+		//EnergyDensity Edensity(U);
+		ImprovedEnergyDensity ImprovedEdensity(U);
+		ImprovedEdensity.calculate(flowTime_pickup);
+
+		//save the observables to files
+		//unimprovedTopCharge.saveTopologicalChargeToFile(params.getbeta(), "GF", ensembleNum + "_Flowtime" + std::to_string(flowTime));
+		unimprovedTopCharge.saveTopologicalChargeToFile(params.getbeta(), "GF", flowParams.getdataFolder(), "_" + ensembleNum);
+		ImprovedEdensity.saveEnergyDensityToFile(params.getbeta(), "GF", flowParams.getdataFolder(), "_" + ensembleNum);
+		//Edensity.saveEnergyDensityToFile(beta, ensembleNum + "flowed");
+	}
+}
 
 //void GenerateLHMCGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, int NrUpdates) {
 //	

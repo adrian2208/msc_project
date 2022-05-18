@@ -3,8 +3,8 @@ from scipy import stats
 from mayavi import mlab
 
 
-dir = 'C:\\Users\\adria\\Documents\\3D-Qdensity\\'
-filename = 'torus_extdof1_3_Flowtime13.000000.bin'
+dir = 'C:\\Users\\adria\\Documents\\3D-Qdensity\\v_flowTime\\'
+filename = 'torus_extdof1_44_Flowtime13.000000.bin'
 
 with open(dir+filename,'rb') as f:
     data = np.fromfile(f, dtype=np.float64)
@@ -16,7 +16,6 @@ slice = data[:xmax*ymax*zmax]
 density = slice
 #density = np.reshape(slice,(xmax,ymax,zmax))
 
-mu, sigma = 0, 0.1 
 x = list(range(xmax))
 y = list(range(ymax))
 z = list(range(zmax))
@@ -27,20 +26,28 @@ y= Y.ravel()
 z= Z.ravel()
 
 figure = mlab.figure('DensityPlot')
-cutoff = max(abs(density))/2
-mask = np.where(abs(density) < cutoff,0,density)
-print(mask)
+#cutoff = max(abs(density))/2
+#mask = np.where(abs(density) < cutoff,0,density)
+#print(mask)
+print(sum(data))
 
+maximum = max(abs(density))
 
-
-
-pts = mlab.points3d(x,y,z, density, scale_mode='none', scale_factor=0.5,colormap='seismic')
-
+fig = mlab.figure(bgcolor=(1,1,1),fgcolor=(0.88,0.88,0.88),size=(420,350))
+pts = mlab.points3d(x,y,z, density, scale_mode='none', scale_factor=0.5,colormap='seismic',figure=fig,vmax = maximum,vmin = -maximum)
+cbr = mlab.colorbar(pts,orientation = 'vertical',nb_labels=13)
 lut = pts.module_manager.scalar_lut_manager.lut.table.to_array()
-zeroSpace = 20
+zeroSpace = 4#20
 lut[:, -1] = np.concatenate((np.linspace(255, 0, 128-int(zeroSpace/2)),np.zeros(zeroSpace),np.linspace(0,255, 128-int(zeroSpace/2)))) 
 pts.module_manager.scalar_lut_manager.lut.table = lut
-mlab.axes()
+
+axes = mlab.axes(extent = [0, xmax, 0, ymax, 0, zmax],line_width = 0.5,figure=fig,xlabel='',ylabel='',zlabel='')
+axes.label_text_property.font_family = 'courier'
+axes.label_text_property.font_size = 8
+
+cbr.label_text_property.font_family = 'courier'
+cbr.label_text_property.font_size = 8
+
 mlab.show()
 
 
