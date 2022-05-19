@@ -1,5 +1,5 @@
-import module1 as mod
 import pandas as pd
+import puwr as mod
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt

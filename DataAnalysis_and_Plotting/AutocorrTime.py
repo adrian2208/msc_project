@@ -1,4 +1,3 @@
-import module1 as mod
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')

@@ -1855,6 +1855,10 @@ To determine the lattice spacing $a$ from the inverse coupling $\beta$ we use an
 \begin{equation}\label{eq:avBeta_interpolated}
 \ln \left(a / r_{0}\right)=-1.6805-1.7139(\beta-6)+0.8155(\beta-6)^{2}-0.6667(\beta-6)^{3}.
 \end{equation}
+According to the authors, this interpolation is accompanied by a relative error, which increases linearly from $0.3\%$ at $\beta = 5.7$ to $0.6\%$ at $\beta = 6.57$. This relative error has been incorporated by the parametrization 
+\begin{equation}
+Error_{a/r_0} = \frac{a}{r_0}(0.0034482758621\beta - 0.0166551724138)
+\end{equation}
 
 \begin{figure}[H]
 \centering
@@ -2977,6 +2981,12 @@ SENDS AND RECEIVES AT THE SAME TIME
 \caption[]{FINAL}\label{fig:PLACEHOLDER}
 \end{figure}
 \subsection{Scale setting with $t^2\langle E\rangle$}
+\begin{figure}[H]
+\centering
+\includegraphics{FINALPLOTS/E_v_flowtime.pdf}
+\caption[]{FINAL- E v t}\label{fig:PLACEHOLDER}
+\end{figure}
+
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
