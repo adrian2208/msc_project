@@ -30,7 +30,8 @@ void GenerateHeatBathGaugeConfigurations(SimulationParameters& params, HBParamet
 void FlowSavedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams);
 void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup);
 
-void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup);
+void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams);
+void MeasureQdensityDistribution(SimulationParameters& params, FlowParameters& flowParams);
 
 //void ResumeHeatBathGaugeConfigurations(SimulationParameters& params, int ConfigurationResumeFrom, int ConfigurationStop, int ConfigTimeSeparation);
 //#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());

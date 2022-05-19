@@ -1,4 +1,5 @@
 ﻿#include "LGF.h"
+#include <cstring>
 #ifdef LEGACY_CXX
 #include <experimental/filesystem>
 namespace n_fs = ::std::experimental::filesystem;
@@ -91,25 +92,29 @@ int main(int argc, char** argv) {
 
 	double flowTime_pickup = 20;
 	//ResumeFlowedConfiguration(params, flowParams, flowTime_pickup);
-	MeasureFlowedGaugeConfigurations(params, flowParams, flowTime_pickup);
+	MeasureFlowedGaugeConfigurations(params, flowParams);
+	MeasureQdensityDistribution(params, flowParams);
 	//GenerateHeatBathGaugeConfigurations(params, HBparams);
 
 
-	//MEASURE Q_DENSITYDISTRIBUTION
-	//Lattice lattice(NrDims, shape);
-	//SU3_field U(lattice, extdofs);
-	//std::string ensembleNum = std::to_string(170);
-	//double flowTime = 20.0;
-	//U.loadSU3FromFile(beta, "GF",dataFolder, ensembleNum + "_Flowtime" + std::to_string(flowTime));
-	//QdensityDistribution Qdensity(U, beta, "GF",dataFolder, ensembleNum + "_Flowtime" + std::to_string(flowTime));
-	//Qdensity.calculate(flowTime);
+
 
 	mpiWrapper::end_parallelSession();
 
 	return 0;
 }
 
-
+void MeasureQdensityDistribution(SimulationParameters& params, FlowParameters& flowParams) {
+	Lattice lattice(params,true);
+	double flowTime_pickup = flowParams.getepsilon() * flowParams.getflowSteps();
+	for (int i = flowParams.getConfigurationStart(); i <= flowParams.getConfigurationStop(); i++) {
+		SU3_field U(lattice, params.getextdofs());
+		std::string ensembleNum = std::to_string(i);
+		U.loadSU3FromFile(params.getbeta(), "GF", flowParams.getdataFolder(), ensembleNum + "_Flowtime" + std::to_string(flowTime_pickup));
+		QdensityDistribution Qdensity(U, params.getbeta(), "GF", flowParams.getdataFolder(), ensembleNum + "_Flowtime" + std::to_string(flowTime_pickup));
+		Qdensity.calculate(flowTime_pickup);
+	}
+}
 
 //void ResumeHeatBathGaugeConfigurations(SimulationParameters& params, int ConfigurationResumeFrom, int ConfigurationStop,int ConfigTimeSeparation) {
 //	Lattice lattice(params,false);
@@ -210,9 +215,10 @@ void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flo
 	}
 }
 
-void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup) {
+void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams) {
 	Lattice lattice(params, true);
 	Wilson action(params.getbeta());
+	double flowTime_pickup = flowParams.getepsilon() * flowParams.getflowSteps();
 	//run through the saved gauge configurations
 	for (int i = flowParams.getConfigurationStart(); i <= flowParams.getConfigurationStop(); i++) {
 		//load the gauge configuration into U
