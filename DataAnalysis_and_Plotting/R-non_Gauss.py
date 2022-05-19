@@ -127,13 +127,13 @@ plt.errorbar(0.0,fit_b.nominal_value,fit_b.std_dev,markersize = 2.0,
                 fmt='o',ecolor = red,color = red,capsize=2,elinewidth=1,
             markeredgewidth=1)
 
-x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list[1:])],np.c_[np.zeros_like(aOverR0_list[1:])])
-y_fit = unumpy.uarray(mean_list[1:],std_list[1:])
+x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list)],np.c_[np.zeros_like(aOverR0_list)])
+y_fit = unumpy.uarray(mean_list,std_list)
 inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
 
 fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
 print(fit_b)
-a_axis = np.linspace(-0.0005,a[1]**2/(0.5**2),100)
+a_axis = np.linspace(-0.0005,a[0]**2/(0.5**2),100)
 plt.plot(a_axis,np.full_like(a_axis,fit_b[0].nominal_value),color="black")
 plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
                 fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,
@@ -141,5 +141,5 @@ plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
 plt.xlabel(r'$a^2/r_0^2$')
 plt.ylabel(r'$R$')
 #plt.legend()
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\R_continuum_extrapolation.pdf', bbox_inches="tight")
+plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\R_continuum_extrapolation.pdf', bbox_inches="tight")
 #plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\chi_fourthRoot_continuum_extrapolation.pdf', bbox_inches="tight")

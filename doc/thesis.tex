@@ -1446,8 +1446,6 @@ Because this operation is so frequent, the link variables will eventually deviat
 \boldsymbol{v}^\prime &=\frac{\boldsymbol{v}-\boldsymbol{u}^\prime\left(\boldsymbol{v} \cdot (\boldsymbol{u}^\prime)^{*}\right)}{\left|\boldsymbol{v}-\boldsymbol{u}^\prime\left(\boldsymbol{v} \cdot (\boldsymbol{u}^\prime)^{*}\right)\right|}\\ w^\prime &=(\boldsymbol{u}^\prime)^{*}\times(\boldsymbol{v}^\prime)^{*}
 \end{aligned}
 \end{equation}
-\paragraph{Different algorithms} such as Heat bath and Overrelaxation algorithms leverage the ultralocality of the pure gauge action to speed up the progress made by each step in the Markov chain. Ultimately, we're describing a theory with dynamical fermions and the fermion determinant \eqref{eq:Z_F_As_determinant} is by no means a local quantity. We therefore leave the subject of these to the book by Gattringer and Lang\cite{Gattringer:2010zz}, except to mention that for the case of pure gauge theory, these are invaluable tools, often used in conjunction.
-\subsubsection{Simulating pure SU(3) gauge theory}
 With all this in mind, we can outline the very most basic program structure for simulating pure $SU(3)$ lattice gauge theory.
 \begin{algorithm}[H]
 \caption{Monte Carlo program for pure gauge theory}\label{alg:cap}
@@ -1493,6 +1491,169 @@ With all this in mind, we can outline the very most basic program structure for 
 \State Write all information relevant to restarting the program at a later time to file 
 \end{algorithmic}
 \end{algorithm}
+The metropolis-Hastings algorithm is a good introductory example for the generation of gauge configurations, but it's rarely used in contemporary simulations. Instead, depending on whether one's simulating in the quenched approximation or with dynamical fermions, most simulations use some variant of Heatbath algorithms combined with overrelaxation or one of several Hybrid Monte Carlo algorithms which will be covered in later sections. Next, we cover the two primary algorithms which have been used for generating pure gauge configurations in the LGF suite. Heatbath and Overrelaxation.
+\subsubsection{Cabbibo- Marinari Heatbath}
+Heatbath algorithms have proven invaluable tools for generating gauge configurations in pure gauge theory. It has been shown to be, in the case of SU(3), about three times more efficient than the metropolis algorithm \cite{CABIBBO1982387}. The heatbath algorithm combines the configuration proposal and acceptance steps of the Wilson gauge action- Metropolis algorithm by sampling gauge links directly from the distribution
+\begin{equation}\label{eq:Heatbath_distribution}
+\mathrm{d} P(U)=\mathrm{d} U \exp \left(\frac{\beta}{N} \operatorname{Re} \operatorname{tr}[U A]\right)
+\end{equation}
+with $\mathrm{d} U$ denoting the Haar measure of $SU(N)$ and $A$ denoting the sum of staples 
+\begin{equation}
+\begin{aligned}
+A=&\sum_{\nu \neq \mu}\left(U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu})\right.\\
+&\left.+U_{-\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}-\hat{\nu}) U_{\nu}(n-\hat{\nu})\right).
+\end{aligned}
+\end{equation}
+While no Heatbath algorithms exist that sample directly from $SU(3)$ group space, the so- called pseudo- heatbath algorithm of Cabbibo and Marinari \cite{CABIBBO1982387} works by performing three $SU(2)$ heatbath updates on the $SU(2)$ subgroups of the link variables. Denote by 
+\begin{equation}\label{eq:SU2_embeddingInSU3}
+R=\left(\begin{array}{ccc}
+r_{11} & r_{12} & 0 \\
+r_{21} & r_{22} & 0 \\
+0 & 0 & 1
+\end{array}\right), S=\left(\begin{array}{ccc}
+s_{11} & 0 & s_{12} \\
+0 & 1 & 0 \\
+s_{21} & 0 & s_{22}
+\end{array}\right)\,\, and\,\, T=\left(\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & t_{11} & t_{12} \\
+0 & t_{21} & t_{22}
+\end{array}\right)
+\end{equation}
+the elements of the $SU(2)$ subgroups of $UA$ embedded in $3\times3$ matrices. Then the link variable $U$ can be successively updated by left multiplication with $R$, $S$ and $T$, where the elements $r_{nm}$, $s_{nm}$ and $t_{nm}$ have been updated using a $SU(2)$ heatbath.
+\paragraph{The SU(2) Heatbath} algorithm we detail here follows that of Kennedy and Pendleton \cite{KENNEDY1985393}.\\$SU(2)$ has the property that the sum of any of its elements is proportional to another element of $SU(2)$. Because of this, the sum of staples can be expressed as $A = aV$ for $a=\sqrt{\operatorname{det}[A]}$. In the $O(4)$ representation of $SU(2)$, parameterized by 
+\begin{equation}\label{eq:O(4)SU(2)rep}
+A=x_{0} \mathbb{1}+\mathrm{i} \boldsymbol{x} \cdot \boldsymbol{\sigma}
+\end{equation}
+we have $a = \sqrt{x_0^2 +\mathbf{x}^2}$. To sample gauge links from \eqref{eq:Heatbath_distribution}, we can use the invariance of the Haar measure under left- and right multiplication with group elements to express the distribution as
+\begin{equation}
+\mathrm{d} P(X)=\mathrm{d} X \exp \left(\frac{1}{3} a \beta \operatorname{Retr}[X]\right)
+\end{equation}
+for $X = UV$ (note that the distribution has the factor $\frac{1}{3}$ because we're ultimately updating $SU(3)$ group elements). In this same representation, the new Haar measure is
+\begin{equation}
+\mathrm{d} X=\frac{1}{\pi^{2}} \mathrm{~d}^{4} x \frac{\theta\left(1-x_{0}^{2}\right)}{2 \sqrt{1-x_{0}^{2}}}\left(\delta\left(|\boldsymbol{x}|-\sqrt{1-x_{0}^{2}}\right)+\delta\left(|\boldsymbol{x}|+\sqrt{1-x_{0}^{2}}\right)\right).
+\end{equation}
+where $\theta$ is the step function. The second Dirac delta term doesn't contribute
+and so the only non- zero contribution is from $|\boldsymbol{x}| = \sqrt{1-x_{0}^{2}}$. From \eqref{eq:O(4)SU(2)rep}, we see that the only real diagonal element is $x_0$, which contributes to the real trace as $\operatorname{Retr}[X] = 2x_0$, thus the distribution can be expressed as 
+\begin{equation}
+\mathrm{d} P(X)=\frac{1}{2 \pi^{2}} \mathrm{~d} \cos \vartheta \mathrm{d} \varphi \mathrm{d} x_{0} \sqrt{1-x_{0}^{2}} \mathrm{e}^{\frac{2}{3}a \beta x_{0}}.
+\end{equation}
+for $x_{0} \in[-1,1], \cos \vartheta \in[-1,1]$, and $\varphi \in[0,2 \pi)$.
+Sampling matrices from this distribution effectively amounts sampling $ x_{0}$, as well as the trivial uniform sampling of $\cos \vartheta$ and $\varphi$ from their respective intervals.\\In order to effectively sample $x_0$ from the distribution $\mathrm{e}^{\frac{2}{3}a \beta x_{0}}$, four uniformly distributed random numbers $R,R',R''' \in (0,1]$ and $R''\in [0,1]$ are generated. We then introduce a new variable $\alpha =\frac{a\beta}{3} $ (this is to match the notation used in \cite{KENNEDY1985393}) and calculate 
+\begin{equation}
+\bar{\delta} = -\frac{1}{\alpha}\left(\ln \left(R'\right)+\cos ^{2}\left(2 \pi R''\right) \ln \left(R'\right)\right).
+\end{equation}
+$\bar{\delta}$ is then either accepted if 
+$R'''^2 \leq 1-\frac{1}{2}\bar{\delta}$ or otherwise rejected, in which case four new random numbers are generated and the procedure is repeated. If $\bar{\delta}$ is accepted, we set $x_0 = 1-\bar{\delta}$.\\\\With $x_0$ determined, we can now calculate $|\mathbf{x}| = \sqrt{1-x_0^2}$, and using $\cos \vartheta$, $\varphi$ and $\sin \vartheta = \sqrt{1.0-\cos^2 \vartheta}$ we get the values $x_1 = |\mathbf{x}|\sin \vartheta \cos\varphi$, $x_2 = |\mathbf{x}|\sin \vartheta \sin\varphi$, $x_3 = |\mathbf{x}|\cos \vartheta$. To get back to the matrix representation, we use \eqref{eq:O(4)SU(2)rep} to get
+\begin{equation}
+U=\left[\begin{array}{ll}
+x_0+ix_3 & x_2+ix_1 \\
+-x_2+ix_1 & x_0-ix_3
+\end{array}\right]
+\end{equation}
+\subsubsection{Overrelaxation}
+Overrelaxation is a method which attempts to increase the distance in group space traversed between configurations. It does this by exploiting the symmetry of the action under certain operations, to propose new link variables which leave the action invariant and therefore are automatically accepted.
+Overrelaxation is not ergodic on it's own as it only traverses the configuration subspace of constant action. It is therefore necessary to include fully canonical update methods such as the Heatbath to achieve ergodicity.\\\\We proceed by examining the Overrelaxation method which works by updating the $SU(2)$ subgroups of $SU(3)$. Similar in vein to the scheme introduced for the Cabbibo- Marinari Heatbath.\\\\There exists overrelaxation algorithms for SU(N) gauge theories with $N>2$, and they have proven to be more efficient than SU(2) subgroup update- algorithms. Its implementation however, is more involved than the SU(2) subgroup algorithm, and for $N=3$, the improvement in the autocorrelation time of e.g. the Polyakov loop is very slight \cite{inbook}.\\\\For the Wilson action we see that the trace remains invariant if the proposed $U'$ has the property that $U' = V^\dagger U^\dagger V^\dagger$ where $V = \frac{A}{a}$ following the same convention as for the $SU(2)$ Heatbath. We get that
+
+\begin{equation}
+\operatorname{tr}\left[U^{\prime} A\right]=\operatorname{tr}\left[V^{\dagger} U^{\dagger} V^{\dagger} A\right]=a \operatorname{tr}\left[V^{\dagger} U^{\dagger}\right]=\operatorname{tr}\left[A^{\dagger} U^{\dagger}\right]=\operatorname{tr}[U A].
+\end{equation}
+
+In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Overrelaxation constitues a massive improvement when it comes to decorrelating measurements in Monte Carlo time \cite{PhysRevLett.58.2394} and its ease of implementation to pre-existing update algorithms makes it an obvious addition when generating gauge configurations.
+
+\subsubsection{Algorithm}
+\begin{algorithm}[H]
+\caption{$SU(3)$ Cabbibo- Marinari w/ Overrelaxation}\label{alg:HBplusOR}
+\begin{algorithmic}
+
+\While{$n<\# iterations$}
+\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}\Comment{Start of Heatbath}
+
+\For{$SU(2)$ subgroup number $I$ of $SU(3)$ at $n$ for $I\in\{0,1,2\}$}
+
+\State $W = U_\mu(n)A_\mu(n)$\Comment{$A_\mu(n)$ is the sum of staples found in eq. \eqref{eq:sumOfStaples} }
+\Procedure{GetSU(2)submatrixIn$O_4$Rep}{$W$, $I$}
+  \State $k \gets I+1$\Comment{The combinations of $j$ and $k$}
+\State $j \gets k / 3$ \Comment{parametrizes the embedding onto the $SU(2)$ element}
+\State $k \gets k - j$ \Comment{in the $O_4$ representation according to \eqref{eq:SU2_embeddingInSU3}.}
+\State $Z_0 \gets \operatorname{Re}\left( W_{jj} + W_{kk} \right)$, $Z_1 \gets \operatorname{Im}\left( W_{jk} + W_{kj} \right)$
+\State $Z_2 \gets \operatorname{Re}\left( W_{jk} - W_{kj} \right)$, $Z_3\gets \operatorname{Im}\left( W_{jj} - W_{kk} \right)$
+\EndProcedure
+\State $Q \gets \mathsf{HB_{SU(2)}} \left( Z \right)$ \Comment{$Q\in SU(2)$}
+
+\State $X \gets \mathbb{1}_{3\times 3}$
+\State $X_{jj} \gets Q_{00},\,X_{jk} \gets Q_{01},\,X_{kj} \gets Q_{10},\,X_{kk} \gets Q_{11}$
+\State $U_\mu(n) \gets XU_\mu(n)$
+\EndFor
+\EndFor
+
+
+\While{$n_{OR}< N_{OR\,per\,HB}$}\Comment{Start of Overrelaxation}
+
+\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
+
+\For{$SU(2)$ subgroup number $I$ of $SU(3)$ at $n$ for $I\in\{0,1,2\}$}
+\State $W = U_\mu(n)A_\mu(n)$
+\State $Z \gets GetSU(2)submatrixInO_4Rep(W,\, I)$
+\State $a=\sqrt{Z\cdot Z}$
+\If{$a<\epsilon$}
+\State $Z \gets (1,0,0,0)$
+\Else
+\State $Z \gets \frac{1}{a}Z^\dagger = \frac{1}{a}\left( Z_0,-Z_1,-Z_2,-Z_3 \right)$
+\State\Comment{$\left( Z_0\mathbb{1}-i\vec{Z}\cdot\vec{\sigma} \right)^2 = (Z_0^2-\vec{Z}\cdot\vec{Z})\mathbb{1}-2iZ_0\vec{Z}\cdot\vec{\sigma}$}
+\State $V_0 \gets Z_0^2-(Z_1^2+Z_2^2+Z_3^2)$
+\State $V_1 \gets -2Z_0Z_1$
+\State $V_2 \gets -2Z_0Z_2$
+\State $V_3 \gets -2Z_0Z_3$
+\State $X \gets V_0\mathbb{1}+\vec{V}\cdot i\vec{\sigma}$
+\State $U_\mu(n) \gets XU_\mu(n)$
+\EndIf
+\EndFor
+\EndFor
+\EndWhile
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+\begin{algorithm}[H]
+\caption{$SU(2)$ Heatbath}\label{alg:SU2HB}
+\hspace*{\algorithmicindent} \textbf{Input: $Z$ in the $O4$ rep. of $SU(2)$} \\
+\hspace*{\algorithmicindent} \textbf{Output: $X$ in the $GL(2,\mathcal{C})$ rep. of $SU(2)$}
+\begin{algorithmic}
+\Ensure
+\State $Z \gets $ function input $(Z)$
+\State $\beta \gets $ ensemble $\beta$
+\State $a=\sqrt{Z\cdot Z}$
+\State $Z \gets \frac{1}{a}Z$
+
+\State $X \gets Z_0\mathbb{1}-\vec{Z}\cdot i\vec{\sigma}$
+
+\While{$R^2>1-\frac{1}{2}\bar{\delta}$}
+\State Generate uniform, random numbers $r_0,\,r_1 \in (0,1]$,  $r_2 \in [0,1)$ and $R \in [0,1)$
+\State $X = -\operatorname{ln}(r_0)$
+\State $X' = -\operatorname{ln}(r_1)$
+\State $C = \cos^2\left( 2\pi r_2 \right)$
+\State $A = XC$
+\State $\bar{\delta} = 3\frac{X'+A}{\beta a}$
+\EndWhile
+\State Generate uniform, random numbers $R'\in [-1,1)$ and $R'' \in [0,1)$
+
+\State $\theta_{cos} \gets R'$
+\State $\phi \gets 2\pi R''$
+\State $\theta_{sin} \gets \sqrt{1-\theta_{cos}^2}$
+\State $x_0 \gets 1-\bar{\delta}$
+\State $|x| \gets \sqrt{1-x_0^2}$
+\State $x_1 \gets |x|\theta_{sin}\cos{\phi}$
+\State $x_2 \gets |x|\theta_{sin}\sin{\phi}$
+\State $x_3 \gets |x|\theta_{cos}$
+\State $V \gets x_0\mathbb{1}+\vec{x}\cdot i\vec{\sigma}$
+\State $X\gets VX$
+\end{algorithmic}
+\end{algorithm}
+
 \paragraph{Pseudo- random number generators} (RNGs) are crucial in Monte Carlo calculations as these are at the very core of the program and therefore make up a sizable proportion of all clock cycles. A typical lattice size for a LQCD calculation with light flavours might be $64^3\times 128$ \cite{tanabashi2018review}, meaning a single sweep through the lattice with a single update requires at least $\mathcal{O}(10^8)$ random numbers, counting only the acceptance step in the Metropolis algorithm. Many different engines are available through e.g. \CC standard libraries such as the Mersenne twister engine. Any RNG can be used as long as it has a guaranteed period far in excess of the number of random numbers required by the program. Computational efficiency is high on the list of requirements, but autocorrelation will ultimately extend the duration of the program, meaning quality \footnote{Quality meaning as close to uncorrelated as possible} of random numbers is often the deciding factor.
 \subsubsection{Post analysis}
 Following your simulation, you should now have a file containing every measurement value. Because they originate from a Markov chain, they will be correlated to some extent. This is known as autocorrelation, and its presence means that a naive implementation of an error estimate will give an underestimate of the actual error. This actual error is a function of the correlation time and the estimated standard deviation  $\sigma$ of the sample mean $\braket{O}$ is given by
@@ -1801,56 +1962,21 @@ The fact that we use different lattice actions to simulate seemingly the same ph
 Any simulation will happen at a finite lattice volume, and this impacts the outcomes of observables, as modes that traverse the spatial torus give contributions that would be absent in the infinite volume limit.\\Most simulations are carried out with a temporal extent roughly twice that of the spatial extent to allow excited states to decay. Therefore, the leading contributions are from spatial finite size effects. The largest correlation length in the system arises from the lightest hadron correlator. Volume dependence varies between observables, but for processes involving single particle states, the effects are purported to be sub- leading order for $m_\pi N_sa \geq 4$, where $m_\pi$ is the mass of the pion, the lightest hadron.\\\\The extrapolation can be carried out by increasing the number of spatial lattice points while keeping all other parameters fixed. If possible, the extrapolation might be accompanied by a parametrization based on theory or otherwise a naive power law dependence of the form $\frac{1}{(aN_s)^n}$.
 
 \section{Implementation}
+At this point, the thesis will change course dramatically. Rather than broadly discussing the theory and practices of quantum field theory and lattice QCD, we move on to tackling the relevant set of issues for answering the problem statement we made at the very beginning of the thesis. These are issues pertaining to the topological charge and the Wilson flow applied to ensembles of pure gauge configurations. We will also tackle the workings of LGF and the particular details associated with implementing lattice QCD simulations in the real world.\\\\As stated numerous times, measuring observables in lattice QCD is effectively partitioned into two separate problems: generating gauge configurations and analysing those configurations. For us, this analysis includes the application of the Wilson flow, accompanied by measurements of observables at several flow steps. We tackle the problem of generation first.
 \subsection{Generating Gauge Configurations}
-To measure observables, it's necessary to generate a substantial amount of statistically independent gauge configurations. There are several factors which determine the efficiency of the generation and the quality of the measurement outcomes.
-
+There are several considerations at play when deciding the set of ensembles which are worth including in your analysis. There are specific requirements to our particular analysis which influences the choice of ensembles and choice of update algorithm.
 \begin{enumerate}
-\item autocorrelation time of topological observables
-\item negate finite-volume effects
-\item choosing $\beta$ to avoid critical slowing down
-\item constant volume, decreasing $a$ for continuum extrapolation
+\item Autocorrelation time of the topological charge
+\item Negating finite-volume effects
+\item Limiting discretization effects, autocorrelation and the numerical cost of the Wilson flow through our choice of $\beta$
+\item The need for large statistics
+\item The need for continuum extrapolation
+\item Estimating the autocorrelation time
 \end{enumerate}
-\paragraph{autocorrelation time of topological observables}
-INCLUDE AUTOCORRELATION TIMES FOR THE LOCAL HYBRID MONTE CARLO ALGORITHM AND RELATE IT TO THE PARAGRAPH BELOW, TALK ABOUT WHY WE CAN'T USE IT FOR TOPOLOGICAL OBSERVABLES. MENTION THAT THIS PROBLEM COULD BE MITIGATED WITH OPEN TEMPORAL BOUNDARY CONDITIONS.
+We cover these in turn.\\\\The topological charge and its cumulants are infamous for suffering from critical slowing down to a greater extent than other observables. This is known to be a particularly substantial problem for HMC algorithms for which e.g. the effective dynamical critical exponent of the squared topological charge was found to be $5$ in pure gauge theory \cite{2011}. This is often referred to as the topology-freezing problem. This is thought to arise from periodic boundary conditions which, close to the continuum, constrain configurations from changing their topological charge through any continuous deformation\footnote{Think, unwinding a closed loop going through the hole of a doughnut without cutting it}. It has been proposed that using open (Neumann) boundary conditions in the time direction can bypass this issue in \cite{L_scher_2011}. An analysis of this was carried out in \cite{PhysRevD.90.074502}.\\Since we're not analysing dynamical fermions, we're free to choose other update algorithms which do not move along molecular-dynamics trajectories and are more likely to 'tunnel' between topological sectors in configuration space. For example, the overrelaxation algorithm is blatantly not a continuous transformation in configuration space.\\The combination of Heatbath and overrelaxation (HB-OR) has been used in several pure gauge theory analyses of the topological charge \cite{non_gaussianities2015} \cite{PhysRevD.92.094518} with great success which makes it a good choice for our purposes.\\That said, LGF has an implementation of a local variant of HMC based on \cite{Kennedy_1994} which is quite fast compared to the HB-OR algorithm and without a careful analysis of the autocorrelation times for different lattice spacings, I cannot say with confidence whether this algorithm could be a viable option for some range of lattice constants. Some limited analysis has been done on the autocorrelation time of observables in \cite{LHMC_autocorr}, but none for the topological charge.\\\\For finite volume effects, we can consider the fact that the lightest glueball has an energy of about 1.5 GeV. For the topological susceptibility, this is expected to produce very small finite-volume effects for simulation lengths greater than $1fm$ \cite{Del_Debbio_2005}. However, we will mostly rely on an analysis carried out in \cite{non_gaussianities2015}. They use a different definition for the field strength tensor (more on this later) and larger lattice constants than this analysis but there is little reason to doubt its transferability to our situation.\\They found that for $L\geq 1.4fm$, finite size effects on the topological susceptibility were smaller than  $0.5\%$. This was a very high statistics study, so these effect sizes are likely smaller than what we need to consider, however we'll air on the side of caution here.\\\\We would like to simulate with very small lattice constants as this makes the continuum extrapolation less questionable. We would also like very high statistics. These two goals are unfortunately at odds. Lower lattice constants increase autocorrelation time as well as the generation time and the computational cost of the Wilson flow for the same simulation volume by increasing the number of lattice points and the number of flow steps needed.\\This effect on computational effort is substantial to the point where analysing 2000 statistically independent configurations at $\beta=6.0$ is practically trivial compared to analysing 100 such configurations at $\beta=6.46$. Trying to strike a balance here is difficult without a prior analysis of the integrated autocorrelation time.\\\\Because the analysis requires continuum extrapolation and because the smallest lattice spacing requires the most computational effort, it's worthwhile to base your choices for $\beta$ and $|\Lambda|$ on the smallest lattice constant.\\\\Estimating the integrated autocorrelation time is very costly. Rather than incurring that cost for the ensembles used in the analysis, it's preferable to do the analysis on ensembles with a smaller lattice volume, making the assumption that those results will be approximately applicable for the larger lattice volume. 
 
-
-
-""It is well known that in hybrid Monte Carlo (HMC) simulations of lattice
-QCD the autocorrelation time of the topological charge increases very rapidly
-as the lattice spacing is reduced [1, 2, 3, 4]. This is understood to be a
-consequence of the fact that in a periodic volume the topological charge of a
-continuum gauge field cannot change by any continuous deformation, while the topological charge of a lattice gauge field can only change by passing
-through non-continuum-like configurations with large values of the action. As
-the coupling is made weaker such configurations are more and more strongly
-suppressed, so that eventually “tunneling” between the topological sectors
-of field space becomes very rare.
-The resulting increase in the autocorrelation time of the topological charge
-is dangerous, because when autocorrelation times become comparable to or
-longer than the total length of a simulation there is no guarantee that the statistical errors on measured quantities can be reliably estimated. The whole
-calculation then becomes suspect. Modern simulations of QCD are being
-performed at lattice spacings fine enough that this problem is a real and
-pressing one.
-In [5], it was proposed that switching from periodic to open boundary
-conditions for the Euclidean time direction should slow the increase of the
-autocorrelation time of the topological charge. The reason is that when open
-boundary conditions are used topological charge can flow into or out of the
-lattice through the boundaries and thus the topological charge can change
-continuously without the need for rare tunneling events. Ref. [5] provided
-evidence for this hypothesis by studying the dependence of autocorrelation
-times on the lattice spacing a in simulations of pure SU(3) gauge theory with
-open boundary conditions. Autocorrelation times were observed to scale like
-1/a2 at fine enough lattice spacings, which is a slower increase than expected
-with periodic boundary conditions. However, that work was not able to make
-a direct comparison between periodic and open boundary conditions because
-only open boundaries were simulated""\cite{PhysRevD.90.074502}
-
-QUOTE FROM "Topological Susceptibility in SU(3) Gauge Theory"
-""Since the mass of the
-lightest glueball is around 1.5 GeV, finite-volume effects
-are expected to be far below our statistical errors as soon as
-L$\geq$1 fm""
-
-
+\subsubsection{Simulation parameters}
+Keeping all of these factors in mind, we can begin to settle on our choices of simulation parameters.
 To determine the lattice spacing $a$ from the inverse coupling $\beta$ we use an interpolation from \cite{Guagnelli_1998}, which is valid for $5.7 \leq \beta \leq 6.57$:
 \begin{equation}\label{eq:avBeta_interpolated}
 \ln \left(a / r_{0}\right)=-1.6805-1.7139(\beta-6)+0.8155(\beta-6)^{2}-0.6667(\beta-6)^{3}.
@@ -1859,11 +1985,11 @@ According to the authors, this interpolation is accompanied by a relative error,
 \begin{equation}
 Error_{a/r_0} = \frac{a}{r_0}(0.0034482758621\beta - 0.0166551724138)
 \end{equation}
-
+We want to sample the configuration space at roughly evenly spaced values of the lattice spacing, keeping the simulation volume constant. This is to optimize the influence of each ensemble on the final continuum limit, closely grouped values would do a worse job at constraining the extrapolation.\\This is a good point to mention an additional constraint which won't be explained until section \ref{sec:parallelization}: we need the lattice to have an even number of points in each dimension.\\These, along with the constraint that our simulation volume must be larger than $1.4fm$ resulted in the choices shown in figure \ref{fig:choosingBetasAndLambdas}.
 \begin{figure}[H]
 \centering
-\includegraphics[trim=0.0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.7]{ChoosingWhichvalsForNandBeta.pdf}
-\caption[]{$L=1.5fm$, $a(\beta)$ defined in \eqref{eq:avBeta_interpolated} }\label{fig:as}
+\includegraphics{FINALPLOTS/N_v_beta.pdf}
+\caption[]{Choices for $\beta$ and $N$. $L=1.5fm$ produces values which nicely line up with the curve $L/a(\beta)$ at even values of $N$. $a(\beta)$ is as defined in \eqref{eq:avBeta_interpolated}}\label{fig:choosingBetasAndLambdas}
 \end{figure}
 
 
@@ -1882,183 +2008,12 @@ FOR ERRORS IN TABLE\\Every ensemble has used $N_{OR}/N_{HB}=4$!\\
 	  		   $22^4$ & 		&  	 	  & $1.04$  		 		 &$2000$ 	  & $1$		       & $1$  		   & $2\cdot3000$		 & $2\cdot3000$
 \end{tabular}
 
-Need:
-\begin{enumerate}
-\item Q distribution at same flow time for three different lattice spacings
-\end{enumerate}
-
-
-
-
-
-
-\subsubsection{Critical slowing down}
-CORRELATION TIMES OF TOPOLOGICAL OBSERVABLES HEATBATH V. OTHERS
-\subsubsection{Local Hybrid Monte Carlo}
-\subsubsection{Cabbibo- Marinari Heatbath}
-Heatbath algorithms have proven invaluable tools for generating gauge configurations in pure gauge theory. It has been shown to be, in the case of SU(3), about three times more efficient than the metropolis algorithm \cite{CABIBBO1982387}. The heatbath algorithm combines the configuration proposal and acceptance steps of the Wilson gauge action- Metropolis algorithm by sampling gauge links directly from the distribution
-\begin{equation}\label{eq:Heatbath_distribution}
-\mathrm{d} P(U)=\mathrm{d} U \exp \left(\frac{\beta}{N} \operatorname{Re} \operatorname{tr}[U A]\right)
-\end{equation}
-with $\mathrm{d} U$ denoting the Haar measure of $SU(N)$ and $A$ denoting the sum of staples 
-\begin{equation}
-\begin{aligned}
-A=&\sum_{\nu \neq \mu}\left(U_{\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}+\hat{\nu}) U_{-\nu}(n+\hat{\nu})\right.\\
-&\left.+U_{-\nu}(n+\hat{\mu}) U_{-\mu}(n+\hat{\mu}-\hat{\nu}) U_{\nu}(n-\hat{\nu})\right).
-\end{aligned}
-\end{equation}
-While no Heatbath algorithms exist that sample directly from $SU(3)$ group space, the so- called pseudo- heatbath algorithm of Cabbibo and Marinari \cite{CABIBBO1982387} works by performing three $SU(2)$ heatbath updates on the $SU(2)$ subgroups of the link variables. Denote by 
-\begin{equation}\label{eq:SU2_embeddingInSU3}
-R=\left(\begin{array}{ccc}
-r_{11} & r_{12} & 0 \\
-r_{21} & r_{22} & 0 \\
-0 & 0 & 1
-\end{array}\right), S=\left(\begin{array}{ccc}
-s_{11} & 0 & s_{12} \\
-0 & 1 & 0 \\
-s_{21} & 0 & s_{22}
-\end{array}\right)\,\, and\,\, T=\left(\begin{array}{ccc}
-1 & 0 & 0 \\
-0 & t_{11} & t_{12} \\
-0 & t_{21} & t_{22}
-\end{array}\right)
-\end{equation}
-the elements of the $SU(2)$ subgroups of $UA$ embedded in $3\times3$ matrices. Then the link variable $U$ can be successively updated by left multiplication with $R$, $S$ and $T$, where the elements $r_{nm}$, $s_{nm}$ and $t_{nm}$ have been updated using a $SU(2)$ heatbath.
-\paragraph{The SU(2) Heatbath} algorithm we detail here follows that of Kennedy and Pendleton \cite{KENNEDY1985393}.\\$SU(2)$ has the property that the sum of any of its elements is proportional to another element of $SU(2)$. Because of this, the sum of staples can be expressed as $A = aV$ for $a=\sqrt{\operatorname{det}[A]}$. In the $O(4)$ representation of $SU(2)$, parameterized by 
-\begin{equation}\label{eq:O(4)SU(2)rep}
-A=x_{0} \mathbb{1}+\mathrm{i} \boldsymbol{x} \cdot \boldsymbol{\sigma}
-\end{equation}
-we have $a = \sqrt{x_0^2 +\mathbf{x}^2}$. To sample gauge links from \eqref{eq:Heatbath_distribution}, we can use the invariance of the Haar measure under left- and right multiplication with group elements to express the distribution as
-\begin{equation}
-\mathrm{d} P(X)=\mathrm{d} X \exp \left(\frac{1}{3} a \beta \operatorname{Retr}[X]\right)
-\end{equation}
-for $X = UV$ (note that the distribution has the factor $\frac{1}{3}$ because we're ultimately updating $SU(3)$ group elements). In this same representation, the new Haar measure is
-\begin{equation}
-\mathrm{d} X=\frac{1}{\pi^{2}} \mathrm{~d}^{4} x \frac{\theta\left(1-x_{0}^{2}\right)}{2 \sqrt{1-x_{0}^{2}}}\left(\delta\left(|\boldsymbol{x}|-\sqrt{1-x_{0}^{2}}\right)+\delta\left(|\boldsymbol{x}|+\sqrt{1-x_{0}^{2}}\right)\right).
-\end{equation}
-where $\theta$ is the step function. The second Dirac delta term doesn't contribute
-and so the only non- zero contribution is from $|\boldsymbol{x}| = \sqrt{1-x_{0}^{2}}$. From \eqref{eq:O(4)SU(2)rep}, we see that the only real diagonal element is $x_0$, which contributes to the real trace as $\operatorname{Retr}[X] = 2x_0$, thus the distribution can be expressed as 
-\begin{equation}
-\mathrm{d} P(X)=\frac{1}{2 \pi^{2}} \mathrm{~d} \cos \vartheta \mathrm{d} \varphi \mathrm{d} x_{0} \sqrt{1-x_{0}^{2}} \mathrm{e}^{\frac{2}{3}a \beta x_{0}}.
-\end{equation}
-for $x_{0} \in[-1,1], \cos \vartheta \in[-1,1]$, and $\varphi \in[0,2 \pi)$.
-Sampling matrices from this distribution effectively amounts sampling $ x_{0}$, as well as the trivial uniform sampling of $\cos \vartheta$ and $\varphi$ from their respective intervals.\\In order to effectively sample $x_0$ from the distribution $\mathrm{e}^{\frac{2}{3}a \beta x_{0}}$, four uniformly distributed random numbers $R,R',R''' \in (0,1]$ and $R''\in [0,1]$ are generated. We then introduce a new variable $\alpha =\frac{a\beta}{3} $ (this is to match the notation used in \cite{KENNEDY1985393}) and calculate 
-\begin{equation}
-\bar{\delta} = -\frac{1}{\alpha}\left(\ln \left(R'\right)+\cos ^{2}\left(2 \pi R''\right) \ln \left(R'\right)\right).
-\end{equation}
-$\bar{\delta}$ is then either accepted if 
-$R'''^2 \leq 1-\frac{1}{2}\bar{\delta}$ or otherwise rejected, in which case four new random numbers are generated and the procedure is repeated. If $\bar{\delta}$ is accepted, we set $x_0 = 1-\bar{\delta}$.\\\\With $x_0$ determined, we can now calculate $|\mathbf{x}| = \sqrt{1-x_0^2}$, and using $\cos \vartheta$, $\varphi$ and $\sin \vartheta = \sqrt{1.0-\cos^2 \vartheta}$ we get the values $x_1 = |\mathbf{x}|\sin \vartheta \cos\varphi$, $x_2 = |\mathbf{x}|\sin \vartheta \sin\varphi$, $x_3 = |\mathbf{x}|\cos \vartheta$. To get back to the matrix representation, we use \eqref{eq:O(4)SU(2)rep} to get
-\begin{equation}
-U=\left[\begin{array}{ll}
-x_0+ix_3 & x_2+ix_1 \\
--x_2+ix_1 & x_0-ix_3
-\end{array}\right]
-\end{equation}
-\subsubsection{Overrelaxation}
-Overrelaxation is a method which attempts to increase the distance in group space traversed between configurations. It does this by exploiting the symmetry of the action under certain operations, to propose new link variables which leave the action invariant and therefore are automatically accepted.
-Overrelaxation is not ergodic on it's own as it only traverses the configuration subspace of constant action. It is therefore necessary to include fully canonical update methods such as the Heatbath to achieve ergodicity.\\\\We proceed by examining the Overrelaxation method which works by updating the $SU(2)$ subgroups of $SU(3)$. Similar in vein to the scheme introduced for the Cabbibo- Marinari Heatbath.\\\\There exists overrelaxation algorithms for SU(N) gauge theories with $N>2$, and they have proven to be more efficient than SU(2) subgroup update- algorithms. Its implementation however, is more involved than the SU(2) subgroup algorithm, and for $N=3$, the improvement in the autocorrelation time of e.g. the Polyakov loop is very slight \cite{inbook}.\\\\For the Wilson action we see that the trace remains invariant if the proposed $U'$ has the property that $U' = V^\dagger U^\dagger V^\dagger$ where $V = \frac{A}{a}$ following the same convention as for the $SU(2)$ Heatbath. We get that
-
-\begin{equation}
-\operatorname{tr}\left[U^{\prime} A\right]=\operatorname{tr}\left[V^{\dagger} U^{\dagger} V^{\dagger} A\right]=a \operatorname{tr}\left[V^{\dagger} U^{\dagger}\right]=\operatorname{tr}\left[A^{\dagger} U^{\dagger}\right]=\operatorname{tr}[U A].
-\end{equation}
-
-In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Overrelaxation constitues a massive improvement when it comes to decorrelating measurements in Monte Carlo time \cite{PhysRevLett.58.2394} and its ease of implementation to pre-existing update algorithms makes it an obvious addition when generating gauge configurations.
-
-\subsubsection{•}
-\begin{algorithm}[H]
-\caption{$SU(3)$ Cabbibo- Marinari w/ Overrelaxation}\label{alg:HBplusOR}
-\begin{algorithmic}
-
-\While{$n<\# iterations$}
-\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}\Comment{Start of Heatbath}
-
-\For{$SU(2)$ subgroup number $I$ of $SU(3)$ at $n$ for $I\in\{0,1,2\}$}
-
-\State $W = U_\mu(n)A_\mu(n)$\Comment{$A_\mu(n)$ is the sum of staples found in eq. \eqref{eq:sumOfStaples} }
-\Procedure{GetSU(2)submatrixIn$O_4$Rep}{$W$, $I$}
-  \State $k \gets I+1$\Comment{The combinations of $j$ and $k$}
-\State $j \gets k / 3$ \Comment{parametrizes the embedding onto the $SU(2)$ element}
-\State $k \gets k - j$ \Comment{in the $O_4$ representation according to \eqref{eq:SU2_embeddingInSU3}.}
-\State $Z_0 \gets \operatorname{Re}\left( W_{jj} + W_{kk} \right)$, $Z_1 \gets \operatorname{Im}\left( W_{jk} + W_{kj} \right)$
-\State $Z_2 \gets \operatorname{Re}\left( W_{jk} - W_{kj} \right)$, $Z_3\gets \operatorname{Im}\left( W_{jj} - W_{kk} \right)$
-\EndProcedure
-\State $Q \gets \mathsf{HB_{SU(2)}} \left( Z \right)$ \Comment{$Q\in SU(2)$}
-
-\State $X \gets \mathbb{1}_{3\times 3}$
-\State $X_{jj} \gets Q_{00},\,X_{jk} \gets Q_{01},\,X_{kj} \gets Q_{10},\,X_{kk} \gets Q_{11}$
-\State $U_\mu(n) \gets XU_\mu(n)$
-\EndFor
-\EndFor
-
-
-\While{$n_{OR}< N_{OR\,per\,HB}$}\Comment{Start of Overrelaxation}
-
-\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
-
-\For{$SU(2)$ subgroup number $I$ of $SU(3)$ at $n$ for $I\in\{0,1,2\}$}
-\State $W = U_\mu(n)A_\mu(n)$
-\State $Z \gets GetSU(2)submatrixInO_4Rep(W,\, I)$
-\State $a=\sqrt{Z\cdot Z}$
-\If{$a<\epsilon$}
-\State $Z \gets (1,0,0,0)$
-\Else
-\State $Z \gets \frac{1}{a}Z^\dagger = \frac{1}{a}\left( Z_0,-Z_1,-Z_2,-Z_3 \right)$
-\State\Comment{$\left( Z_0\mathbb{1}-i\vec{Z}\cdot\vec{\sigma} \right)^2 = (Z_0^2-\vec{Z}\cdot\vec{Z})\mathbb{1}-2iZ_0\vec{Z}\cdot\vec{\sigma}$}
-\State $V_0 \gets Z_0^2-(Z_1^2+Z_2^2+Z_3^2)$
-\State $V_1 \gets -2Z_0Z_1$
-\State $V_2 \gets -2Z_0Z_2$
-\State $V_3 \gets -2Z_0Z_3$
-\State $X \gets V_0\mathbb{1}+\vec{V}\cdot i\vec{\sigma}$
-\State $U_\mu(n) \gets XU_\mu(n)$
-\EndIf
-\EndFor
-\EndFor
-\EndWhile
-\EndWhile
-\end{algorithmic}
-\end{algorithm}
-
-
-
-
-\begin{algorithm}[H]
-\caption{$SU(2)$ Heatbath}\label{alg:SU2HB}
-\hspace*{\algorithmicindent} \textbf{Input: $Z$ in the $O4$ rep. of $SU(2)$} \\
-\hspace*{\algorithmicindent} \textbf{Output: $X$ in the $GL(2,\mathcal{C})$ rep. of $SU(2)$}
-\begin{algorithmic}
-\Ensure
-\State $Z \gets $ function input $(Z)$
-\State $\beta \gets $ ensemble $\beta$
-\State $a=\sqrt{Z\cdot Z}$
-\State $Z \gets \frac{1}{a}Z$
-
-\State $X \gets Z_0\mathbb{1}-\vec{Z}\cdot i\vec{\sigma}$
-
-\While{$R^2>1-\frac{1}{2}\bar{\delta}$}
-\State Generate uniform, random numbers $r_0,\,r_1 \in (0,1]$,  $r_2 \in [0,1)$ and $R \in [0,1)$
-\State $X = -\operatorname{ln}(r_0)$
-\State $X' = -\operatorname{ln}(r_1)$
-\State $C = \cos^2\left( 2\pi r_2 \right)$
-\State $A = XC$
-\State $\bar{\delta} = 3\frac{X'+A}{\beta a}$
-\EndWhile
-\State Generate uniform, random numbers $R'\in [-1,1)$ and $R'' \in [0,1)$
-
-\State $\theta_{cos} \gets R'$
-\State $\phi \gets 2\pi R''$
-\State $\theta_{sin} \gets \sqrt{1-\theta_{cos}^2}$
-\State $x_0 \gets 1-\bar{\delta}$
-\State $|x| \gets \sqrt{1-x_0^2}$
-\State $x_1 \gets |x|\theta_{sin}\cos{\phi}$
-\State $x_2 \gets |x|\theta_{sin}\sin{\phi}$
-\State $x_3 \gets |x|\theta_{cos}$
-\State $V \gets x_0\mathbb{1}+\vec{x}\cdot i\vec{\sigma}$
-\State $X\gets VX$
-\end{algorithmic}
-\end{algorithm}
+\subsubsection{Thermalization}
+\paragraph{Hot start}
+\paragraph{Cold start}
 
 \subsection{Observables}
-\subsubsection{Improved Lattice Field-Strength tensor}\ref{sec:improvedLatticeFieldStrengthTensor}
+\subsubsection{Improved Lattice Field-Strength tensor}\label{sec:improvedLatticeFieldStrengthTensor}
 For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:
 \begin{equation}
 W_{\mu \nu}^{(m \times n)}=\mathscr{P} \mathrm{e}^{\mathrm{ig} \oint A \mathrm{~d} x}
@@ -2478,7 +2433,6 @@ The terms $C^{(m,n)}$ are so called clover terms which can be calculated on the 
 \caption{$C^{(1,1)}$ and $C^{(2,2)}$ contain a factor of $\frac{1}{4}$ since the two terms are symmetric under $n\leftrightarrow m$. $C^{(1,2)}$ and $C^{(1,3)}$ each need to be evaluated for two different orientations and their results added and multiplied by a factor of $\frac{1}{8}$. Thanks to Martin Ueding for providing Tikz templates on \href{https://github.com/HISKP-LQCD/lqcd-tikz-graphics}{\textbf{their github}}.}\label{figure:Clovers}
 \end{figure}
 equation \eqref{eq:cloverToFST} can then be applied to each clover term to get the improved field strength tensor from equation \eqref{eq:Improved_lattice_field_strength_tensor_FINAL}.
-\subsubsection{Average Plaquette}
 \subsubsection{Energy Density}
 The definition for the energy of the gauge fields can be defined directly from the continuum in terms of the lattice field strength tensor as
 \begin{equation}
@@ -2532,7 +2486,6 @@ In the large volume limit, we can define the topological susceptibility on the l
 \chi_{\mathrm{t}}=\frac{1}{V} \int d^{4} x d^{4} y\langle q(x) q(y)\rangle = \lim\limits_{V\rightarrow \infty}\frac{1}{V}\left( \langle Q^2 \rangle - \langle Q\rangle^2 \right) =\lim\limits_{V\rightarrow \infty} \frac{\langle Q^2 \rangle}{V}
 \end{equation}
 where we have used the fact that the expectation value of the topological charge is 0.
-\subsubsection{Autocorrelation time}
 \subsection{Wilson Flow}
 
 \subsubsection{Numerical integration of the Wilson flow}
@@ -2605,27 +2558,34 @@ where we introduced the variable $\Omega = V_\mu(n)A - \left( V_\mu(n)A \right)^
 M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a^i = 2\operatorname{Tr}\left( T^iM \right)  
 \end{equation}
 \cite{borodulin1995core}.
-\subsubsection{•}
+\subsubsection{Algorithm}
 \begin{algorithm}[H]
-\caption{Wilson flow w/ 4th order Runge-Kutta}\label{alg:Wilson_flow}
+\caption{Wilson flow w/ third order Runge-Kutta}\label{alg:Wilson_flow}
 \begin{algorithmic}
 \Ensure
 \State Load a thermalized gauge configuration into $U$
 
-\While{$k\leq n-1$}\Comment{Full steps between half-steps, typically $n\approx 1/\varepsilon$}
-\State $U_{(k)}=\exp \left(\mathrm{i} \varepsilon P_{\left(k-\frac{1}{2}\right)}\right) U_{(k-1)}$
-\State $P_{\left(k+\frac{1}{2}\right)}=P_{\left(k-\frac{1}{2}\right)}-\varepsilon F\left[ U_{(k)},\phi \right]$
-\State $ k+=1$
+\While{$n < t_{stop}/\epsilon$}
+	\State $Z^0 \gets \partial_{n, \mu}S_W\big|_{U}$
+	\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
+	\State $U_{n\,\mu} \gets \operatorname{exp_{Cayley-Hamilton}}\left( \frac{1}{4}\epsilon Z^0_{n\,\mu} \right)\cdot U_{n\,\mu}$
+	\EndFor
+	
+		\State $Z^1 \gets \partial_{n, \mu}S_W\big|_{U}$
+		\State $Z^0 \gets \frac{8}{9}Z^1 -\frac{17}{36}Z^0$
+	\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
+	\State $U_{n\,\mu} \gets \operatorname{exp_{Cayley-Hamilton}}\left( \epsilon Z^0 \right)\cdot U_{n\,\mu}$
+	\EndFor
+	
+		\State $Z^2 \gets \partial_{n, \mu}S_W\big|_{U}$
+	\For{$\forall\, n \in \mathbf{\Lambda} \& \mu\in \{ 0,1,2,3 \}$}
+	\State $U_{n\,\mu} \gets \operatorname{exp_{Cayley-Hamilton}}\left( \epsilon \left( \frac{3}{4}Z^2_{n\,\mu} - Z^0_{n\,\mu} \right) \right)\cdot U_{n\,\mu}$
+	\EndFor
+	\State $n\gets n+1$
+	\State Take measurements
 \EndWhile
-\State $U_{(n)}=\exp \left(\mathrm{i} \varepsilon P_{\left(n-\frac{1}{2}\right)}\right) U_{(n-1)}$
-\State $P_{\left(n\right)}=P_{\left(n-\frac{1}{2}\right)}-\frac{\varepsilon}{2} F\left[ U_{(n)},\phi \right]$\\
-\State Calculate $\exp (-\Delta H)$
-\State Generate a random, uniformly distributed number $r \in [0,1) $
-\If{$\exp (-\Delta H)\geq r$}
-    \State $U \gets U_{new}$
-\Else
-    \State $U \gets U_{old}$
-\EndIf
+    
+\State Save flowed gauge configuration to file in case more flow is required.
 
 \end{algorithmic}
 \end{algorithm}
@@ -2693,7 +2653,7 @@ where $N_j$ is the extent of the lattice in the direction $j \in \{1,2,\ldots M 
 
 
 
-\subsection{Parallelization}
+\subsection{Parallelization}\label{sec:parallelization}
 LQCD is inherently very costly to simulate, and the cost increases rapidly for the larger lattices required to maintain the simulation volume at small lattice spacings. Therefore it is a necessity that the program includes some form of parallel computing, specifically the type known as "Single instruction, multiple data" or SIMD. To do this, the simulation volume is split into a number of non-overlapping areas of responsibility, each assigned to a different process. A popular protocol for handling cross- process communications, timing, I/O and many other features, is known as MPI (Message-Passing-Interface), and it's the protocol this program is based on.\\\\Every process will have two sets of sites in its memory which we may call "sites of responsibility" and "boundary sites". The former are all the sites which that process will have the sole responsibility for updating. The latter are all the sites which the process needs in order to complete its calculations, but which are within another process' sites of responsibility. The scope of boundary sites required by a process is dependent on the type of operations it's required to do. For example, calculating the plaquette term in the Wilson action requires only the first layer of boundary sites. More complicated terms, such as the clover terms in our definition for the lattice field strength tensor  illustrated in figure \ref{figure:Clovers}, requires three layers of boundary sites.\\\\We'll want a set of indices unique to each process, this is mainly for two reasons: data locality and keeping indices going from zero and up.
 We can imagine trying to use the set of global indices to index a list of field values. When the program is updating a point on the lattice, it will need to fetch the field values of the surrounding points from memory. If the data of those points are stored sequentially in memory, there is a chance that that data can be found in the cache, which is much greater if they are stored physically close in memory.\\With the global indices, this is very unlikely to happen as neighbouring points will be separated by many numbers corresponding to points outside the process domain. The local index is only assigned to points which are needed by the process, which keeps the separation in indices between neighbouring points low, and therefore the chance of cache hits high, improving performance.\\\\With this point in mind, another consideration is the fact that Monte Carlo updates with the local Wilson action only uses field values from points of opposite parity, which gives another point of improvement for the local index system. By first assigning indices to points of one parity, then the other, relevant field values are even more closely located in memory, improving caching even further. This local index system is illustrated in figure \ref{figure:Local_lattice_parameterization}.
 
@@ -2966,9 +2926,7 @@ We see that the lattice must necessarily contain an even number of sites in ever
 SENDS AND RECEIVES AT THE SAME TIME
 
 \section{Results}
-6.46 ENERGY DENSITY - uses 200 + updates between uncorrelated measurements\\
-6.46 Q - uses 2700-2800 ish updates between uncorrelated measurements(0.6 pm 0.19 at 2800) (0.58 pm 0.2 at 3200) (0.4 pm 0.15 at 3600)\\
-6.46 $Q^2$ - uses 2000-2400 ish updates between uncorrelated measurements (0.48 pm 0.15 at 2400) (0.6 pm 0.2 at 2000)\\\\6.0: 200 updates for Q, 200 updates for E\\6.13: 200 updates for Q, 200 updates for E\\6.26: 800 updates for Q, 400 updates for E 
+
 \subsection{Improved v. clover- Field strength tensor}
 \begin{figure}[H]
 \centering
@@ -3126,7 +3084,7 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 
 
 \section{Error Analysis}
-
+\subsection{Autocorrelation}
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
@@ -3148,10 +3106,17 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 \includegraphics{FINALPLOTS/ProofOfStatisticalIndependence.pdf}
 \caption[]{Integrated Auto correlation time of the data used}\label{fig:PLACEHOLDER}
 \end{figure}
+\subsection{Bootstrapping}
 \section{Future analysis and improvements}
 \subsection{Optimizing OR-HB ratio for autocorrelation of topological observables}
 \subsection{Topological susceptibility dependence on topological charge definition}
+It's quite suspect that the difference between the Non-Gaussianities results for the topological susceptibility and the ones obtained here are so different.
+everything is implemented to do this analysis, it just hasn't been done. 
+\subsection{Topological susceptibility continuum limit at different flow times}
 everything is implemented to do this analysis, it just hasn't been done
+\subsection{$\tau_{int}$ of topological observables using Local Hybrid Monte Carlo algorithms}
+\subsection{Do all configurations with $Q=0$ have $q=0$ everywhere}
+Potentially exposing my own ignorance here, but I genuinely don't know the answer to this. This would not be a difficult  analysis to do.
 \subsection{SU(3) Over-Relaxation}
 \cite{diffGeom}
 \newpage
