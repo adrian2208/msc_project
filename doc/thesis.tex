@@ -1991,11 +1991,13 @@ We want to sample the configuration space at roughly evenly spaced values of the
 \includegraphics{FINALPLOTS/N_v_beta.pdf}
 \caption[]{Choices for $\beta$ and $N$. $L=1.5fm$ produces values which nicely line up with the curve $L/a(\beta)$ at even values of $N$. $a(\beta)$ is as defined in \eqref{eq:avBeta_interpolated}}\label{fig:choosingBetasAndLambdas}
 \end{figure}
-
-
-SEE 
-https://journals-aps-org.ezproxy.uio.no/prd/pdf/10.1103/PhysRevD.92.074502
-FOR ERRORS IN TABLE\\Every ensemble has used $N_{OR}/N_{HB}=4$!\\
+\paragraph{Thermalization}
+For thermalization one has a choice of whether to start with all links set to the trivial link (known as a cold start), or whether to start with every link set to a random element of SU(3) (known as a hot start). Performing both, then seeing when the two initial conditions produce the same outcome on the Monte Carlo chain is one way of estimating the required thermalization. Because the topological charge requires the Wilson flow before it can be analyzed, this would be far too costly. Instead, the number of thermalization steps is chosen to be higher than the estimated integrated autocorrelation time.\\\\Choosing cold starts for our analysis would essentially amount to preferentially sample configurations with a topological charge of zero. This is obviously not an option, so every ensemble uses hot starts.
+\paragraph{$N_{OR}/N_{HB}$}
+In the combined HB-OR method, an obvious hyper-parameter one could tweak to improve decorrelation would be the number of OR steps used per HB step. This optimization is lattice constant- dependent and would also be specific to the topological charge. Rather than performing an expensive analysis of this relationship with potentially dubious improvement, we choose a ratio of $\frac{N_{OR}}{N_{HB}}=4 $ which has already been used successfully in \cite{PhysRevD.92.094518}.\\\\Finally, we're ready to state our chosen simulation parameters. Using the estimates for the integrated autocorrelation time obtained in section \ref{sec:autoCorr_analysis} we settle at the values in table \ref{tab:SimulationParameters}
+\begin{table}[H]
+\caption{Simulation parameters for every analysed ensemble}
+\label{tab:SimulationParameters}
 \begin{tabular}{lcccccccc}
 \hline \hline Lattice & $\beta$ & $a[fm]$ & $L[fm]$ &$N_{therm}$ & $N_{decorr}^E$ & $N_{decorr}^Q$& $N_{meas}^E$& $N_{meas}^Q$\\
 \hline		   $16^4$ &   $6.0$ & $0.093$ & $1.49$  		 		 &$2000$  	  & $200$		   & $200$		   & $1704$		 & $1704$ \\	  
@@ -2007,12 +2009,13 @@ FOR ERRORS IN TABLE\\Every ensemble has used $N_{OR}/N_{HB}=4$!\\
 	  		   $32^4$ &   $6.46$& $0.047$ & $1.51$  		 		 &$4700$ 	  & $1350$		   & $4050$		   & $645$		 & $215$ \\
 	  		   $22^4$ & 		&  	 	  & $1.04$  		 		 &$2000$ 	  & $1$		       & $1$  		   & $2\cdot3000$		 & $2\cdot3000$
 \end{tabular}
+\end{table}
 
-\subsubsection{Thermalization}
-\paragraph{Hot start}
-\paragraph{Cold start}
+
+
 
 \subsection{Observables}
+
 \subsubsection{Improved Lattice Field-Strength tensor}\label{sec:improvedLatticeFieldStrengthTensor}
 For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:
 \begin{equation}
@@ -2442,6 +2445,8 @@ Because the energy is an extrinsic property of the gauge field, it is usually no
 \begin{equation}
 E = \frac{1}{2\left| \Lambda \right|}\sum\limits_{x\in\Lambda}\operatorname{Tr}\left[ F_{\mu \nu}(x) F_{\mu \nu}(x)\right].
 \end{equation}
+
+Every analysis of the energy density in this thesis uses the unimproved clover definition with the exception of a small comparative study.\\The reason for this is simply that the evaluation of the improved lattice field strength tensor is much more expensive, and the analysis of the energy density is only considered as a minor addendum.  
 
 \subsubsection{Topological Charge}
 The lattice definition of the topological charge is given by the sum of the topological charge density 
@@ -2923,16 +2928,24 @@ Then by choosing either parity $0$ or $1$ and a direction $\mu$, every such link
 We see that the lattice must necessarily contain an even number of sites in every direction in order for the lattice to be correctly partitioned into even and odd sites for periodic boundary conditions.
 
 \subsubsection{Field communication}
-SENDS AND RECEIVES AT THE SAME TIME
+All communication between processes is done using MPI. MPI provides a few different standards for doing this, which influences its behaviour. There are many such standards but most simply, there are so-called 'blocking' and 'non-blocking' variants. A blocking send command is called using $MPI_Send()$. This will transfer a buffer to the specified process, then wait for confirmation from the receiving process before moving on. This is quite bad for performance, because the receiving process might be farther behind in its computations, halting the sending process until it is ready to receive.\\Rather than doing this, we use the non-blocking variant which is called using $MPI_ISend()$. This command will send the buffer, then immediately move on to the next lines of code. This allows the sending process to execute code until it's halted by a $MPI_Wait()$ command at which point, it waits for confirmation from the receiving process before moving on.\\This distinction is quite important, because it allows the process to spend that extra time receiving data from yet another process. The ids' of the process which is sent to and received from is determined by
+\begin{equation}
+Id_{send\,to} = \operatorname{mod}(id + i,N_{procs}),\,\,i \in \{ 1,\ldots,N_{procs}-1 \}
+\end{equation}
+\begin{equation}
+Id_{rec\,from} = \operatorname{mod}(id + N_{procs} - i,N_{procs}),\,\,i \in \{ 1,\ldots,N_{procs}-1 \}
+\end{equation}
 
 \section{Results}
 
 \subsection{Improved v. clover- Field strength tensor}
+We had different choices for which lattice field strength tensor definition to use, so it's obviously interesting to see what effect it had. Because the analysis only included one of the definitions, this is a rather limited analysis, performed at the very last point along the flow, where the whole gauge configurations had been saved, rather than just the observables. Still, we can try to glean some information from this.\\\\We see from figure \ref{fig:Q_FST_defs_diff} that the clover definition of the topological charge produces results which differ substantially from the improved definition. The clover definition of the lattice field strength tensor produces a topological charge definition with $\mathcal{O}(a^2)$ errors compared to the $\mathcal{O}(a^4)$ errors arising from the improved definition. What implications this has for the computation of the topological susceptibility in the two definitions is not clear. The two definitions are in the same universality class, and so the result is expected to be the same in the continuum limit.
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/Q_def_diff.pdf}
-\caption[]{FINAL}\label{fig:PLACEHOLDER}
+\caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right}\label{fig:Q_FST_defs_diff}
 \end{figure}
+
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/E_def_diff.pdf}
@@ -3084,7 +3097,7 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 
 
 \section{Error Analysis}
-\subsection{Autocorrelation}
+\subsection{Autocorrelation}\label{sec:autoCorr_analysis}
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
