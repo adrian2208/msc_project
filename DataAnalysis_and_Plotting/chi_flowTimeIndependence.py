@@ -67,13 +67,14 @@ beta = [6.0,6.13,6.26,6.46]
 V = [16**4,20**4,24**4,32**4]
 extrapolate_at_t_comp_list = [#3/4 : [2.4,3.6,5.4,9.5],
                               #1/2 : [1.6,2.4,3.6,6.3],
+                              [3.4,5.15,7.6,13.0],
                               [0.8,1.2,1.8,3.0],#1/4
                               [0.55,0.8,1.2,2.0],#1/6
-                              [0.25,0.4,0.6,1.0]]#1/12
+                              [0.4,0.6,0.9,1.5]]#1/8   #1/12 [0.25,0.4,0.5,1.0]
 t0_list = [3.2,4.85,7.1,12.2]
 color_list = [blue,green,orange,purple,red]
 marker_list = ['^','o','s','p']
-label_list = [r'$t = 1/4t_0$',r'$t = 1/6t_0$',r'$t = 1/12t_0$']
+label_list = [r'$t = 50/47t_0$',r'$t = 1/4t_0$',r'$t = 1/6t_0$',r'$t = 1/8t_0$']
 a = [calc_a(entry) for entry in beta]
 aOverR0 = [calc_aOverr0W_errors(entry) for entry in beta]
 t0_list_phys = np.array([ufloat(0.1108,0.0009),ufloat(0.1107,0.0010),ufloat(0.1109,0.0011),ufloat(0.1115,0.0013)])
@@ -127,7 +128,7 @@ for k in range(len(extrapolate_at_t_comp_list)):
         temp_denArray = at_t0_Qarraylist[j]
 
 
-        temp_mean,temp_std_dev = RatioCovariance(df2**2,temp_denArray.to_numpy()**2,10000,fileEnd_list[j]-20)
+        temp_mean,temp_std_dev = RatioCovariance(df2**2,temp_denArray.to_numpy()**2,1000,fileEnd_list[j]-20)
         temp_std_dev = np.sqrt(temp_std_dev)
 
         #temp_mean = temp_num.nominal_value/temp_den.nominal_value
@@ -204,4 +205,4 @@ plt.xlabel(r'$a^2/t_0$')
 plt.legend()
 #plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\chi_flowTime_independence.pdf')
 #plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\chi_flowTime_independence_a^4_extrapolation.pdf')
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\chi_flowTime_independence.pdf', bbox_inches="tight")
+plt.savefig('chi_flowTime_independence.pdf', bbox_inches="tight")

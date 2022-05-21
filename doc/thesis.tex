@@ -2943,27 +2943,29 @@ We had different choices for which lattice field strength tensor definition to u
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/Q_def_diff.pdf}
-\caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right}\label{fig:Q_FST_defs_diff}
+\caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:Q_FST_defs_diff}
 \end{figure}
-
+For the energy density we see that the relative difference between the two definitions follow a similar relationship. It's noticeable that the coarsest lattice produces considerably larger differences than the finer lattices. This observation will inform our analysis of $\Lambda_{YM}$.
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/E_def_diff.pdf}
-\caption[]{FINAL}\label{fig:PLACEHOLDER}
+\caption[]{Expectation value of the difference between the two Energy density definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:E_FST_defs_diff}
 \end{figure}
-\subsection{Scale setting with $t^2\langle E\rangle$}
+\subsection{Energy density}
+The Wilson flow drives the action towards its stationary points. We therefore expect the energy density of the gauge field to go to zero in the large flow time limit. This is exactly what we find, as can be seen in figure \ref{fig:EvFlow}. 
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/E_v_flowtime.pdf}
-\caption[]{FINAL- E v t}\label{fig:PLACEHOLDER}
+\caption[]{Expectation value of the energy density as a function of the physical flow time over the square of the Sommer parameter. The error bars are smaller than the symbols. }\label{fig:EvFlow}
 \end{figure}
-
+\subsubsection{Scale setting with $t^2\langle E\rangle$}
+As we saw, to leading order in perturbation theory, $t^2\langle E\rangle$ is proportional to the gauge coupling. We expect that this perturbative expansion should match our lattice results within some range of flow times. This is between the range in which perturbation theory is expected to break down and where the discretization effects of the lattice causes scaling violations in $\langle E\rangle$.\\In figure \ref{fig:tsquaredE_v_flowtime}, which has been replicated from Lüscher's paper\cite{Luscher2010}, we see that the finest lattice produces near perfect agreement with perturbation theory within the range of roughly $\frac{t}{r_0^2}=0.01$ to $\frac{t}{r_0^2}=0.035$. This region corresponds to a smearing radius $\sqrt{8t}$ which is $3-5.6$ times the lattice spacing.
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
-\caption[]{FINAL}\label{fig:PLACEHOLDER}
+\caption[]{The dimensionless combination $t^2\langle E\rangle$ as a function of the physical flow time over the squared Sommer radius. The errorband in the perturbative expansion is dominated by the error in $\Lambda\big|_{N_f=0}$ which is sited in \cite{CapitaniStefano1999Nqmr}. The errorbars are not visible on the scale of the figure.}\label{fig:tsquaredE_v_flowtime}
 \end{figure}
-
+In the same paper, Lüscher proposed the introduction of a reference scale $t_0$ 
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/t0_extrapolate_with_errors.pdf}
@@ -3100,9 +3102,16 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 \subsection{Autocorrelation}\label{sec:autoCorr_analysis}
 \begin{figure}[H]
 \centering
+\includegraphics[width=\textwidth]{FINALPLOTS/Q_v_mcTime.pdf}
+\caption[]{QvmcTime}\label{fig:PLACEHOLDER}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
 \caption[]{Integrated Auto correlation time -- Q}\label{fig:PLACEHOLDER}
 \end{figure}
+
 \begin{figure}[H]
 \centering
 \includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q_squared.pdf}
@@ -3125,11 +3134,11 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 \subsection{Topological susceptibility dependence on topological charge definition}
 It's quite suspect that the difference between the Non-Gaussianities results for the topological susceptibility and the ones obtained here are so different.
 everything is implemented to do this analysis, it just hasn't been done. 
-\subsection{Topological susceptibility continuum limit at different flow times}
-everything is implemented to do this analysis, it just hasn't been done
 \subsection{$\tau_{int}$ of topological observables using Local Hybrid Monte Carlo algorithms}
 \subsection{Do all configurations with $Q=0$ have $q=0$ everywhere}
 Potentially exposing my own ignorance here, but I genuinely don't know the answer to this. This would not be a difficult  analysis to do.
+\subsection{Dynamical fermions}
+The HMC algorithm has already been implemented for the gauge fields and little additional work would be required in order to include fermionic fields.\\The boundary conditions of the lattice are encoded in a single function, so the introduction of open boundary conditions in the time direction would be relatively easy, barring complications arising from computations near the open boundary region.
 \subsection{SU(3) Over-Relaxation}
 \cite{diffGeom}
 \newpage
