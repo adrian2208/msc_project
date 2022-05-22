@@ -1169,10 +1169,10 @@ Just as the Sommer parameter sets the scale through the static quark potential $
 r^2\left.\frac{d}{d r} V(r)\right|_{r=r0} = 1.65
 \end{equation}
 a reference scale $t_0$ can be defined by the equation
-\begin{equation}
+\begin{equation}\label{eq:t0RefImplicitEq}
 \left.t^{2}\langle E(t)\rangle\right|_{t=t_{0}}=0.3.
 \end{equation}
-For $\langle E\rangle$ to be a physical quantity of the theory, the dimensionless ratio of the reference scale defined from it, $\frac{t_0}{r0^2}$ cannot vary when the cut-off scale imposed by $a$ is removed barring a $\mathcal{O}(a)$ correction. When $E$ on the lattice is defined directly from the continuum expression \eqref{eq:energyDensity_continuum}, using a symmetric discretization of the field strength tensor using a clover term (see figure \ref{figure:Clovers} and discussion in section \ref{sec:improvedLatticeFieldStrengthTensor}), the scaling violations are seen to be particularly small. Of course, higher- order improved lattice field strength tensors could be used with presumably even smaller scaling violations.\\\\
+For $\langle E\rangle$ to be a physical quantity of the theory, the dimensionless ratio of the reference scale defined from it, $\frac{t_0}{r_0^2}$ cannot vary when the cut-off scale imposed by $a$ is removed barring a power dependence on $a$ as per the prediction from effective field theory. When $E$ on the lattice is defined directly from the continuum expression \eqref{eq:energyDensity_continuum}, using a symmetric discretization of the field strength tensor using a clover term (see figure \ref{figure:Clovers} and discussion in section \ref{sec:improvedLatticeFieldStrengthTensor}), the scaling violations are seen to be particularly small. Of course, higher- order improved lattice field strength tensors could be used with presumably even smaller scaling violations.\\\\
 The reference scale $t_0$ has several distinct advantages over other reference scales such as the Sommer scale. It does not require any fits or extrapolations and require relatively small statistics in order to achieve small statistical errors \cite{Luscher2010}.
 
 \subsection{The topological charge and the Wilson flow}
@@ -2942,79 +2942,91 @@ Id_{rec\,from} = \operatorname{mod}(id + N_{procs} - i,N_{procs}),\,\,i \in \{ 1
 We had different choices for which lattice field strength tensor definition to use, so it's obviously interesting to see what effect it had. Because the analysis only included one of the definitions, this is a rather limited analysis, performed at the very last point along the flow, where the whole gauge configurations had been saved, rather than just the observables. Still, we can try to glean some information from this.\\\\We see from figure \ref{fig:Q_FST_defs_diff} that the clover definition of the topological charge produces results which differ substantially from the improved definition. The clover definition of the lattice field strength tensor produces a topological charge definition with $\mathcal{O}(a^2)$ errors compared to the $\mathcal{O}(a^4)$ errors arising from the improved definition. What implications this has for the computation of the topological susceptibility in the two definitions is not clear. The two definitions are in the same universality class, and so the result is expected to be the same in the continuum limit.
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/Q_def_diff.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/Q_def_diff.pdf}
 \caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:Q_FST_defs_diff}
 \end{figure}
 For the energy density we see that the relative difference between the two definitions follow a similar relationship. It's noticeable that the coarsest lattice produces considerably larger differences than the finer lattices. This observation will inform our analysis of $\Lambda_{YM}$.
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/E_def_diff.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/E_def_diff.pdf}
 \caption[]{Expectation value of the difference between the two Energy density definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:E_FST_defs_diff}
 \end{figure}
 \subsection{Energy density}
 The Wilson flow drives the action towards its stationary points. We therefore expect the energy density of the gauge field to go to zero in the large flow time limit. This is exactly what we find, as can be seen in figure \ref{fig:EvFlow}. 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/E_v_flowtime.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/E_v_flowtime.pdf}
 \caption[]{Expectation value of the energy density as a function of the physical flow time over the square of the Sommer parameter. The error bars are smaller than the symbols. }\label{fig:EvFlow}
 \end{figure}
 \subsubsection{Scale setting with $t^2\langle E\rangle$}
 As we saw, to leading order in perturbation theory, $t^2\langle E\rangle$ is proportional to the gauge coupling. We expect that this perturbative expansion should match our lattice results within some range of flow times. This is between the range in which perturbation theory is expected to break down and where the discretization effects of the lattice causes scaling violations in $\langle E\rangle$.\\In figure \ref{fig:tsquaredE_v_flowtime}, which has been replicated from Lüscher's paper\cite{Luscher2010}, we see that the finest lattice produces near perfect agreement with perturbation theory within the range of roughly $\frac{t}{r_0^2}=0.01$ to $\frac{t}{r_0^2}=0.035$. This region corresponds to a smearing radius $\sqrt{8t}$ which is $3-5.6$ times the lattice spacing.
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
-\caption[]{The dimensionless combination $t^2\langle E\rangle$ as a function of the physical flow time over the squared Sommer radius. The errorband in the perturbative expansion is dominated by the error in $\Lambda\big|_{N_f=0}$ which is sited in \cite{CapitaniStefano1999Nqmr}. The errorbars are not visible on the scale of the figure.}\label{fig:tsquaredE_v_flowtime}
+\includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
+\caption[]{The dimensionless combination $t^2\langle E\rangle$ as a function of the physical flow time over the squared Sommer radius. The errorband in the perturbative expansion is dominated by the uncertainty in $\Lambda\big|_{N_f=0}$ which is sited in \cite{CapitaniStefano1999Nqmr}. The errorbars are not visible on the scale of the figure.}\label{fig:tsquaredE_v_flowtime}
 \end{figure}
-In the same paper, Lüscher proposed the introduction of a reference scale $t_0$ 
+In the same paper, Lüscher proposed the introduction of a reference scale $t_0$ defined by the implicit equation \eqref{eq:t0RefImplicitEq}. We can identify $\frac{t_0}{r_0^2}$ by the point in figure \ref{fig:tsquaredE_v_flowtime} at which the graph crosses $t^2\left\langle E\right\rangle = 0.3$. We have a limited flow-time resolution, and so in order to get an estimate we have to interpolate between the points in its vicinity. We see the result of this extrapolation in figure \ref{fig:t0-extrapolation}. The error in $\frac{t_0}{r_0^2}$ comes from the uncertainty in $\frac{a}{r_0}$ as well as the statistical error in $t^2\left\langle E\right\rangle$. The systematic error arising from the interpolation is negligible. The estimate for every lattice spacing is consistent within errors.
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/t0_extrapolate_with_errors.pdf}
-\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\includegraphics[width=\textwidth]{FINALPLOTS/t0_extrapolate_with_errors.pdf}
+\caption[]{Interpolation of the flow time dependence of $t^2\left\langle E\right\rangle $ in the vicinity of $\frac{t_0}{r_0^2}$. The interpolation includes the two points closest to the final answer. The vertical uncertainty derives from the uncertainty in $\frac{a}{r_0}$, while the horizontal uncertainty is the statistical error in $t^2\left\langle E\right\rangle $.}\label{fig:t0-extrapolation}
 \end{figure}
-
+We can see from figure \ref{fig:SmearRad_v_latticeConstant} that the discretization effects are much smaller than the errors. The discretization effect in this case, would manifest itself as a slope in the linear extrapolation in $\frac{a^2}{t_0}$, as the effective field theory using the Wilson action predicts dicretization effects of $\mathcal{O}(a^2)$. The continuum extrapolation of $\frac{\sqrt{8t_0}}{r_0}$ indicates very strongly that the dimensionless ratio $\frac{t_0}{r_0^2}$ is independent of the lattice spacing. The continuum value of $\frac{\sqrt{8t_0}}{r_0}$ is seen to extrapolate to
+\begin{equation}
+\frac{\sqrt{8t_0}}{r_0} = 0.943(6)
+\end{equation}
+which is in near perfect agreement with the result stated in \cite{non_gaussianities2015} of $\frac{\sqrt{8t_0}}{r_0} = 0.941(7)$. This result is from a very high statistics study using the same definition for the energy density, but at larger lattice spacings of $a = 0.102,\,0.087,\,0.077$ and $0.068fm$. The smaller extrapolation error incurred by having smaller lattice spacings, may be enough to explain the roughly equal magnitudes of the errors. As stated in their paper, the error in $\frac{\sqrt{8t_0}}{r_0}$ is dominated by the uncertainty in $\frac{a}{r_0}$ which is also the case here, meaning the higher statistics eventually saturates below the uncertainty of $\frac{a}{r_0}$, leaving the error roughly unchanged.
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/smearRad_cont_limit.pdf}
-\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\includegraphics[width=\textwidth]{FINALPLOTS/smearRad_cont_limit.pdf}
+\caption[]{Linear extrapolation in $a^2/t_0$ of $\frac{\sqrt{8t_0}}{r_0}$ to the continuum. The horizontal error is not visible on the scale of the figure.}\label{fig:SmearRad_v_latticeConstant}
 \end{figure}
 
 \subsection{Estimating $\Lambda_{YM}$}
+Because the lattice results and the perturbative expansion match over a range of flow times, we can actually get an estimate for the YM-scale $\Lambda_{YM}$ through their relation in equations \eqref{eq:leadingOrder_pt_E} and \eqref{eq:runningCouplingApprox}. To do this, we have to exercise a fair bit of caution, as the range over which these results can be said to match, has no objective boundaries. If we were to base this analysis on the entirely subjective matching region discussed earlier, we might conclude that the results should match from approximately $q = 750-1400MeV$ where $q=\frac{1}{\sqrt{8t}}$ is the momentum scale as defined through equation \eqref{eq:runningCouplingApprox}\footnote{The gradient flow averages the gauge field in a spherical range with mean-square radius $\sqrt{8t}$, making the characteristic wavelength of the lattice $\frac{1}{\sqrt{8t}}$. This is quite reminiscent of how the RG-flow integrates out degrees of freedom.}. To make the analysis less biased, we'll instead consider a larger matching region of $q = 527-2358MeV$.\\\\Firstly, we need to extrapolate $t^2\left\langle E\right\rangle $ to the continuum over the range of flow times considered. As with the extrapolation of $t_0$, we now need to extrapolate a value of $t^2\left\langle E\right\rangle $ for several flow times between measurements. Again, this was done by interpolating between two subsequent datapoints. Then we perform the extrapolation to the continuum linearly in $\frac{a^2}{r_0^2}$.  At this point, the ensemble with the coarsest lattice spacing was excluded from the analysis. As we saw in figure \ref{fig:E_FST_defs_diff}, the difference from the improved definition becomes quite large which has big implications for the quality of the fit. The result of this continuum extrapolation is found in figure \ref{fig:Coupling_cont_extrapolation}.
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/t_squared_v_q_contLimit.pdf}
-\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_q_contLimit.pdf}
+\caption[]{$t^2\left\langle E\right\rangle $ dependence on the momentum scale $q = \frac{1}{\sqrt{8t}}[MeV]$ with the extrapolation to the continuum based on the three finest lattice spacings.}\label{fig:Coupling_cont_extrapolation}
+\end{figure}
+The continuum extrapolation contains a total of 100 points evenly spaced in $\frac{t}{r_0^2}$. To estimate $\Lambda_{YM}$, we proceed by resampling the set of 100 points by performing a $\chi^2$ fit of the function \eqref{eq:leadingOrder_pt_E} to every set of subsequent points with a length greater than or equal to 5. This is done until the list of possible resamples is exhausted and every examined value of $\Lambda_{YM}$ is assigned a score based on how well it fitted the data in every resample. When this is done, the results are as seen in figure \ref{fig:YM-Scale_chiSquaredFit}. This result is compatible with the result of $\Lambda^{(0)}_{MS} = 238(19)MeV$ from \cite{CapitaniStefano1999Nqmr}. I cannot de-emphasize the results of this analysis enough though. In order to sample the $400$ different values of $\Lambda_{YM}$, I've had to compromise away any analysis of the statistical error in the estimate, as any bootstrap sampling would take far to long execute. Sampling more values of $\Lambda_{YM}$ was seen to have a very large impact on the final result as lowering the sample rate had a tendency to exclude highly weighted values, deforming the result. I should also make a note of a very important detail which was glossed over in the introduction to this analysis. This detail is immediately apparent, looking at figure \ref{fig:Coupling_cont_extrapolation}: we chose to space the values evenly in $\frac{t}{r_0^2}$, not in $\frac{1}{\sqrt{8t}}$. This has the effect of weighting the points in the lower energy region much higher than those in the high energy region. Doing the exact same analysis, now with the samples being evenly spaced in $\frac{1}{\sqrt{8t}}$, we get the result in figure \ref{fig:YM-Scale_chiSquaredFit-altspac} .
+This result is a very strong signal that we don't have our systematic errors under control.\\This being said, there are genuine reasons for why we might want to weight lower energies more than higher energies, such as the fact that the low flow time extrapolations don't have a well defined continuum limit. 
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution_HIST.pdf}
+\caption[]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. The three vertical lines denote the weighted median and its $68\%$ confidence interval which are $224.96MeV$, $234.59MeV$ and $240.15MeV$ from left to right. The peak corresponds to a value of $237.74MeV$.}\label{fig:YM-Scale_chiSquaredFit}
 \end{figure}
 
-
-
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution_HIST.pdf}
-\caption[]{LinearFit to get t0/r0 -- FINAL!}\label{fig:PLACEHOLDER}
+\includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution-altSpacing.pdf}
+\caption[]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. Fitting done on values separated evenly in $\frac{1}{\sqrt{8t}}$}\label{fig:YM-Scale_chiSquaredFit-altspac}
 \end{figure}
 
 \subsection{Topological charge}
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.0.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/Q_v_flowtime_beta_6.0.pdf}
 \caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.13.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/Q_v_flowtime_beta_6.13.pdf}
 \caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.26.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/Q_v_flowtime_beta_6.26.pdf}
 \caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/Q_v_flowtime_beta_6.46.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/Q_v_flowtime_beta_6.46.pdf}
 \caption[]{Q v flowtime}\label{fig:PLACEHOLDER}
 \end{figure}
 
@@ -3025,60 +3037,66 @@ WHY LOOK AT THE SPATIAL DISTRIBUTION OF TOPOLOGICAL CHARGE? MAKING A QUALITATIVE
 
 \begin{figure}[H]
 \centering
-\includegraphics[trim=30cm 0.0cm 28cm 2.0cm, clip=true,scale=0.2]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime0.010000.pdf}
+\includegraphics[trim=30cm 0.0cm 28cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime0.010000.pdf}
 \caption[]{Mayavi \cite{ramachandran2011mayavi}}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[trim=30cm 0.0cm 27cm 2.0cm, clip=true,scale=0.2]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime0.410000.pdf}
+\includegraphics[trim=30cm 0.0cm 27cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime0.410000.pdf}
 \caption[]{Mayavi \cite{ramachandran2011mayavi}}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[trim=30cm 0.0cm 27cm 2.0cm, clip=true,scale=0.2]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime1.210000.pdf}
+\includegraphics[trim=30cm 0.0cm 27cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime1.210000.pdf}
 \caption[]{Mayavi \cite{ramachandran2011mayavi}}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[trim=30cm 1.0cm 27cm 2.0cm, clip=true,scale=0.2]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime13.000000.pdf}
+\includegraphics[trim=30cm 1.0cm 27cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime13.000000.pdf}
 \caption[]{$Q = 3.99996$. Mayavi \cite{ramachandran2011mayavi}}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \subsection{Topological susceptibility}
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/chi_fourthRoot_v_smearRad.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/chi_fourthRoot_v_smearRad.pdf}
 \caption[]{FINAL!!}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[trim=1.5cm 0.0cm 0cm 1.0cm, clip=true]{FINALPLOTS/Q_histogram_at_t0_over12.pdf}
+\includegraphics[trim=0cm 0.0cm 0cm 1.0cm, clip=true,width=\textwidth]{FINALPLOTS/Q_histogram_at_t0_over12.pdf}
 \caption[]{FINAL!! $t_0/12$}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[trim=1.5cm 0.0cm 0cm 1.0cm, clip=true]{FINALPLOTS/Q_histogram_at_t0.pdf}
+\includegraphics[trim=0cm 0.0cm 0cm 1.0cm, clip=true,width=\textwidth]{FINALPLOTS/Q_histogram_at_t0.pdf}
 \caption[]{FINAL!!$t_0$}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \subsubsection{Continuum limit}
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/chi_fourthRoot_continuum_extrapolation.pdf}
-\caption[]{FINAL!!196.35909331003572+/-1.6081484704334992}\label{fig:PLACEHOLDER}
+\includegraphics[width=\textwidth]{FINALPLOTS/chi_fourthRoot_continuum_extrapolation.pdf}
+\caption[]{FINAL!! constant: 196.3715883745854+/-1.5926754123395541 Linear: 197+/-5}\label{fig:PLACEHOLDER}
 \end{figure}
+3.22+/-0.04 4.89+/-0.06 7.16+/-0.10 12.18+/-0.20
+3.2 4.9 7.2 12.200000000000001
+diff:
+0.02+/-0.04 -0.01+/-0.06 -0.04+/-0.10 -0.02+/-0.20
+
+
 \subsubsection{Flow time independence in the continuum limit}
 compare results from "non-gaussianities". since they used an un-improved definition of the field strength tensor, your trajectories should be flatter with respect to the lattice spacing.
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/chi_flowTime_independence.pdf}
-\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quartic function in $a^2/r_0^2$. A result of $1.0$ would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:PLACEHOLDER}
+\includegraphics[width=\textwidth]{FINALPLOTS/chi_flowTime_independence.pdf}
+\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:PLACEHOLDER}
 \end{figure}
 \subsubsection{Non-Gaussianities}
 \begin{equation}
@@ -3093,7 +3111,7 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/R_continuum_extrapolation.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/R_continuum_extrapolation.pdf}
 \caption[]{FINAL!!}\label{fig:PLACEHOLDER}
 \end{figure}
 
@@ -3108,24 +3126,24 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
 \caption[]{Integrated Auto correlation time -- Q}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/IntegratedAutoCorrTime_Q_squared.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q_squared.pdf}
 \caption[]{Integrated Auto correlation time -- Q squared}\label{fig:PLACEHOLDER}
 \end{figure}
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/IntegratedAutoCorrTime_E.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_E.pdf}
 \caption[]{Integrated Auto correlation time -- E}\label{fig:PLACEHOLDER}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics{FINALPLOTS/ProofOfStatisticalIndependence.pdf}
+\includegraphics[width=\textwidth]{FINALPLOTS/ProofOfStatisticalIndependence.pdf}
 \caption[]{Integrated Auto correlation time of the data used}\label{fig:PLACEHOLDER}
 \end{figure}
 \subsection{Bootstrapping}

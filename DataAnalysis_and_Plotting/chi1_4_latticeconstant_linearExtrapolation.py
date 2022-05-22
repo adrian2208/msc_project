@@ -56,7 +56,7 @@ fileStart_list = [0,0,0,0]
 fileEnd_list = [1703,1323,613,214]#CHANGE
 beta = [6.0,6.13,6.26,6.46]
 V = [16**4,20**4,24**4,32**4]
-extrapolate_at_t_comp = [3.2,4.85,7.1,12.2]
+extrapolate_at_t_comp = [3.2,4.9,7.2,12.2]
 t_extrList = [[3.1,3.15,3.2,3.25,3.3],[4.7,4.75,4.8,4.85,4.9,4.95,5],[6.8,6.9,7,7.1,7.2,7.3,7.4],[11.9,12,12.1,12.2,12.3,12.4,12.5]]
 t0OverR_squared = np.array([ufloat(0.1115,0.0009),ufloat(0.1112,0.0010),ufloat(0.1110,0.0011),ufloat(0.1117,0.0013)])
 #directory_list = ["C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\16X16X16X16\\GF\\"]
@@ -156,4 +156,5 @@ plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
 plt.xlabel(r'$a^2/r_0^2$')
 plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
 #plt.legend()
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\chi_fourthRoot_continuum_extrapolation.pdf', bbox_inches="tight")
+plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\chi_fourthRoot_continuum_extrapolation.pdf', bbox_inches="tight")
+#C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\

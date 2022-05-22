@@ -52,10 +52,11 @@ a = [calc_a(entry) for entry in beta]
 aOverR0_list = np.array([calc_aOverr0W_errors(entry) for entry in beta])
 color_list = [blue,orange,purple,red]
 marker_list = ['^','o','s','p']
-#t_comp_lim_low_list = [3.0,4.5,6.5,11.5]
-#t_comp_lim_high_list = [3.4,5.05,8,13]
-t_comp_lim_low_list = [2.7,4.0,6.5,11.5]
-t_comp_lim_high_list = [3.5,5.5,8.5,13]
+
+#t_comp_lim_low_list = [2.7,4.0,6.5,11.5]
+#t_comp_lim_high_list = [3.5,5.5,8.5,13]
+t_comp_lim_low_list = [3.2,4.85,7.1,12.5]
+t_comp_lim_high_list = [3.25,4.9,7.2,12.6]
 r_0 = 0.5
 
 t0_estimate_list = []
@@ -97,7 +98,7 @@ for j in range(len(directory_list)):
 
     plt.errorbar(tsquaredE,[item.nominal_value for item in tOverR_0],xerr=errorList,yerr=[item.std_dev for item in tOverR_0],markersize = 3.0,
                  fmt='o',ecolor = plot_color,color = plot_color,marker = PlotMarker,capsize=2,elinewidth=1,
-                markeredgewidth=1,label = r'$a =$'+ "{:.3f}".format(a_val))
+                markeredgewidth=1)
 
 
     #x_fit = unumpy.uarray(np.c_[np.array(tOverR_0),np.ones_like(tOverR_0)],np.c_[np.zeros_like(tOverR_0),np.zeros_like(tOverR_0)])
@@ -131,17 +132,17 @@ for j in range(len(directory_list)):
     print(label_text)
     plt.errorbar(0.0,fit_b.nominal_value,yerr=fit_b.std_dev,markersize = 4.0,
                  fmt='o',ecolor = plot_color,color = plot_color,marker = PlotMarker,capsize=3,elinewidth=1,
-                markeredgewidth=1.5,label = r'$t_0/r_0^2 ={}$'.format(label_text))
+                markeredgewidth=1.5,label = r'$t_0/r_0^2 ={}$, $a ={:.3f}$'.format(label_text,a_val))
 
-plt.xlim(-0.01,0.01)
-plt.ylim(0.105,0.115)
+plt.xlim(-0.004,0.004)
+plt.ylim(0.103,0.118)
 plt.ylabel(r'$t/r_0^2$')
 plt.xlabel(r'$t^2\langle E \rangle-0.3$')
 plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
 plt.legend()
 
 #plt.savefig('t0_extrapolate_with_errors.pdf', bbox_inches="tight")
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\t0_extrapolate_with_errors.pdf', bbox_inches="tight")
+plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\t0_extrapolate_with_errors.pdf', bbox_inches="tight")
 plt.clf()
 
 t0_estimate_list = np.array(t0_estimate_list)
@@ -156,21 +157,25 @@ y_fit = smear_rads
 
 inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
 fit_a, fit_b= inv_mat.dot(x_fit.T.dot(y_fit))
-print(fit_a)
-print(fit_b)
+#print(fit_a)
+
 a_axis = np.linspace(0.0,0.35,100)
-plt.plot(a_axis,fit_a.nominal_value*a_axis+fit_b.nominal_value,color="black")
+plt.plot(a_axis,fit_a.nominal_value*a_axis+fit_b.nominal_value,color=plot_color)
+print(std_devs)
 plt.errorbar(means,[item.nominal_value for item in smear_rads],xerr=std_devs,yerr = [item.std_dev for item in smear_rads],markersize = 2.0,
-                fmt='o',ecolor = plot_color,color = plot_color,capsize=2,elinewidth=1,
-            markeredgewidth=1)
+                fmt='o',ecolor = purple,color = purple,capsize=2,elinewidth=1,
+            markeredgewidth=1,marker=marker_list[1])
 
 plt.errorbar(0.0,fit_b.nominal_value,yerr=fit_b.std_dev,markersize = 2.0,
-                fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,
-            markeredgewidth=1)
-
+                fmt='o',ecolor = plot_color,color = plot_color,capsize=2,elinewidth=1,
+            markeredgewidth=1,marker=marker_list[0])
+print(fit_b)
+print(fit_b.nominal_value)
+print(fit_b.std_dev)
 plt.ylim(0.915,0.975)
 plt.xlim(-0.012,0.35)
 plt.ylabel(r'$\sqrt{8t_0}/r_0$')
 plt.xlabel(r'$a^2/t_0$')
 #plt.savefig('smearRad_cont_limit.pdf', bbox_inches="tight")
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\smearRad_cont_limit.pdf', bbox_inches="tight")
+#plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\smearRad_cont_limit.pdf', bbox_inches="tight")
+#C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOT\\

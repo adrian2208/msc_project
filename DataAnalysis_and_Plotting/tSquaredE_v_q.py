@@ -84,13 +84,15 @@ Fit_tOverR0Squared_stop = 0.07#0.04#0.115
 fit_nrPoints = 100
 minSize_fit = 5
 
-Lambda_min = 200
-Lambda_max = 260
+#Lambda_min = 200
+#Lambda_max = 260
+Lambda_min = 210
+Lambda_max = 320
 Nr_Lambdas = 400
 
-contLimit_fitDomain = np.linspace(Fit_tOverR0Squared_start,Fit_tOverR0Squared_stop,fit_nrPoints)
-#contLimit_fitDomain = np.linspace(2000,600,fit_nrPoints)
-#contLimit_fitDomain = np.array([(1/item*197.327)**2/2 for item in contLimit_fitDomain])
+#contLimit_fitDomain = np.linspace(Fit_tOverR0Squared_start,Fit_tOverR0Squared_stop,fit_nrPoints)
+contLimit_fitDomain = np.linspace(2350,525,fit_nrPoints)
+contLimit_fitDomain = np.array([(1/item*197.327)**2/2 for item in contLimit_fitDomain])
 
 mean_list = []
 std_list = []
@@ -161,11 +163,11 @@ for time, i in zip(contLimit_fitDomain,range(len(contLimit_fitDomain))):
 
 #[print(item) for item in interpolated_array]
 #plt.xlim(0)
-print(len(smear_rad))
-print(len(smear_rad))
+#print(len(smear_rad))
+#print(len(smear_rad))
 contLimit_fitDomain
 fit_x_axis = 1/unumpy.sqrt(contLimit_fitDomain*8*0.5**2)*197.327
-
+print(fit_x_axis)
 #RESTORE\/\/\/\/\/\/
 plt.errorbar(fit_x_axis,[item.nominal_value for item in cont_limit_array],yerr=[item.std_dev for item in cont_limit_array],markersize = 2.0,
                 fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,
@@ -177,7 +179,7 @@ plt.legend()
 plt.ylim(0,0.25)
 plt.xlim(300,2000)
 
-plt.savefig('t_squared_v_q_contLimit.pdf', bbox_inches="tight")
+plt.savefig('t_squared_v_q_contLimit-altSpacing.pdf', bbox_inches="tight")
 #C:\\Users\\adria\\Documents\\msc_project\\doc\\
 plt.clf()
 
@@ -203,7 +205,7 @@ for i in range(len(fit_x_axis)):
 
 norm = np.sum(OneOverChiSquared_list)
 df = pd.DataFrame(data = OneOverChiSquared_list/norm, index = LambdaList)
-df.to_csv("ChiSquaredFit.csv",header = False)
+df.to_csv("ChiSquaredFit-altSpacing.csv",header = False)
 plt.plot(LambdaList,OneOverChiSquared_list/norm)
 plt.xlabel(r'$\Lambda_{YM}[MeV]$')
 #plt.ylabel(r'$1/\chi^2$')
@@ -211,7 +213,7 @@ plt.xlabel(r'$\Lambda_{YM}[MeV]$')
 #plt.ylim(0,0.25)
 plt.xlim(Lambda_min,Lambda_max)
 
-plt.savefig('t_squared_v_q_ChiSquared_fitDistribution.pdf', bbox_inches="tight")
+plt.savefig('t_squared_v_q_ChiSquared_fitDistribution-altSpacing.pdf', bbox_inches="tight")
 plt.clf()
 plt.hist(LambdaList,bins = int(len(LambdaList)/4),weights = OneOverChiSquared_list/norm,color = "#D5824B")
 plt.xlabel(r'$\Lambda_{YM}[MeV]$')
@@ -220,5 +222,5 @@ plt.xlabel(r'$\Lambda_{YM}[MeV]$')
 #plt.ylim(0,0.25)
 #plt.xlim(Lambda_min,Lambda_max)
 
-plt.savefig('t_squared_v_q_ChiSquared_fitDistribution_HIST.pdf', bbox_inches="tight")
+plt.savefig('t_squared_v_q_ChiSquared_fitDistribution_HIST-altSpacing.pdf', bbox_inches="tight")
 #C:\\Users\\adria\\Documents\\msc_project\\doc\\

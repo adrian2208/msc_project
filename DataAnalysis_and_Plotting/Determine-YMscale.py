@@ -23,7 +23,7 @@ red = '#DF4545'
 df1 = pd.read_csv("ChiSquaredFit.csv",names = ['Lambda','Weight'], sep=",", header=None)
 LambdaList = df1['Lambda']
 OneOverChiSquared_list = df1['Weight']
-
+print(LambdaList.iloc[OneOverChiSquared_list.idxmax()])
 Lambda_min = min(LambdaList)
 Lambda_max = max(LambdaList)
 Nr_Lambdas = len(LambdaList)
