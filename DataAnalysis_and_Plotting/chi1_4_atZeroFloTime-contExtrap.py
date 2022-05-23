@@ -56,7 +56,8 @@ fileStart_list = [0,0,0,0]
 fileEnd_list = [1703,1323,613,214]#CHANGE
 beta = [6.0,6.13,6.26,6.46]
 V = [16**4,20**4,24**4,32**4]
-extrapolate_at_t_comp = [3.2,4.9,7.2,12.2]
+#extrapolate_at_t_comp = [3.2,4.9,7.2,12.2]
+extrapolate_at_t_comp = [0,0,0,0]
 t_extrList = [[3.1,3.15,3.2,3.25,3.3],[4.7,4.75,4.8,4.85,4.9,4.95,5],[6.8,6.9,7,7.1,7.2,7.3,7.4],[11.9,12,12.1,12.2,12.3,12.4,12.5]]
 t0OverR_squared = np.array([ufloat(0.1115,0.0009),ufloat(0.1112,0.0010),ufloat(0.1110,0.0011),ufloat(0.1117,0.0013)])
 #directory_list = ["C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\beta6_000000\\16X16X16X16\\GF\\"]
@@ -117,20 +118,19 @@ for j in range(len(directory_list)):
 #plt.savefig('chi_fourthRoot_linear_extrapolation.pdf')
 #print(x0)
 #print(x1)
-x_fit = unumpy.uarray(np.c_[np.array([item.nominal_value for item in aOverR0_list**2]),np.ones_like(aOverR0_list)],np.c_[np.array([item.std_dev for item in aOverR0_list**2]),np.zeros_like(aOverR0_list)])
+x_fit = unumpy.uarray(np.c_[np.array([item.nominal_value for item in aOverR0_list**4]),np.array([item.nominal_value for item in aOverR0_list**2]),np.ones_like(aOverR0_list)],np.c_[np.array([item.std_dev for item in aOverR0_list**4]),np.array([item.std_dev for item in aOverR0_list**2]),np.zeros_like(aOverR0_list)])
 y_fit = unumpy.uarray(mean_list,std_list)
 inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
 
-fit_a, fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
+fit_a, fit_b, fit_c = inv_mat.dot(x_fit.T.dot(y_fit))
 
-print("Linear Fit:")
-print(fit_b)
-#print(fit_a.nominal_value)
-#print(fit_a.std_dev)
-#print('fit_a={}, fit_b={}'.format(fit_a, fit_b))
+
+print(fit_a.nominal_value)
+print(fit_a.std_dev)
+print('fit_a={}, fit_b={}, fit_c={}'.format(fit_a, fit_b,fit_c))
 a_axis = np.linspace(0,0.035,100)
 
-plt.plot(a_axis,fit_a.nominal_value*a_axis+fit_b.nominal_value,color=red)
+plt.plot(a_axis,fit_a.nominal_value*a_axis**2 + fit_b.nominal_value*a_axis+fit_c.nominal_value,color=red)
 #plt.plot(a_axis,(fit_a.nominal_value-fit_a.std_dev)*a_axis+(fit_b.nominal_value+fit_b.std_dev))
 #plt.plot(a_axis,(fit_a.nominal_value+fit_a.std_dev)*a_axis+(fit_b.nominal_value-fit_b.std_dev))
 
@@ -139,82 +139,23 @@ plt.xlim(-0.001,0.035)
 plt.errorbar([item.nominal_value for item in aOverR0_list**2],mean_list,std_list,xerr=[item.std_dev for item in aOverR0_list**2],markersize = 2.0,
                 fmt='o',ecolor = purple,color = purple,capsize=2,elinewidth=1,
             markeredgewidth=1)
-plt.errorbar(0.0,fit_b.nominal_value,fit_b.std_dev,markersize = 2.0,
+plt.errorbar(0.0,fit_c.nominal_value,fit_c.std_dev,markersize = 2.0,
                 fmt='o',ecolor = red,color = red,capsize=2,elinewidth=1,
             markeredgewidth=1)
 
-x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list)],np.c_[np.zeros_like(aOverR0_list)])
-y_fit = unumpy.uarray(mean_list,std_list)
-inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
-
-fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
-print("constant fit:")
-print(fit_b[0])
-print("data means:")
-print(mean_list)
-print("data std:")
-print(std_list)
-print("datapoint x-coor:")
-[print(item) for item in aOverR0_list**2]
-a_axis = np.linspace(-0.0005,a[0]**2/(0.5**2),100)
-plt.plot(a_axis,np.full_like(a_axis,fit_b[0].nominal_value),color="black")
-plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
-                fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,
-            markeredgewidth=1)
-plt.xlabel(r'$a^2/r_0^2$')
-plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
-#plt.legend()
-plt.savefig('chi_fourthRoot_continuum_extrapolation.pdf', bbox_inches="tight")
-#C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\
-
-#--------------\/\/\/\/\/\/   FIT USING ONLY THREE FINEST LATTICE SPACINGS     \/\/\/\/\/--------------------------------------------------------------------------------------------------------------------------------------
-
-#x_fit = unumpy.uarray(np.c_[np.array([item.nominal_value for item in aOverR0_list[1:]**2]),np.ones_like(aOverR0_list[1:])],np.c_[np.array([item.std_dev for item in aOverR0_list[1:]**2]),np.zeros_like(aOverR0_list[1:])])
-#y_fit = unumpy.uarray(mean_list[1:],std_list[1:])
-#inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
-
-#fit_a, fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
-
-#print("Linear Fit:")
-#print(fit_b)
-##print(fit_a.nominal_value)
-##print(fit_a.std_dev)
-##print('fit_a={}, fit_b={}'.format(fit_a, fit_b))
-#a_axis = np.linspace(0,0.035,100)
-
-#plt.plot(a_axis,fit_a.nominal_value*a_axis+fit_b.nominal_value,color=red)
-##plt.plot(a_axis,(fit_a.nominal_value-fit_a.std_dev)*a_axis+(fit_b.nominal_value+fit_b.std_dev))
-##plt.plot(a_axis,(fit_a.nominal_value+fit_a.std_dev)*a_axis+(fit_b.nominal_value-fit_b.std_dev))
-
-#plt.xlim(-0.001,0.035)
-##plt.ylim(150,230)
-#plt.errorbar([item.nominal_value for item in aOverR0_list**2],mean_list,std_list,xerr=[item.std_dev for item in aOverR0_list**2],markersize = 2.0,
-#                fmt='o',ecolor = purple,color = purple,capsize=2,elinewidth=1,
-#            markeredgewidth=1)
-#plt.errorbar(0.0,fit_b.nominal_value,fit_b.std_dev,markersize = 2.0,
-#                fmt='o',ecolor = red,color = red,capsize=2,elinewidth=1,
-#            markeredgewidth=1)
-
-#x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list[1:])],np.c_[np.zeros_like(aOverR0_list[1:])])
-#y_fit = unumpy.uarray(mean_list[1:],std_list[1:])
+#x_fit = unumpy.uarray(np.c_[np.ones_like(aOverR0_list)],np.c_[np.zeros_like(aOverR0_list)])
+#y_fit = unumpy.uarray(mean_list,std_list)
 #inv_mat = unumpy.ulinalg.pinv(x_fit.T.dot(x_fit))
 
 #fit_b = inv_mat.dot(x_fit.T.dot(y_fit))
-#print("constant fit:")
-#print(fit_b[0])
-#print("data means:")
-#print(mean_list)
-#print("data std:")
-#print(std_list)
-#print("datapoint x-coor:")
-#[print(item) for item in aOverR0_list**2]
+#print(fit_b)
 #a_axis = np.linspace(-0.0005,a[0]**2/(0.5**2),100)
 #plt.plot(a_axis,np.full_like(a_axis,fit_b[0].nominal_value),color="black")
 #plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
 #                fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,
 #            markeredgewidth=1)
-#plt.xlabel(r'$a^2/r_0^2$')
-#plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
-##plt.legend()
-#plt.savefig('chi_fourthRoot_continuum_extrapolation.pdf', bbox_inches="tight")
-##C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\
+plt.xlabel(r'$a^2/r_0^2$')
+plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
+#plt.legend()
+plt.savefig('chi_fourthRootAtZeroFlowTime-ContExtrap.pdf', bbox_inches="tight")
+#C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\

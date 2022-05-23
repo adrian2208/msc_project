@@ -10,7 +10,7 @@ from scipy import stats
 import numpy as np
 from sklearn.utils import resample
 from resizeFig import set_size
-plt.figure(figsize=set_size(420))
+#plt.figure(figsize=set_size(420))
 blue = '#447DAC'
 green = '#30988A'
 orange = '#D5824B'
@@ -45,6 +45,9 @@ V_list  = [16**4,20**4,24**4,32**4]
 t0OveraList = [3.2,4.85,7.1,12.2]
 color_list = [blue,orange,green,red]
 
+fig, axs = plt.subplots(nrows=4, sharex=True, subplot_kw=dict(frameon=False),figsize=(5.535,8))
+plt.subplots_adjust(hspace=.1)
+
 #RIGHT CLICK FILENAME AND RUN WITHOUT DEBUGGING (VS)
 for j in range(len(dirs)):
     #Take files from this directory
@@ -63,19 +66,24 @@ for j in range(len(dirs)):
         frames.append(df1)
     df2 = pd.concat(frames,axis=1)
 
-    plt.plot(df2)
-    plt.axvline(x=t0OveraList[j],color = red,linestyle = 'dashed',label=r"$t_0/a^2$")
-    plt.xlabel(r'$t/a^2$')
-    plt.ylabel(r'$Q$')
+    axs[j].plot(df2)
+    if (j==0):
+        axs[j].axvline(x=t0OveraList[j],color = red,linestyle = 'dashed',label=r"$t_0/a^2$")
+        axs[j].legend()
+    else:
+        axs[j].axvline(x=t0OveraList[j],color = red,linestyle = 'dashed')
     ymax = np.ceil(max(abs(df2.iloc[-1])))+1
     #ymin = np.floor(min(df2.iloc[-1]))-1
-    plt.ylim(-ymax-4,ymax+4)
-    plt.yticks(np.arange(-ymax,ymax+1,1))
-    plt.yticks(fontsize = 10)
-    plt.legend()
+    axs[j].grid(which='both',color='grey', linestyle='-', linewidth=0.5,axis='y')
+    axs[j].set_yticks(np.arange(-ymax,ymax+1,1))
+    axs[j].set_ylim(-ymax-4,ymax+4)
+    axs[j].tick_params(axis='both', which='major', labelsize=7)
     
-    plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\Q_v_flowtime_beta_{}.pdf'.format(beta_list[j]), bbox_inches="tight")
-    plt.clf()
+
+plt.xlabel(r'$t/a^2$')
+plt.ylabel(r'$Q$') 
+plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\Q_v_flowtime.pdf', bbox_inches="tight")
+plt.clf()
 
 #plt.xlim(0)
 #plt.ylim(100,350)

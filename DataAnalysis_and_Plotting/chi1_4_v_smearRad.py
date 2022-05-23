@@ -83,12 +83,12 @@ for j in range(len(directory_list)):
                 markeredgewidth=1,label = r'$a =$'+ "{:.3f}".format(round(a_val,3)),alpha =0.7)
 
 
-plt.xlim(0)
-plt.ylim(100,350)
+plt.xlim(-0.025)
+plt.ylim(175,500)
 plt.xlabel(r'$\frac{\sqrt{8t}}{r_0}$')
 plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
 plt.legend()
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\chi_fourthRoot_v_smearRad.pdf', bbox_inches="tight")
+plt.savefig('chi_fourthRoot_v_smearRad.pdf', bbox_inches="tight")
 
 
 
