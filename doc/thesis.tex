@@ -1352,8 +1352,7 @@ This definition has no divergences and requires no renormalization. Thus, to cal
 \left( \frac{\chi_t^{naive}}{\chi_t^{Chiral\,Dirac \,operator}} \right)^{\frac{1}{4}}=\frac{180.5(5)(43) \mathrm{MeV}}{191(5) \mathrm{MeV}} \approx 0.95(3)
 \end{equation}
 we see that they are in close agreement, providing some strong evidence of their equivalence.
-\subsubsection{Non- Gaussianities}
-\textcolor{sciRed}{!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\\!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\\!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\\!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\\!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}
+
 \subsection{The strong CP problem}
 CP- symmetry is a discrete space-time symmetry which combines the action of a parity transformation (P) and a time reversal operation (T). Several CP- violating processes have been discovered \cite{aaij2013first}\cite{aaij2019observation}, however no experiment has found evidence of CP-violation in the QCD sector of the standard model. This is puzzling, because the QCD Lagrangian contains CP-violating terms, e.g. for three dynamical quark flavours we have
 \begin{equation}
@@ -2596,7 +2595,9 @@ M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a
 
 \end{algorithmic}
 \end{algorithm}
-
+The implementation of the Cayley-Hamilton exponentiation follows exactly from the procedure described in section \ref{HMC}, with the exception of a  very handy addition which is included in the 'CHROMA' library \cite{Edwards_2005} implementation of the same algorithm. Essentially, if $\operatorname{ReTr}\left( Q^2 \right)$ satisfies a certain bound, where $Q=-iP$ for $\exp(iP)$, one can truncate the procedure without compromise beyond machine precision. A quick analysis of the CPU expenditure however, reveals that for the bound imposed in the LGF implementation, essentially no time is spent executing this branch of the code, meaning it might be better to leave it out or make the bound larger.
+\subsubsection{Choice of flow parameters}
+There are only a few parameters to decide on for the Wilson flow- and measurement- scheme. These are the step size $\epsilon$, the final flow time $t_{stop}$ and the frequency with which we measure the gauge configuration along the flow. Ideally, we would measure the configurations between every flow update, however the use of the improved lattice field strength tensor makes the evaluation of the topological charge take considerable time.\\\\The choice of $\epsilon$ is based on the empirical observation by Lüscher \cite{Luscher2010} that the third order Runge-Kutta integrator produces integration errors in the link variables which are of the order of $10^{-6}$ if $\epsilon=0.01$. Ideally, such a choice would be made after conducting a proper analysis on the step size dependence of the systematic error in the observable. This would however require us to flow the same configurations several times, varying the step size each time which would reduce the time spent building up statistics.\\\\The choice of $t_{stop}$ was made after several attempts, by determining the flow time at which all contributions to the $t_0$ estimate had vanished. This is important to ensure, as the final analysis of the topological susceptibility depends on conducting the continuum limit at the same physical flow time. In particular the continuum limit in this analysis was performed at $t_0$.\\\\The measurement interval was decided somewhat arbitrarily by enforcing a physical flow time resolution of $\mathcal{O}(10^{-4})[fm^2]$ while also ensuring that the measurement interval was divisible by $\frac{t_{stop}}{\epsilon}$ i.e. no wasted  flow steps.
 \subsection{Lattice Representation}
 Choosing a proper representation of the lattice on the computer is important for ease of implementation, use and efficiency. Using a four- dimensional coordinate system to address locations in memory would work, but would also incur very large performance penalties in caching, memory speed etc. Instead, at the beginning of the program, every site is assigned an index, identifying its location along a one-dimensional array in memory.\\The addition of parallellization will also require the introduction of two separate index systems. One global, shared by every process, and one local, unique to every process. It will also require a mapping between the two to facilitate unambiguous communication between processes. The choice of local and global index systems are from a paper by Massimo Di Pierro describing the workings of a MPI based lattice simulation library known as MDP \cite{MDP}.\\\\Each point on the $M$- dimensional lattice is assigned a global index based on its global coordinate, given by 
 \begin{equation}
@@ -3098,41 +3099,41 @@ which is certainly compatible with the values found in \cite{PhysRevLett.94.0320
 
 \subsubsection{Flow time independence in the continuum limit}
 We expect the topological susceptibility to be flow time independent for all $t>0$ in the continuum limit. We can test this assertion by conducting a universality test of the topological susceptibility at several flow times, comparing the results to the one obtained at flow time $t_0$. If the assertion is correct, we would expect the ratio of the topological susceptibility defined at a flow time $t$ over the topological susceptibility at flow time $t_0$ to go to $1$ in the continuum limit. When we perform this analysis, extrapolating with a polynomial which is quadratic in $\frac{a^2}{t_0}$ we get the results shown in figure \ref{fig:UniversalityTest}. The result for the continuum limit is very much compatible with $1$.\\If we compare this result with the results of the same analysis performed in \cite{non_gaussianities2015}, but with the clover definition for the lattice field strength tensor,  we can infer some of the effects of using the improved lattice field strength tensor. Looking for example at the trajectories drawn by their $\frac{t_0}{4}$ and our $\frac{t_0}{4}$ extrapolation, we can see that the ratio saturates at much larger lattice spacings.
-
-
-compare results from "non-gaussianities". since they used an un-improved definition of the field strength tensor, your trajectories should be flatter with respect to the lattice spacing.
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/chi_flowTime_independence.pdf}
 \caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:UniversalityTest}
 \end{figure}
 \subsubsection{Non-Gaussianities}
+Next we can attempt to determine the the non-Gaussianity of the topological charge distribution by taking the continuum limit on the ratio of the fourth cumulant to the second. These are defined as  
 \begin{equation}
 R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 \end{equation}
+where
 \begin{equation}
 \begin{aligned}
 \left\langle Q^2 \right\rangle &=\frac{1}{N} \sum_{i=1}^{N} q_{i}^{2} \\
-\left\langle Q^4 \right\rangle_c &=\frac{1}{N} \sum_{i=1}^{N} q_{i}^{4}-3\left\langle Q^2 \right\rangle^{2},
+\left\langle Q^4 \right\rangle_c &=\frac{1}{N} \sum_{i=1}^{N} q_{i}^{4}-3\left\langle Q^2 \right\rangle^{2}.
 \end{aligned}
 \end{equation}
-
+The result is shown in figure \ref{fig:R-contLim}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/R_continuum_extrapolation.pdf}
-\caption[]{FINAL!!}\label{fig:PLACEHOLDER}
+\caption[]{Linear (red) and constant (black) continuum extrapolation of $R$ using data from every lattice spacing. Both predictions by the dilute instanton gas model ($R=1$) and the large $N_c$- expansion ($\mathcal{O}(R) = \mathcal{O}(\frac{1}{N^2})$) are easily within the errorbars.}\label{fig:R-contLim}
 \end{figure}
-
+Clearly, this result isn't good for anything. It cannot discriminate between the dilute instanton gas model and the large $N_c$- expansion. The problem here is that the estimation of $R$ requires extraordinarily high statistics to be feasible.\\The statistical error of each data point is extremely large. In essence this means that if the sole purpose of this thesis was to determine $R$, the choice of a simulation volume of $L\approx 1.5fm$ would have been a bad one. Because the computational cost incurred by having more lattice points is so high, it would have been better to conduct the study at a smaller simulation volume. This would make finite size effects larger, but allow for much higher statistics. At present, the statistical errors are orders of magnitude larger than any finite size effects  are predicted to be \cite{non_gaussianities2015} so clearly a happy middle ground is to be found between $L = 1.5fm$ and $L =  1.1fm$. 
 
 \section{Error Analysis}
+The results won't mean anything without an analysis of the inherent measurement errors.\\The ethos for this analysis was to avoid any autocorrelation, so that all statistical errors could be evaluated solely with the use of bootstrapping. 
 \subsection{Autocorrelation}\label{sec:autoCorr_analysis}
+In order to estimate the autocorrelation of the observables, a separate set of gauge configurations were generated using the same lattice spacings, but a much smaller simulation volume of approximately $1fm$. This is of course, working under the assumption that the estimate will be applicable to the larger lattices.\\Each configuration was separated by a single sweep of the 1HB/4OR- update used to generate the complete data. The Monte Carlo history of the flowed topological charge (see table \ref{tab:IntAutocorrs} for the flow times) is shown in figure \ref{fig:MC-historyQ}
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/Q_v_mcTime.pdf}
-\caption[]{QvmcTime}\label{fig:PLACEHOLDER}
+\caption[]{Monte Carlo history of the flowed topological charge.}\label{fig:MC-historyQ}
 \end{figure}
-
+The large $\tau_{int}$ which we associate with the finer lattice spacings is immediately evident from the Monte Carlo history. for the finest lattice, we can spend multiple thousands of MC-updates sampling essentially the same part of the configuration space before moving on.\\\\In order to estimate the autocorrelation time we use the estimation algorithm described in \cite{WOLFF2004143}. 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
@@ -3150,6 +3151,19 @@ R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
 \caption[]{Integrated Auto correlation time -- E}\label{fig:PLACEHOLDER}
 \end{figure}
 
+\begin{table}[H]
+\centering
+\caption{Estimated autocorrelation time of observables from ensembles with MC-time separation of one listed in table \ref{tab:SimulationParameters}. The autocorrelation is measured at lower flow times than those used in the analysis, because the autocorrelation for the topological observables saturate much earlier.}
+\label{tab:IntAutocorrs}
+\begin{tabular}{lcccccccc}
+\hline \hline  $\beta$ 	& $t/a^2$ 	&$\tau_{int}^Q$	& $\tau_{int}^{Q^2}$ 	& $\tau_{int}^{Q^4}$	& $\tau_{int}^E$	\\
+\hline		   $6.0$ 	& $3.5$ 	& $19(5)$		& $6(1)$			& $4.3(0.7)$   		& $10(2)$ 		\\	  
+	  		   $6.13$	& $5.5$ 	& $50(18)$		& $18(5)$		   	& $11(2)$			& $16(4)$ 		\\
+	  		   $6.26$	& $4$ 		& $157(61)$		& $78(26)$		   	& $64(20)$			& $32(8)$ 		\\
+	  		   $6.46$	& $4$ 		& $280(111)$	& $176(65)$		   	& $78(23)$		 	& $25(5)$ 		\\
+\end{tabular}
+\end{table}
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/ProofOfStatisticalIndependence.pdf}
@@ -3164,14 +3178,15 @@ everything is implemented to do this analysis, it just hasn't been done.
 \subsection{$\tau_{int}$ of topological observables using Local Hybrid Monte Carlo algorithms}
 \subsection{Re-analysing the energy density results with the improved lattice field strength tensor}
 \subsection{Do all configurations with $Q=0$ have $q=0$ everywhere}
-Potentially exposing my own ignorance here, but I genuinely don't know the answer to this. This would not be a difficult analysis to do.
+Potentially exposing my own ignorance here, but I genuinely don't know the answer to this. This would not be a difficult analysis to do.\\\\All configurations with a topological charge of zero are continuously deformable to the trivial field which is a minimum of the action. Knowing the effect of the Wilson flow on the gauge configurations, it's difficult to see how this could result in anything other than $q=0$ everywhere.
 \subsection{Dynamical fermions}
 The HMC algorithm has already been implemented for the gauge fields and little additional work would be required in order to include fermionic fields.\\The boundary conditions of the lattice are encoded in a single function, so the introduction of open boundary conditions in the time direction would be relatively easy, barring complications arising from computations near the open boundary region.
-
+\subsection{Thermal QCD}
+If the topological susceptibility is studied in thermal QCD, it can be directly related to the axion mass.
 \subsection{Implementation improvements}
 \paragraph{Only communicating links of a given parity}
 \paragraph{SU(3) Overrelaxation}
-\cite{diffGeom}
+\paragraph{Greater flow time resolution at smaller flow times}
 \newpage
 \bibliographystyle{unsrt}
 \bibliography{references}

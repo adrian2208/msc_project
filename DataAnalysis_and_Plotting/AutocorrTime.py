@@ -87,7 +87,7 @@ for j in range(len(fileStart_list)):
             df1 = pd.read_csv(dir+file,index_col='t',names = ['t','Q'+str(i)], sep=",", header=None)
             frames.append(df1)
         df2 = pd.concat(frames,axis=1)
-        autocorrArray.append(df2**2)
+        autocorrArray.append(df2)
 
     t0_overR_0Squared.append(a[j]/(r_0))
     t_comp_list = []
@@ -110,7 +110,8 @@ for j in range(len(fileStart_list)):
     #tau_int_Qsquared.append(tau_Estimate)
     #error_Qsquared.append(error_temp)
 
-
+    [print(item) for item in zip(tau_int_Q,error_Q)]
+    print("---------------------------------------------")
 
 #plt.xlim(0)
 #plt.ylim(100,350)
@@ -118,4 +119,4 @@ plt.xlabel(r'$t/a^2$')
 plt.ylabel(r'$\tau_{int}$')
 plt.legend()
 
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\IntegratedAutoCorrTime_E.pdf', bbox_inches="tight")
+plt.savefig('IntegratedAutoCorrTime_E.pdf', bbox_inches="tight")
