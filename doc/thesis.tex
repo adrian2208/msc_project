@@ -1,6 +1,13 @@
-\documentclass[a4paper,10pt]{article}
+\documentclass[a4paper,10pt]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\pagenumbering{arabic}
 \usepackage{graphicx}
+\usepackage{placeins}
 \usepackage{subcaption}
+\usepackage{pdfpages}
+\usepackage[UKenglish]{uiomasterfp}
 \usepackage{enumerate}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -31,6 +38,7 @@
 }
 
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{tikz}
 %TIKZ COLOR PALLETE
 \definecolor{sciBlue}{RGB}{68,125,172}
@@ -51,46 +59,34 @@
 
 
 % Use all allowed space
-\addtolength{\hoffset}{-0.5cm}
-\addtolength{\textwidth}{1.0cm}
-\addtolength{\voffset}{-1.5cm}
-\addtolength{\textheight}{3cm}
-\setlength{\columnsep}{0.5cm}
+%\addtolength{\hoffset}{-0.5cm}
+%\addtolength{\textwidth}{1.0cm}
+%\addtolength{\voffset}{-1.5cm}
+%\addtolength{\textheight}{3cm}
+%\setlength{\columnsep}{0.5cm}
 
 % Remove Abstract titile for abstract
-\renewcommand{\abstractname}{}
 
+
+
+
+\title{Title}
 \author{A.\ M.\ Kleven}
-
-\title{Lattice Quantum Chromo Dynamics review}
-
 \begin{document}
-
-\maketitle
-\begin{abstract}
-Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the strong interaction of quarks and gluons. The theory has a running coupling that decreases with increasing energy, meaning that at high energy scales, it's solvable using perturbation theory. At low energies however, the coupling expansion converges extremely slowly or not at all. This is where non- perturbative methods become necessary. Lattice QCD has been used for this purpose with astounding success, placing high precision constraints on standard model parameters and demonstrating crucial low- energy QCD phenomenology such as color confinement and spontaneous chiral symmetry breaking.
-\end{abstract}
-\vspace{5mm}
+\uiomasterfp[nosp, program={Computational science: physics},supervisors={Prof. A. Shindler\and Prof. M. Hjort-Jensen},title={Title},dept={Department of physics},color=grey]
 
 
-
-
-
-
-\section{Theory}
-
-\newpage
-\newpage
+\tableofcontents{}
+\listoffigures{}
+\listoftables{}
+\chapter*{Abstract} 
+\chapter*{Preface}
 
 
 
+\chapter{Theory}
 
-
-
-
-
-
-\subsection{Lattice field theory}
+\section{Lattice field theory}
 To lay the theoretical ground work for lattice field theories, we start with the continuum field theory, then discretize it while justifying the transformation and finally, cover the novel issues that arise in lattice field theories.\\\\Starting with the central equations that are the origin of the main mathematical tool used to evaluate observables:\\
 The Euclidean correlation function is given by
 \begin{equation}\label{eq:first}
@@ -109,7 +105,7 @@ where $O_n$ is the eigenvalue of $\ket{n}$, although this result is independent 
 \lim _{T \rightarrow \infty}\left\langle O_{2}(t) O_{1}(0)\right\rangle_{T}=\sum_{n}\left\langle 0\left|\widehat{O}_{2}\right| n\right\rangle\left\langle n\left|\widehat{O}_{1}\right| 0\right\rangle \mathrm{e}^{-t E_{n}}
 \end{equation}
 where $E_{n}$ are the energy eigenvalues of the Hamiltonian such that $E_0 < E_1 <\ldots$. Here $\ket{0}$ denotes the vacuum, meaning only operators that act on the vacuum to produce states with a non- vanishing inner- product with the energy eigenstates of the Hamiltonian, will have non- vanishing correlation functions.\\ We see that contributions from states other than the ground state are supressed exponentially in $t$. This will become crucial later when calculating the mass spectrum of QCD.
-\subsubsection{Path integral formulation}
+\subsection{Path integral formulation}
 In the continuum, the partition function can be calculated using the Trotter formula with time- step $\epsilon = \frac{T}{N_T}$, and the Hamiltonian now acting on field eigenstates.  
 \begin{equation}\label{eq:partitionFunction_Trotter}
 Z_{T}=\int \mathcal{D} \Phi_{0}\left\langle\Phi\left|e^{-T \widehat{H}}\right| \Phi\right\rangle=\lim _{N_{T} \rightarrow \infty} \int \mathcal{D} \Phi\left\langle\Phi\left|\widehat{W}_{\varepsilon}^{N_{T}}\right| \Phi\right\rangle
@@ -168,7 +164,7 @@ The fact that we can do this i.e. change the discretization, is due to the Oster
 This will allow us to later extract valuable information about eigenvalues and matrix elements from \eqref{operator_correlationfunction} using computational methods applied to \eqref{eq:pathintegral_correlationfunction}
 and \eqref{eq:pathintegral_Z}.
 
-\subsubsection{Wick rotation}
+\subsection{Wick rotation}
 It's important to note that lattice gauge theories use the Euclidean metric as opposed to the Minkowski metric. Faithful Lorentz transformation in Minkowski spacetime on a lattice do not preserve locality or the lattice notion of distance.\\In order to work on the lattice the time dimension is rotated in the complex plane such that the Minkowski and Euclidean metric are related by 
 \begin{equation}
 d s^{2}=-\left(d t^{2}\right)+d x^{2}+d y^{2}+d z^{2} = d \tau^{2}+d x^{2}+d y^{2}+d z^{2} 
@@ -183,7 +179,7 @@ or
 \end{equation}
 with $\gamma_{\mu}^{M}$ being the Minkowski gamma matrices.
 
-\subsubsection{Continuum gauge theory}
+\subsection{Continuum gauge theory}
 QCD is the theory of quarks, gluons and their interactions. Quarks are Dirac 4- spinors 
 \begin{equation}
 \psi^{(f)}(x)_{\alpha, c}, \quad \bar{\psi}^{(f)}(x)_{\alpha, c}
@@ -257,7 +253,7 @@ where due to the property of the generators in the fundamental representation, $
 S_{G}[A]=\frac{1}{4} \sum_{i=1}^{n^2-1} \int \mathrm{d}^{4} x F_{\mu \nu}^{(i)}(x) F_{\mu \nu}^{(i)}(x)
 \end{equation}
 where the extra factor of $\frac{1}{2}$ is simply a manner of convention.
-\subsubsection{Lattice gauge theory}\label{sec:lgt}
+\subsection{Lattice gauge theory}\label{sec:lgt}
 In the continuum, we introduced the connection $A_\mu(x)$ as the algebra valued objects living in the tangent space of the space- time manifold $M$. From these, we can construct the parallel transporter
 \begin{equation}\label{eq:gauge_transporter}
 G(x, y)=P \exp \left(\mathrm{i} \int_{\mathcal{C}_{x y}} A \cdot \mathrm{d} s\right)
@@ -372,7 +368,7 @@ and
 \item The numerical results have to be renormalized to relate them to physical experiments.
 \end{itemize}
 
-\subsubsection{Group integration}
+\subsection{Group integration}
 The integration measure $\int \mathcal{D}[U]$ is the product measure of every link variable on the lattice
 \begin{equation}
 \prod\limits_{n\in \Lambda}\prod\limits_{\mu}\int dU_\mu(n)
@@ -416,8 +412,8 @@ The first of which, together with the gauge invariance of the action can be used
 \begin{theorem}
 A spontaneous breaking of local symmetry for a symmetrical gauge theory without gauge fixing is impossible
 \end{theorem}
-\subsection{Lattice fermions}
-\subsubsection{Grassmann numbers and Wick's theorem}
+\section{Lattice fermions}
+\subsection{Grassmann numbers and Wick's theorem}
 In this section, we deal entirely with the fermionic part of the expectation value i.e. \eqref{eq:fermionic_expectationValue}.\\The Fermi statistics we require of our quark fields are captured by their anti- commutativity. This notion leads inexorably to considering the Grassmann algebra, also known as the exterior algebra over the complex numbers. The generators of this algebra, so- called Grassmann numbers, anti- commute under the exterior product $\eta_i\wedge\eta_j$ which we simply denote $\eta_i\eta_j$. This property naturally leads to other properties
 \begin{equation}\label{eq:grassmannNumbers}
 \eta_i\eta_j = -\eta_j\eta_i \longrightarrow \eta_i^2 = 0 \longrightarrow \mathit{Finite  }\hspace{1mm}\mathit{multivectors} \rightarrow \exp\left( \eta_i \right) = 1+\eta_i
@@ -452,7 +448,7 @@ doing the same for the second equality of the generating functional gives
 \end{equation}
 where the sum is over every permutation $n$ numbers.
 This equality is known as Wick's theorem, and it's the final puzzle piece to understanding the fermionic expectation value in \eqref{eq:fermionic_expectationValue}.
-\subsubsection{The fermionic expectation value}
+\subsection{The fermionic expectation value}
 We take a short interlude to revisit the equations for the fermionic expectation value
 \begin{equation}\label{eq:fermion_exp_diracOperator}
 \braket{O}_{F}=\frac{1}{Z_{F}[U]} \int \mathcal{D}[\psi, \bar{\psi}] \exp\left( -a^4\mkern-18mu \,\,\sum\limits_{n,m\in\Lambda}\mkern-18mu\sum\limits^{a,b,\alpha,\beta} \bar{\psi}(n)_{\alpha,a}D(n\mkern-4mu\mid \mkern-4mu m)_{\beta,b}^{\alpha,a} \bar{\psi}(m)^{\beta,b}\right) O[\psi, \bar{\psi}, U]
@@ -472,7 +468,7 @@ where we have suppressed color and Dirac indices and made the dependence of the 
 \end{aligned}
 \end{equation}
 where a factor of $-a^{-4}$ has been absorbed into the definition of $D^{-1}$. Here, every index except the flavour index has been made explicit to avoid any ambiguity. The object $\left( D^{-1}(n\mkern-4mu\mid \mkern-4mu m) \right)_{\beta_{j},b_{j}}^{\alpha_i,a_i}$ is what's known as a propagator and can be interpreted as propagating a fermion at space- time point $n$ with Dirac and color indices $\alpha_i$ and $a_i$ to the space-time -Dirac - color point $m,\,\beta_j,\,b_j$.
-\subsubsection{Chiral fermions and the problem of doublers}\label{Chiral_symmetry_breaking}
+\subsection{Chiral fermions and the problem of doublers}\label{Chiral_symmetry_breaking}
 To understand what is wrong about the naive fermion action introduced in \eqref{eq:naiveFermionAction}, we first have to understand some phenomenology in continuum QCD.\\\\In the continuum, the massless action for $N_f$ flavours has the global continous symmetry group
 
 \begin{equation}\label{eq:SU_SU_U_U}
@@ -498,7 +494,7 @@ anomaly. \textbf{Better known (I think) as the chiral anomaly. On the lattice, t
 \end{enumerate}
 \end{theorem}
 Where the bold text was not in the original theorem, but are clarifying statements intended to narrow the scope to lattice QCD in four dimensions. It should be noted that the lattice no- go theorem makes additional assumptions on the details of the theory, namely locality, and by inference from the general assumptions; continuity of the dispersion relation and therefore periodic boundary conditions i.e. the Brilluin zone forming a $3- torus$\cite{NielsenH.B1981Antf}.
-\subsubsection{Working around the Nielsen-Ninomiya theorem}\label{Chiral_fermions}
+\subsection{Working around the Nielsen-Ninomiya theorem}\label{Chiral_fermions}
 The  consequence of this theorem, is that a lattice QCD theory, must violate one of the assumptions laid out in theorem \ref{theorem:asas}. Several models have been proposed and tested along these lines
 \paragraph{Wilson Fermions} were introduced by Wilson to resolve an issue of the naive fermion action, it violates the second assumption of the Nielsen-Ninomiya theorem.\\To see this, we simply have to look at the momentum- space propagator for massless fermions and trivial gauge fields (i.e. gauge fields gauged to the identity)
 \begin{equation}
@@ -673,7 +669,7 @@ although it can also be defined through the spectral decomposition.\\$A$ can be 
 \left|D(n \mid m)_{\alpha \beta}\right| \leq C \exp (-\gamma\|n-m\|)
 \end{equation}
 By this criteria, we can recover locality in the continuum limit.\\\\The primary computational cost of the overlap operator is calculating the sign function, for which two main techniques have been explored, approximation with Chebyshev polynomials and with Zolotarev polynomials, which differ only slightly conceptually.
-\subsubsection{Phenomenology of chiral fermions}\label{sec:chiral_fermions_topCharge}
+\subsection{Phenomenology of chiral fermions}\label{sec:chiral_fermions_topCharge}
 If a Dirac operator is $\gamma_5$-hermitian i.e.
 \begin{equation}
 \gamma_{5} D \gamma_{5}=D^{\dagger}
@@ -822,7 +818,7 @@ where $\rho_{A}(\alpha)$ is the angular density of eigenvalues on the Ginsparg-W
 \lambda=\frac{1}{a}\left(1-\mathrm{e}^{\mathrm{i} \varphi}\right), \quad \varphi \in(-\pi, \pi].
 \end{equation}
 This angular density can in turn be related to gauge field configurations carrying topological charge through the index theorem, allowing us to relate them to symmetry breaking VeV. of the mass term.
-\subsection{Other observables}
+\section{Other observables}
 In the previous section, we covered different observables such as the topological charge and topological susceptibility given by equations \eqref{eq:topological_charge} and \eqref{eq:topological_susc}. We also covered the observable in \eqref{eq:chiral_condensate_exp_val}, which is known as the chiral condensate, although we've referred to it as the VeV. of the mass term.\\The purpose of this section is to cover, in somewhat rapid succession, some other observables of relevance.\\\\For convenience, I restate the relevant expressions here. The expectation value of an observable $O$ is given by
 \begin{equation}\label{eq:exp_val_collection}
 \begin{aligned}
@@ -849,7 +845,7 @@ where $\bar{O}$ is the operator in real space and $\widetilde{O}$ is the momentu
 \widetilde{O}\left(\boldsymbol{p}, n_{t}\right)=\frac{1}{\sqrt{\left|\Lambda_{3}\right|}} \sum_{\boldsymbol{n} \in \Lambda_{3}} O\left(\boldsymbol{n}, n_{t}\right) \mathrm{e}^{-\mathrm{i} a \boldsymbol{n} \boldsymbol{p}}
 \end{equation}
 and $\widehat{O}$ and $\widehat{O}^{\dagger}$ are annihilation and creation operators acting in Hilbert space, corresponding to the physical states in the correlation function.
-\subsubsection{Hadron masses}\label{hadron_masses}
+\subsection{Hadron masses}\label{hadron_masses}
 The methodology for extracting hadron masses revolves entirely around equation \eqref{eq:corr_function_for_hadron_masses}. The correlation function on the LHS. can be evaluated on a computer, and exploiting the exponential decay wrt. $n_t$ on the second line, we can isolate all but the lowest lying energy state $E_p=E_0$ \footnote{This is, among other reasons, why the temporal extent of most lattices are much larger than their spatial extent.}. This energy is related to the hadron mass through the dispersion relation $E_0 = m_H$.\\ To do this, we need to construct interpolators\footnote{Operators in the context of euclidean correlation functions} with the correct symmetries and quantum numbers of the physical states they represent. For mesons, a general local interpolator is given by
 \begin{equation}
 \begin{aligned} 
@@ -858,7 +854,7 @@ O_{M}(n)&=\bar{\psi}^{\left(f_{1}\right)}(n) \Gamma \psi^{\left(f_{2}\right)}(n)
 \end{equation}
 where common choices for $\Gamma$ for a given set of quantum numbers $J^{P C}$\footnote{Common notation for Spin, parity, charge} is given in table \ref{table:Interpolator_gammas}
 
-\begin{table}[H]
+\begin{table}[h]
 \centering
 \caption{Commonly used $\Gamma$ for meson interpolators with quantum numbers $J^{PC}$ \cite{Gattringer:2010zz}}
 \begin{tabular}{lcll}
@@ -887,7 +883,7 @@ m_{eff}(n_t+\frac{1}{2}) &= \operatorname{ln}\frac{\left\langle\widetilde{O}\lef
 \end{aligned}
 \end{equation}
 which as we see, should plateau at $aE_p = am$, the hadron mass.\\\\There is still, however the matter of the lattice constant which appears alongside the hadron mass. We do not know what the lattice constant is and we won't know until we tackle the issue of renormalization and scale setting in section \ref{Renormalization}. In the meanwhile, we can still compare numerical results with experiments by comparing ratios of hadron masses, for which the lattice constant cancels.
-\subsubsection{The Wilson loop}
+\subsection{The Wilson loop}
 Other than quark bilinears, another gauge invariant object that can serve as an observable is the trace of a path ordered product of link variables along a closed curve, which we discussed in the construction of the Wilson action. Computing the expectation values of Wilson loops is an interesting exercise on its own, however we can take certain steps to glean a physical interpretation of this value.\\\\For large quark masses, Wilson's Dirac operator can be expanded, upto an irrelevant constant, into 
 \begin{equation}
 \begin{aligned} 
@@ -908,7 +904,7 @@ P_{\mu_{1} \ldots \mu_{j}}(n)_{a b}=\left(U_{\mu_{1}}(n) U_{\mu_{2}}\left(n+\hat
 \end{equation}
 \cite{Gattringer:2010zz}. Because of the Kroncker- delta in \eqref{eq:hopping_term}, the leading contributing term will be $H^{||m-n||}(n\mkern-5mu \mid\mkern-5mu m)$ where we denote by $||m-n||$ the smallest separation between lattice sites $m$ and $n$ in units of $a$. $P_{\mu_{1} \ldots \mu_{j}}(n)_{a b}$ is then the shortest (not necessarily unique) path ordered product of link variables connecting the two sites.\\\\To restate this, the leading contribution to the quark propagator in the large quark mass limit is a straight Wilson line. The connection to Wilson loops becomes immediately apparent if we gauge the temporal link variables to the identity. This turns the Wilson loop into a product of two straight, strictly spatial and oppositely oriented Wilson lines with a temporal separation commensurate with the temporal range of the original Wilson loop. We can therefore interpret the Wilson loop as a static quark-antiquark pair.
 
-\subsubsection{Pion decay constant}
+\subsection{Pion decay constant}
 The Pion decay constant can be determined from examining correlation functions of operators between the Pion state and the vacuum. Before seeing this however, we need to look at Ward identities.\\ The expectation values of observables 
 \begin{equation}
 \langle 0|O| 0\rangle=\frac{1}{Z} \int \mathcal{D}[\psi, \bar{\psi}, U] O[\psi, \bar{\psi}, U] \mathrm{e}^{-S[\psi, \bar{\psi}, U]}
@@ -950,7 +946,7 @@ For the purpose of Pion decay, we need only look at $\partial_{\mu}j_{5\mu}^a$. 
 \end{aligned}
 \end{equation}
 The decay of a charged pion into leptons is mediated by the comparatively very heavy $W$--boson. e.g. $\pi^{+} \rightarrow e^{+}+v_{e}$, whose leading order contribution is given by the interaction on the LHS. in figure \ref{fig:feynman_weak_decay}
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \begin{tikzpicture}
 \begin{feynman}
@@ -1026,7 +1022,7 @@ Different methods have been proposed for matching these operators:
 \subitem Using short- ranged correlation functions of improved lattice correlators\cite{MARTINELLI1997141}.
 \end{itemize}
 
-\subsection{Yang- Mills gradient flow}
+\section{Yang- Mills gradient flow}
 The Yang- Mills gradient flow (We refer to the Wilson flow in the case of pure gauge theory using the Wilson action) is an essential tool in QCD phenomenology, with many diverse applications such as the determination of the topological susceptibility in lattice QCD \cite{Luscher2010}, the energy-momentum tensor\cite{10.1093/ptep/ptt059}, strong coupling constant \cite{Luscher2010} and chiral condensate\cite{L_scher_2013}\cite{SHINDLER201471}. As well as providing a reference scale for scale setting and an understanding of the separation of topological sectors at small lattice spacings\cite{Luscher2010}, to mention a few.\\Although the method has been extended to the quark fields \cite{L_scher_2013}, we only tackle the method applied to SU(3) gauge fields as described Lüscher in \cite{Luscher2010}. We will in particular look at its implications for topological observables.\\\\The Wilson flow in lattice QCD is defined by
 \begin{equation}\label{eq:flow1}
 \dot{B}_{\mu}=D_{\nu} G_{\nu \mu},\left.\quad B_{\mu}\right|_{t=0}=A_{\mu}
@@ -1035,7 +1031,7 @@ The Yang- Mills gradient flow (We refer to the Wilson flow in the case of pure g
 G_{\mu \nu}=\partial_{\mu} B_{\nu}-\partial_{\nu} B_{\mu}+\left[B_{\mu}, B_{\nu}\right], \quad D_{\mu}=\partial_{\mu}+\left[B_{\mu}, \cdot\right]
 \end{equation}
 where $A_\mu$ is the fundamental QCD gauge field which sets the boundary condition for the corresponding "flowed" gauge field $B_\mu$ at zero flow time $t$. The derivative with respect to this flow time is denoted by a dot.\\We can understand these equations as applying gauge-covariant transformations to the gauge fields, which drive the Yang-Mills action in the direction of steepest descent towards its stationary points.\\\\Preliminary investigations by Lüscher indicated that the flowed gauge fields were smooth and renormalized \cite{Luscher2010}. That these gauge fields were free of ultra-violet divergences was later proved with an all-order analysis of the perturbation theory of the flow in \cite{L_scher_2011}.
-\subsubsection{The Wilson flow in perturbation theory}
+\subsection{The Wilson flow in perturbation theory}
 The Wilson flow can be studied at small coupling using perturbation theory. For reasons that are thoroughly outlined in the not dissimilar case of the Langevin equation, not gauge fixing, introduces difficulties with renormalization, which the authors remedy by adding a gauge-fixing force term tangent to the gauge orbit of the gauge field \cite{Zinn-JustinJ1988Wift}.\\The flow equations \eqref{eq:flow1} and \eqref{eq:flow2} are at present invariant under gauge transformations which are not themselves functions of the flow time. Lüscher alters the existing flow equations by adding an extra term
 \begin{equation}\label{eq:mod_flow}
 \dot{B}_{\mu}=D_{\nu} G_{\nu \mu}+\lambda D_{\mu} \partial_{\nu} B_{\nu}
@@ -1079,14 +1075,14 @@ K_{t}(z) = \int \frac{\mathrm{d}^{D} p}{(2 \pi)^{D}}\mathrm{e}^{i p z-t p^{2}} =
 \end{equation}
 where we have used a well known result for integrals over Gaussian functions.\\Figure \ref{fig:flowTimeMeanSquareRadius} illustrates the point that the flow smooths the gauge fields with increasing flow time, averaging the field values with a mean square radius which is some function of the flow time.  
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 
 \includegraphics[trim=0cm 0.2cm 0cm 1.0cm, clip=true,scale = 0.7]{smearRad.pdf}
 \caption[]{Plot of $K_t(0.5)$ and $\sqrt{8t}$ with flow time $t$ for $D=4$. We see that $K_t(z)$ peaks at the flow time corresponding to $\sqrt{8t}=z$ then slowly attenuates with increasing flow time. }\label{fig:flowTimeMeanSquareRadius}
 \end{figure}
 
-\subsubsection{Scale-setting with the Wilson flow}
+\subsection{Scale-setting with the Wilson flow}
 One observable of interest is the energy of the gauge fields, which is the contraction of two copies of the field strength tensor, summed over all generators $T^a$ of the gauge group 
 \begin{equation}\label{eq:energyDensity_continuum}
 E=\frac{1}{4} G_{\mu \nu}^{a} G_{\mu \nu}^{a}.
@@ -1159,7 +1155,7 @@ where $\Lambda$ is a constant of integration which corresponds to the scale at w
 \Lambda_{\overline{MS}}=0.602(48) / r_{0}
 \end{equation}
 and equation \eqref{eq:runningCouplingApprox}, the perturbative expansion for $t^2\langle E \rangle$ can be calculated upto some small value of the flow time. The result of this calculation as a function of the flow time is shown in figure \ref{fig:t_squared_E_perturbativeExpansion}
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[trim=0cm 0.0cm 0cm 0.0cm, clip=true,scale = 0.7]{t_squaredE_pert_theory.pdf}
 \caption[]{Plot of $t^2\langle E\rangle$ as a function of the flow time for $\langle E\rangle$ in \eqref{eq:leadingOrder_pt_E},  $\alpha\left(q^{2}\right)$ in \eqref{eq:runningCouplingApprox}, $q=\frac{1}{\sqrt{8t}}$ and $\Lambda_{\overline{MS}}=0.602(48) / r_{0}$ at $N_f=0$. The error band arises from the error in $\Lambda_{\overline{MS}}$.}\label{fig:t_squared_E_perturbativeExpansion}
@@ -1175,7 +1171,7 @@ a reference scale $t_0$ can be defined by the equation
 For $\langle E\rangle$ to be a physical quantity of the theory, the dimensionless ratio of the reference scale defined from it, $\frac{t_0}{r_0^2}$ cannot vary when the cut-off scale imposed by $a$ is removed barring a power dependence on $a$ as per the prediction from effective field theory. When $E$ on the lattice is defined directly from the continuum expression \eqref{eq:energyDensity_continuum}, using a symmetric discretization of the field strength tensor using a clover term (see figure \ref{figure:Clovers} and discussion in section \ref{sec:improvedLatticeFieldStrengthTensor}), the scaling violations are seen to be particularly small. Of course, higher- order improved lattice field strength tensors could be used with presumably even smaller scaling violations.\\\\
 The reference scale $t_0$ has several distinct advantages over other reference scales such as the Sommer scale. It does not require any fits or extrapolations and require relatively small statistics in order to achieve small statistical errors \cite{Luscher2010}.
 
-\subsection{The topological charge and the Wilson flow}
+\section{The topological charge and the Wilson flow}
 We last looked at the topological charge in the context of The Atiyah-Singer index theorem and the axial anomaly in section \ref{sec:chiral_fermions_topCharge}. There, the lattice formulation for the topological charge in equation \eqref{eq:topCharge_DiracOperator_index} was defined in terms of the massless Dirac operator and related to its analytical index through the index theorem. This is broadly known as the 'Fermionic' topological charge definition.\\\\In the continuum, it was shown \cite{BelavinA.A1975Psot} that differentiable gauge fields of compact gauge groups in 4-dimensional euclidean space have an associated topological index. Consider a $S^3$ sphere embedded in this 4-dimensional space and the set of $A_\mu(y)\,|\,y\in S^3$. The gauge fields $A_\mu(x)$ which satisfy the condition 
 \begin{equation}
 F_{\mu \nu}=\partial_{\mu} A_{\nu}-\partial_{\nu} A_{\mu}+\left[A_{\mu}, A_{\nu}\right] \underset{x \rightarrow \infty}{\rightarrow} 0
@@ -1256,7 +1252,7 @@ where $S_{G}$ is the Wilson plaquette action. This means that the QCD functional
 \end{equation}
 where $S(U)$ denotes the total action evaluated at zero flow time and the reference time $t_0$ has taken the place of $t$ as the integration bound.\\It's clear from this that the functional integral strongly favours smooth configurations.
 We then see how the properties of the Wilson flow allow us to measure the topological charge directly from the flowed gauge fields, and that at sufficiently large values of the flow time, those fields satisfy the bound and permit an unambiguous topological charge definition, thus settling into integer values.
-\subsubsection{Separation of topological sectors}\label{sec:sepofTopSec}
+\subsection{Separation of topological sectors}\label{sec:sepofTopSec}
 In QCD, the set of fields which satisfy the bound \cite{PhillipsAnthony1986Lgfp}
 \begin{equation}\label{eq:topChargeDefinedBoundQCD}
 h<0.067
@@ -1266,7 +1262,7 @@ admit a definition for the topological charge and so can be said to fall into to
 h\geq 0.067
 \end{equation}
 admit no such definition, filling field space with boundaries between topological sectors, mimicking the behaviour of the continuum fields. An illustration of this is seen in figure \ref{fig:topologicalSectors_illustration}.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \begin{tikzpicture}
 
@@ -1285,7 +1281,7 @@ admit no such definition, filling field space with boundaries between topologica
 
 As we saw in equation \eqref{eq:actionDensityExpVal}, when $a\rightarrow 0$ and thereby $g\rightarrow 0$ , the proportion of fields satisfying some bound $s_{U_{\mu \nu}(n)}<s_{max}$ quickly goes to $1$. This is seen in figure \ref{fig:latticeSpacingexceedingBound}, where the probability that the bound is exceeded is plotted along the value of the bound at three different lattice spacings.
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \begin{tikzpicture}
     \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[scale = 0.4]{plaquettesBelowBound.png}};
@@ -1300,15 +1296,15 @@ As we saw in equation \eqref{eq:actionDensityExpVal}, when $a\rightarrow 0$ and 
 Lüscher reports in \cite{Luscher2010} that the percentage of gauge fields which satisfied the bound \eqref{eq:topChargeDefinedBoundQCD} went as
 $0\%\rightarrow 8\%\rightarrow 70\%$ as the lattice spacing was reduced from\\$0.1\rightarrow0.07\rightarrow0.05$.
 Thus, the emergence of topological sectors in the continuum limit is seen to arise dynamically from the rapidly decreasing weight in the functional integral of the large-$h$ configurations.
-\subsubsection{Universality}
+\subsection{Universality}
 The hereto geometric construction for the topological charge density is computable. However for $t>0$, any definition for the topological charge density on the lattice which share in the same asymptotic behaviour in the classical continuum limit belong to the same universality class \cite{Luscher2010}\cite{L_scher_2011} and the same can be said of its cumulants. Thus, a simple, symmetric discretization of the Field strength tensor can be used to construct what is known as the 'naive' definition of the topological charge density 
 \begin{equation}\label{eq:topChargeDensity_flowed_lattice}
 q(n, t)=\frac{1}{64 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} G_{\mu \nu}^{a}(n, t) G_{\rho \sigma}^{a}(n, t)
 \end{equation}
 where $G_{\mu \nu}^{a}(n, t)$ is the discretized lattice field strength tensor at flow time $t$.\\\\It's notable that while the Neuberger topological charge definition in equation \eqref{eq:topCharge_DiracOperator_index} is of course calculable on the lattice, this new definition lends itself to much easier computation and much higher statistics \cite{PhysRevLett.94.032003}\cite{non_gaussianities2015}.
 
-\subsection{Predictions from the topological charge}
-\subsubsection{Witten-Veneziano mechanism}
+\section{Predictions from the topological charge}
+\subsection{Witten-Veneziano mechanism}
 The flavour singlet pseudoscalar $\eta '$- meson has turned out to be a persistent source of bewilderment. As we saw in section \ref{sec:chiral_fermions_topCharge}, due to the Axial anomaly, $\eta '$ is not a pseudo Nambu-Goldstone boson. Whereas eight pseudoscalar mesons have light masses, attributable to them undergoing chiral symmetry breaking, the $\eta '$-meson is much heavier as the flavour singlet chiral symmetry $U(1)_A$ is broken explicitly by the axial anomaly.\\
 The Witten-Veneziano mechanism\cite{VenezianoG1979Uwi}\cite{WittenE1979Catf} is one solution to this problem. It is based on an observation and procedure stated by 't Hooft \cite{HOOFT1974461} that considers the large $N$ expansion where $N$ is the number of colours. In this limit where $N\rightarrow \infty$, the $U(1)_A$ symmetry of the theory is restored and thus the $\eta '$- meson undergoes chiral symmetry breaking, becoming massless in the chiral limit.\\\\ The Witten-Veneziano formula
 \begin{equation}\label{eq:etaPrimeMass}
@@ -1337,7 +1333,7 @@ f_{\pi^{-}}=(130.41 \pm 0.03 \pm 0.20) \mathrm{MeV}.
 
 
 
-\subsubsection{Topological susceptibility}
+\subsection{Topological susceptibility}
 In the Monte Carlo procedure, we sample gauge configurations from the functional integral, then flow those gauge configurations according to the Wilson flow. As we saw, the smoothness condition effectively disassociates different topological sectors in field space, meaning the topological susceptibility $\chi_t$ can be unambiguously derived from a representative sample of gauge configurations, each with a corresponding topological charge.
 The topological susceptibility as it is defined in equation \eqref{eq:topological_susc} diverges as $\frac{1}{a^4}$. However, at all non-vanishing flow times $t>0$, the topological susceptibility can be defined from the naive definition of the topological charge density in \eqref{eq:topChargeDensity_flowed_lattice} as
 \begin{equation}
@@ -1368,9 +1364,9 @@ where the complex phase $\alpha$ of the quark mass matrix $M$ is usually dealt w
 \end{equation}
 This in turn alters the integration measure (see equation \eqref{eq:AxAnom_measure_transform}), as we've seen in the lattice case in section \ref{sec:chiral_fermions_topCharge}. This additional phase $\alpha$ is then included in the parameter $\theta$ such that all CP-violating interactions are seen to arise from the existence of the topological charge density.\\\\The value of the $\theta$-term is very tightly constrained by measurements of the neutron electric dipole moment \cite{PhysRevLett.97.131801}, to $\mathcal{O}(10^{-10})$. This raises a natural question: $\theta$ could be anything between $0$ and $2\pi$, why should it be so small? When questions like these arise in physics, they're called 'Fine tuning'- problems, and this one in particular is known as 'The strong CP-problem'. 
 
-\section{Computation}
+\chapter{Computation}
 As of yet, we've neglected to mention how LQCD computations are solved. Recall, once again the expression for the expectation value of an observable from \eqref{eq:exp_val_collection} for a given choice of lattice action. If the observable is a function of the quark- and anti- quark fields, then performing the Grassmann integration will yield, in addition to the fermion determinant, any quark propagators arising from Wick's theorem \eqref{eq:new_Wick_Theorem}. \par The computation of gauge configurations including the quarks is conceptually difficult and would for the time being, distract from the relatively simple formalism. We therefore start by considering the case of a pure gauge action which has observables such as the Wilson loop expectation value, which is only dependent on the link variables.
-\subsection{Pure gauge theory}
+\section{Pure gauge theory}
 The expression we need to evaluate 
 \begin{equation}
 \langle O\rangle=\frac{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} O[U]}{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]}}  ,
@@ -1386,7 +1382,7 @@ where $U_{n}$ is sampled from the probability measure
 \mathrm{d} P(U)=\frac{\mathrm{e}^{-S_g[U]} \mathcal{D}[U]}{\int \mathcal{D}[U] \mathrm{e}^{-S_g[U]}}.
 \end{equation}
 This sum must obviously terminate at some finite number of Monte Carlo samples $N$ at which the estimated error is proportional to $\frac{1}{\sqrt{N}}$.
-\subsubsection{Generating gauge configurations}
+\subsection{Generating gauge configurations}
 Constructing the set of distributed gauge configurations\footnote{By gauge configuration we mean a choice of $U$ for every link variable on the lattice} and performing the measurement on an observable can be regarded as completely separate problems. In fact, large databases of ensembles of gauge configurations\footnote{Each with differing lattice size, lattice constant and quark masses} have been aggregated and publicized in what's known as the International Lattice Data Grid \cite{Beckett_2011}. In order to make a measurement with the operator $O$, one need only compute the sum \eqref{eq:MC_gauge_sum} using gauge configurations from this database or your own for an appropriate amount of samples $N$.\\\\Ensembles of gauge configurations are constructed using a Markov chain, which for our purposes is a sequence of configurations initialized with some arbitrary configuration and updated with a conditional transition amplitude $T\left( U_{n+1} \mid U_{n} \right)$ such that $\sum\limits_{U_{n+1} \in \Lambda}\mkern-10mu T\left( U_{n+1} \mid U_{n} \right) = 1 \,\,\forall\,\, U_{n} \in \Lambda $. We also require that the Markov process, once it has reached equilibrium, fulfils 
 \begin{equation}
 \sum_{U} T\left(U^{\prime} \mid U\right) P(U) \stackrel{!}{=} \sum_{U} T\left(U \mid U^{\prime}\right) P\left(U^{\prime}\right)
@@ -1493,7 +1489,7 @@ With all this in mind, we can outline the very most basic program structure for 
 \end{algorithmic}
 \end{algorithm}
 The metropolis-Hastings algorithm is a good introductory example for the generation of gauge configurations, but it's rarely used in contemporary simulations. Instead, depending on whether one's simulating in the quenched approximation or with dynamical fermions, most simulations use some variant of Heatbath algorithms combined with overrelaxation or one of several Hybrid Monte Carlo algorithms which will be covered in later sections. Next, we cover the two primary algorithms which have been used for generating pure gauge configurations in the LGF suite. Heatbath and Overrelaxation.
-\subsubsection{Cabbibo- Marinari Heatbath}
+\subsection{Cabbibo- Marinari Heatbath}
 Heatbath algorithms have proven invaluable tools for generating gauge configurations in pure gauge theory. It has been shown to be, in the case of SU(3), about three times more efficient than the metropolis algorithm \cite{CABIBBO1982387}. The heatbath algorithm combines the configuration proposal and acceptance steps of the Wilson gauge action- Metropolis algorithm by sampling gauge links directly from the distribution
 \begin{equation}\label{eq:Heatbath_distribution}
 \mathrm{d} P(U)=\mathrm{d} U \exp \left(\frac{\beta}{N} \operatorname{Re} \operatorname{tr}[U A]\right)
@@ -1552,7 +1548,7 @@ x_0+ix_3 & x_2+ix_1 \\
 -x_2+ix_1 & x_0-ix_3
 \end{array}\right]
 \end{equation}
-\subsubsection{Overrelaxation}
+\subsection{Overrelaxation}
 Overrelaxation is a method which attempts to increase the distance in group space traversed between configurations. It does this by exploiting the symmetry of the action under certain operations, to propose new link variables which leave the action invariant and therefore are automatically accepted.
 Overrelaxation is not ergodic on it's own as it only traverses the configuration subspace of constant action. It is therefore necessary to include fully canonical update methods such as the Heatbath to achieve ergodicity.\\\\We proceed by examining the Overrelaxation method which works by updating the $SU(2)$ subgroups of $SU(3)$. Similar in vein to the scheme introduced for the Cabbibo- Marinari Heatbath.\\\\There exists overrelaxation algorithms for SU(N) gauge theories with $N>2$, and they have proven to be more efficient than SU(2) subgroup update- algorithms. Its implementation however, is more involved than the SU(2) subgroup algorithm, and for $N=3$, the improvement in the autocorrelation time of e.g. the Polyakov loop is very slight \cite{inbook}.\\\\For the Wilson action we see that the trace remains invariant if the proposed $U'$ has the property that $U' = V^\dagger U^\dagger V^\dagger$ where $V = \frac{A}{a}$ following the same convention as for the $SU(2)$ Heatbath. We get that
 
@@ -1562,7 +1558,8 @@ Overrelaxation is not ergodic on it's own as it only traverses the configuration
 
 In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Overrelaxation constitues a massive improvement when it comes to decorrelating measurements in Monte Carlo time \cite{PhysRevLett.58.2394} and its ease of implementation to pre-existing update algorithms makes it an obvious addition when generating gauge configurations.
 
-\subsubsection{Algorithm}
+\subsection{Algorithm}
+The complete algorithm for performing the joint Heatbath- and Overrelaxation updates on the entire lattice can be found in listing \ref{alg:HBplusOR}. The algorithm for performing each subgroup update in the Heatbath steps can be found in listing \ref{alg:SU2HB}.
 \begin{algorithm}[H]
 \caption{$SU(3)$ Cabbibo- Marinari w/ Overrelaxation}\label{alg:HBplusOR}
 \begin{algorithmic}
@@ -1656,7 +1653,7 @@ In conjunction with other update methods such as Cabbibo- Marinari Heatbath, Ove
 \end{algorithm}
 
 \paragraph{Pseudo- random number generators} (RNGs) are crucial in Monte Carlo calculations as these are at the very core of the program and therefore make up a sizable proportion of all clock cycles. A typical lattice size for a LQCD calculation with light flavours might be $64^3\times 128$ \cite{tanabashi2018review}, meaning a single sweep through the lattice with a single update requires at least $\mathcal{O}(10^8)$ random numbers, counting only the acceptance step in the Metropolis algorithm. Many different engines are available through e.g. \CC standard libraries such as the Mersenne twister engine. Any RNG can be used as long as it has a guaranteed period far in excess of the number of random numbers required by the program. Computational efficiency is high on the list of requirements, but autocorrelation will ultimately extend the duration of the program, meaning quality \footnote{Quality meaning as close to uncorrelated as possible} of random numbers is often the deciding factor.
-\subsubsection{Post analysis}
+\subsection{Post analysis}
 Following your simulation, you should now have a file containing every measurement value. Because they originate from a Markov chain, they will be correlated to some extent. This is known as autocorrelation, and its presence means that a naive implementation of an error estimate will give an underestimate of the actual error. This actual error is a function of the correlation time and the estimated standard deviation  $\sigma$ of the sample mean $\braket{O}$ is given by
 \begin{equation}
 \sigma=\sqrt{\frac{1}{N} 2 \tau_{O, \text { int }} \widehat{\sigma}_{O}^{2}}
@@ -1676,7 +1673,7 @@ In practice, we only calculate the sum over $\Gamma_{O}(t)$ in \eqref{eq:integra
 \end{equation}
 diverges, the integrated autocorrelation time similarly increases approximately as $\left(\xi_{O}\right)^{z}$ with the dynamical critical exponent $z$ depending on the observable and the type of updating algorithm. This effect, known as critical slowing down, has been shown to be especially bad for the case of the squared topological charge, with $z\approx 5$ in the case of Hybrid Monte Carlo (HMC) \cite{2011}.\\\\If the autocorrelation time is not known and is too costly to calculate, we can still estimate it by using a procedure known as Blocking:\\We split our dataset into blocks of equal size $x$ and calculate the mean value of each subset $\braket{\bar{O}_i}$. We then calculate the standard deviation between these mean values, plotting them against the block size $x$. Once the chunks are large enough so as to be uncorrelated, we find that the standard deviation plateaus for increasing $x$. This corresponds to our intuition that the autocorrelation time corresponds to the largest separation between uncorrelated samples.\\\\Whether the independent data comes from blocking or from selective sampling using autocorrelation time\footnote{Depending on the expense associated with calculating the observable in question, these may be used in conjunction, discarding configurations between measurements, then doing the blocking analysis}, we are now ready to do the necessary data analysis. This is often done using tools such as Bootstrapping or Jackknife, which assume an uncorrelated data set. These both work by considering slight alterations on the original data set to construct many "new" data sets on which analysis can be performed. Because LQCD data is so computationally demanding, this kind of re-sampling is often necessary to improve estimates.
 
-\subsection{Fermions}
+\section{Fermions}
 With some working knowledge of the programmatic structure for simulating pure gauge theory, we're now ready to introduce fermion fields. We begin their introduction by considering once again, the expectation value of an observable $O$
 \begin{equation}\label{eq:compute_fermion_exp_val}
 \begin{aligned}
@@ -1711,7 +1708,7 @@ is replaced with
 \braket{O}=\frac{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]}  \braket{O}_{F}}{\int \mathcal{D}[U] \mathrm{e}^{-S_{G}[U]} },
 \end{equation}
 setting the fermion determinant to the identity. This amounts to ignoring the presence of quark loops in the vacuum, in other words setting the sea quark masses to be infinitely heavy. This has major implications for the theory. It can no longer be considered a valid quantum field theory with a Hilbert space, hadrons cannot decay, small eigenvalues in the Dirac operator spectrum cause greater numerical instability along with many others. Still, for many results the discrepancy between numerical and physical experiment is remarkably small \cite{aoki2003light} and seeing as the fermion determinant is the most costly part of generating gauge field configurations, this is a worthwhile approximation.
-\subsubsection{Calculating the quark propagators}
+\subsection{Calculating the quark propagators}
 For a moderately small lattice, e.g. $18\times18\times 36$, the quark propagator for a single flavour would have of $\mathcal{O}(10^{10})$ complex entries connecting every site $(m,\alpha,a)$ to every other site $(n,\beta,b)$. Rather than calculating this entire matrix (which carries a very low information density due to correlated entries), we instead calculate the product
 \begin{equation}
 \sum_{m, \alpha, a} D^{-1}(n \mid\boldsymbol{m},m_t)_{\beta,b}^{\alpha,a} \boldsymbol{s}^{\left(m_{0}, \alpha_{0}, a_{0}\right)}(\boldsymbol{m})_{\alpha,a}
@@ -1729,12 +1726,12 @@ for the value of $\boldsymbol{x}$. Many different algorithms are fit for this pu
 \Lambda_i = m+\lambda_i[U]
 \end{equation}
 where $\lambda_i[U]$ are the eigenvalues of the massless Dirac- operator. As we saw in \eqref{eq:Ginsparg_wilson_circle}, for $\gamma_5$- Hermitian Dirac- operators obeying the Ginsparg-Wilson equation, $\lambda_i[U]$ are constrained to circle in the positive half of the complex plane, meaning $\Lambda_i$ is bounded from below by the smallest bare quark mass.\\ Other Dirac- operators, on the other hand, can have $\lambda_i[U] \approx -m$ giving very small eigenvalues and therefore numerical instability. This has to be offset by raising the bare quark mass.\\\\Another technique aimed at increasing numerical stability is variously called link smearing, gauge smoothing etc. These are aimed at lowering the coupling of fermions to local gauge field fluctuations by averaging field values across adjacent links. Care must be taken so as to make this averaging gauge invariant and local to not distort the short wavelength physics. APE smearing \cite{albanese1987glueball}, HYP smearing \cite{PhysRevD.64.034504} and Stout smearing \cite{morningstar2004analytic} are three such examples.
-\subsubsection{Dynamical fermions}
+\subsection{Dynamical fermions}
 The very last piece required for the full LQCD calculation of fermionic observables in \eqref{eq:compute_fermion_exp_val}, is the fermion determinant. For all but the smallest lattices (both in size and dimension), the problem of calculating the fermion determinant falls under the umbrella of generating gauge configurations. As was briefly mentioned, calculating gauge configurations and calculating observables can often be considered as separate issues. Once an ensemble of gauge configurations is available, it can be used to calculate any observable we could care to measure.
 
 The ways in which we can effectively treat the fermion determinant is dependent on several properties of the Dirac- operator.
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \begin{tikzpicture}[node distance=3cm]
 \node (q0) [question]{$\gamma_5-Hermitian?$};
@@ -1780,7 +1777,7 @@ We then leveraged the fact that the action was local in the link variables so th
 \exp \left(S[U]-S\left[U^{\prime}\right]\right)=\exp \left(S_{G}[U]-S_{G}\left[U^{\prime}\right]\right) \exp \left(S_{\mathrm{F}}^{\mathrm{eff}}[U]-S_{\mathrm{F}}^{\mathrm{eff}}\left[U^{\prime}\right]\right)
 \end{equation}
 with $S_{\mathrm{F}}^{\mathrm{eff}}[U] =\phi^{\dagger}\left(D[U] D^{\dagger}[U]\right)^{-1} \phi $, which is by no means a local action. This means that every time we proposed a change in a link variable, we would have to calculate the entire global effective action. If the entire action is going to change anyway, we might as well update several link variables between accept-reject steps. Doing this in a way that leads to acceptable acceptance- rates and autocorrelation times is the goal of the next section.
-\subsubsection{Hybrid Monte Carlo}\label{HMC}
+\subsection{Hybrid Monte Carlo}\label{HMC}
 HMC is an instance of the Metropolis-Hastings algorithm where proposed configurations are generated according to Hamiltonian time evolution using a numerical integrator. This integrator is subject to two conditions, due to the detailed balance condition, which are reversibility and volume preservation. The usual candidate (and the one we will be working with) is the leapfrog integrator. This integrator is subject to a discretization error, which can be corrected by including an accept-reject step akin to that of regular Monte Carlo.\\\\As for a system of classical particles, we define a Hamiltonian and a configuration space consisting of the field values $Q$ and their conjugate momenta $P$. In the case of $SU(3)$, we define $Q$ and $P$ to be elements of the algebra
 \begin{equation}
 Q_{\mu}(n) = \sum_{i=1}^{8} \omega_{\mu}^{i}(n) T_{i},\quad P_{\mu}(n)=\sum_{i=1}^{8} P_{\mu}^{i}(n) T_{i}
@@ -1889,9 +1886,9 @@ to instead evaluate only the positive case, and apply the above relation for the
 \\ = \exp&\left(- \phi^{\dagger} \left( D^{\dagger} \right)^{-1}D^{-1} \phi \right)\\=  \exp&\left(- \left( D\chi \right)^{\dagger} \left( D^{\dagger} \right)^{-1}D^{-1} \left( D\chi \right) \right)\\ = \exp&\left(- \chi^{\dagger} \chi  \right),\,\,\phi = D\chi.
 \end{aligned}
 \end{equation}
-We are now ready to state the algorithm for the full HMC update step. Here, $P$ and $Q$ carry suppressed lattice and Dirac- indices i.e. $P^{\mu,n}_{(k)},\,U^{\mu,n}_{(k)}\rightarrow P_{(k)},\,U_{(k)}$ with the exception of the real numbers $P_{\mu}^{i}(n)$ which parametrize the generator expansion of the algebra elements $P_{\mu}(n)$. $P^2$ denotes the sum $\sum\limits_{\mu,n} P_{\mu}(n)^2$.
-\begin{algorithm}[H]
-\caption{HMC updating algorithm}\label{alg:cap}
+We are now ready to state the algorithm for the full HMC update step which can be found in listing \ref{alg:HMCalg}. Here, $P$ and $Q$ carry suppressed lattice and Dirac- indices i.e. $P^{\mu,n}_{(k)},\,U^{\mu,n}_{(k)}\rightarrow P_{(k)},\,U_{(k)}$ with the exception of the real numbers $P_{\mu}^{i}(n)$ which parametrize the generator expansion of the algebra elements $P_{\mu}(n)$. $P^2$ denotes the sum $\sum\limits_{\mu,n} P_{\mu}(n)^2$.
+\begin{algorithm}[h]
+\caption{HMC updating algorithm}\label{alg:HMCalg}
 \begin{algorithmic}
 
 \Ensure 
@@ -1919,7 +1916,7 @@ We are now ready to state the algorithm for the full HMC update step. Here, $P$ 
 \end{algorithmic}
 \end{algorithm}
 It can be shown \cite{DUANE1987216} that this algorithm obeys the necessary detailed balance condition. The step size $\varepsilon$ must be controlled so as to make the discretization error small enough for a large acceptance probability. Recall that if the integrator was exact, the Monte- Carlo step would accept every update. 
-\subsubsection{Other algorithms for dynamical fermions}
+\subsection{Other algorithms for dynamical fermions}
 We would often like to go without the restriction of using an even number of mass degenerate, dynamical quark flavours. In addition, working with Ginsparg- Wilson fermions in HMC can make the evaluation of the force term very costly. Several algorithms have been proposed to deal with these scenarios, either working to make HMC compatible with odd numbers of dynamical quark flavours or by using non- exact methods with mitigating procedures to reduce errors.
 \paragraph{The R-algorithm}\cite{PhysRevD.35.2531} calculates the change in the effective fermion action by the linear approximation 
 \begin{equation}
@@ -1955,16 +1952,16 @@ going to $1$ in the limit $m\rightarrow \infty$. This gives an effective pseudof
 S=-\phi^{\dagger} T_{n}^{\dagger}(D) T_{n}(D) \phi
 \end{equation}
 \cite{BORICI1995645}. The above approximation can also be made using rationals, giving their name of rational HMC.\\On our earlier assumption that $\operatorname{det}D$ is positive, this clearly needs to be justified, as there is no visible constraint making this assumption true. This is known as the "sign problem" in LQCD\footnote{This is but one part of a larger class of problems in numerical physics dealing with partition functions of fermions (especially at non- zero chemical potential, recall that $\gamma_5$-hermiticity ensures the reality of the determinant) broadly known as the numerical sign problem.}, and it can be treated in a couple of ways.\\Firstly, one could just compute the sign of the determinant for every gauge configuration and include it in the average, but this is extremely cost-prohibitive.\\In practice, the assumption is made based on a couple of observations:\\$\operatorname{det}D$ is in fact positive in the continuum limit and this is indicated to hold at the range of lattice spacings and quark masses being used in simulations \cite{BORICI1995645}\cite{Zyla:2020zbs}.\\Secondly, under molecular dynamics evolution as is the case in HMC, the gauge configuration changes continuously and therefore also the eigenvalues of $D$. For an eigenvalue to change sign, it must cross zero, making $\operatorname{det}D$ vanish, and thus suppressing updates along such a trajectory \cite{JLQCD:2001ucs}.\\\\Many other algorithms exist for simulating dynamical fermions. A brief review of some of them can be found in \cite{schaefer2012status}.
-\subsection{Extrapolation}
+\section{Extrapolation}
 There are only a few free parameters in a LQCD program. These are the parameters for which we set a number in the program and they are the bare quark masses $m_f$, the inverse gauge coupling $\beta$ and the number of lattice sites which effectively sets the lattice volume through the lattice spacing $a$ which depends on $\beta$ and $m_f$.\par In order to obtain physical results from lattice simulations, one has to extrapolate the results to the continuum- and infinite volume- limit as well as to the physical quark masses if the simulation masses were larger than the physical masses.  
-\subsubsection{The continuum limit}
+\subsection{The continuum limit}
 The fact that we use different lattice actions to simulate seemingly the same physical systems comes from the express understanding that all of these lattice actions share the same universality class\footnote{There has been considerable debate on this point for staggered fermions, see e.g. \cite{BERNARD2007235},\cite{golterman2008qcd},\cite{Creutz2007ReplyT} etc.} i.e. have the same scaling behaviour near critical points, and share the same symmetries relevant to the observable in question. This is important, as taking the continuum limit of a lattice field theory involves driving the couplings to the critical point of the theory corresponding to $a=0$. Therefore, as long as the continuum limit is being considered, different lattice actions will produce the same physical predictions.\par A note of caution before proceeding: Extrapolation to the continuum limit has to be performed at a constant lattice volume. This means that as the couplings are driven towards their critical values, the number of lattice points has to change for every resulting value of $a$ so as to keep the lattice volume from changing.\\\\Keeping $\beta$ constant, the light quark masses $m_u=m_d=m_f$ are tuned to a value $m_f^\star$ where the dimensionless ratios of hadron masses (see \ref{hadron_masses} and \ref{Renormalization}) match the physical predictions. Then the lattice constant is gotten by dividing the hadron mass at the quark mass $m_f^\star$ in lattice units by the physical hadron mass. This procedure is then repeated at several values of $\beta$, allowing us to extrapolate the results to the critical point. Simulations are increasingly being performed at the physical light quark masses, but these may need to be extrapolated based on the available computational resources.
-\subsubsection{The infinite volume limit}
+\subsection{The infinite volume limit}
 Any simulation will happen at a finite lattice volume, and this impacts the outcomes of observables, as modes that traverse the spatial torus give contributions that would be absent in the infinite volume limit.\\Most simulations are carried out with a temporal extent roughly twice that of the spatial extent to allow excited states to decay. Therefore, the leading contributions are from spatial finite size effects. The largest correlation length in the system arises from the lightest hadron correlator. Volume dependence varies between observables, but for processes involving single particle states, the effects are purported to be sub- leading order for $m_\pi N_sa \geq 4$, where $m_\pi$ is the mass of the pion, the lightest hadron.\\\\The extrapolation can be carried out by increasing the number of spatial lattice points while keeping all other parameters fixed. If possible, the extrapolation might be accompanied by a parametrization based on theory or otherwise a naive power law dependence of the form $\frac{1}{(aN_s)^n}$.
 
-\section{Implementation}
+\chapter{Implementation}
 At this point, the thesis will change course dramatically. Rather than broadly discussing the theory and practices of quantum field theory and lattice QCD, we move on to tackling the relevant set of issues for answering the problem statement we made at the very beginning of the thesis. These are issues pertaining to the topological charge and the Wilson flow applied to ensembles of pure gauge configurations. We will also tackle the workings of LGF and the particular details associated with implementing lattice QCD simulations in the real world.\\\\As stated numerous times, measuring observables in lattice QCD is effectively partitioned into two separate problems: generating gauge configurations and analysing those configurations. For us, this analysis includes the application of the Wilson flow, accompanied by measurements of observables at several flow steps. We tackle the problem of generation first.
-\subsection{Generating Gauge Configurations}
+\section{Generating Gauge Configurations}
 There are several considerations at play when deciding the set of ensembles which are worth including in your analysis. There are specific requirements to our particular analysis which influences the choice of ensembles and choice of update algorithm.
 \begin{enumerate}
 \item Autocorrelation time of the topological charge
@@ -1976,7 +1973,7 @@ There are several considerations at play when deciding the set of ensembles whic
 \end{enumerate}
 We cover these in turn.\\\\The topological charge and its cumulants are infamous for suffering from critical slowing down to a greater extent than other observables. This is known to be a particularly substantial problem for HMC algorithms for which e.g. the effective dynamical critical exponent of the squared topological charge was found to be $5$ in pure gauge theory \cite{2011}. This is often referred to as the topology-freezing problem. This is thought to arise from periodic boundary conditions which, close to the continuum, constrain configurations from changing their topological charge through any continuous deformation\footnote{Think, unwinding a closed loop going through the hole of a doughnut without cutting it}. It has been proposed that using open (Neumann) boundary conditions in the time direction can bypass this issue in \cite{L_scher_2011}. An analysis of this was carried out in \cite{PhysRevD.90.074502}.\\Since we're not analysing dynamical fermions, we're free to choose other update algorithms which do not move along molecular-dynamics trajectories and are more likely to 'tunnel' between topological sectors in configuration space. For example, the overrelaxation algorithm is blatantly not a continuous transformation in configuration space.\\The combination of Heatbath and overrelaxation (HB-OR) has been used in several pure gauge theory analyses of the topological charge \cite{non_gaussianities2015} \cite{PhysRevD.92.094518} with great success which makes it a good choice for our purposes.\\That said, LGF has an implementation of a local variant of HMC based on \cite{Kennedy_1994} which is quite fast compared to the HB-OR algorithm and without a careful analysis of the autocorrelation times for different lattice spacings, I cannot say with confidence whether this algorithm could be a viable option for some range of lattice constants. Some limited analysis has been done on the autocorrelation time of observables in \cite{LHMC_autocorr}, but none for the topological charge.\\\\For finite volume effects, we can consider the fact that the lightest glueball has an energy of about 1.5 GeV. For the topological susceptibility, this is expected to produce very small finite-volume effects for simulation lengths greater than $1fm$ \cite{Del_Debbio_2005}. However, we will mostly rely on an analysis carried out in \cite{non_gaussianities2015}. They use a different definition for the field strength tensor (more on this later) and larger lattice constants than this analysis but there is little reason to doubt its transferability to our situation.\\They found that for $L\geq 1.4fm$, finite size effects on the topological susceptibility were smaller than  $0.5\%$. This was a very high statistics study, so these effect sizes are likely smaller than what we need to consider, however we'll air on the side of caution here.\\\\We would like to simulate with very small lattice constants as this makes the continuum extrapolation less questionable. We would also like very high statistics. These two goals are unfortunately at odds. Lower lattice constants increase autocorrelation time as well as the generation time and the computational cost of the Wilson flow for the same simulation volume by increasing the number of lattice points and the number of flow steps needed.\\This effect on computational effort is substantial to the point where analysing 2000 statistically independent configurations at $\beta=6.0$ is practically trivial compared to analysing 100 such configurations at $\beta=6.46$. Trying to strike a balance here is difficult without a prior analysis of the integrated autocorrelation time.\\\\Because the analysis requires continuum extrapolation and because the smallest lattice spacing requires the most computational effort, it's worthwhile to base your choices for $\beta$ and $|\Lambda|$ on the smallest lattice constant.\\\\Estimating the integrated autocorrelation time is very costly. Rather than incurring that cost for the ensembles used in the analysis, it's preferable to do the analysis on ensembles with a smaller lattice volume, making the assumption that those results will be approximately applicable for the larger lattice volume. 
 
-\subsubsection{Simulation parameters}
+\section{Simulation parameters}
 Keeping all of these factors in mind, we can begin to settle on our choices of simulation parameters.
 To determine the lattice spacing $a$ from the inverse coupling $\beta$ we use an interpolation from \cite{Guagnelli_1998}, which is valid for $5.7 \leq \beta \leq 6.57$:
 \begin{equation}\label{eq:avBeta_interpolated}
@@ -1987,7 +1984,7 @@ According to the authors, this interpolation is accompanied by a relative error,
 Error_{a/r_0} = \frac{a}{r_0}(0.0034482758621\beta - 0.0166551724138)
 \end{equation}
 We want to sample the configuration space at roughly evenly spaced values of the lattice spacing, keeping the simulation volume constant. This is to optimize the influence of each ensemble on the final continuum limit, closely grouped values would do a worse job at constraining the extrapolation.\\This is a good point to mention an additional constraint which won't be explained until section \ref{sec:parallelization}: we need the lattice to have an even number of points in each dimension.\\These, along with the constraint that our simulation volume must be larger than $1.4fm$ resulted in the choices shown in figure \ref{fig:choosingBetasAndLambdas}.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics{FINALPLOTS/N_v_beta.pdf}
 \caption[]{Choices for $\beta$ and $N$. $L=1.5fm$ produces values which nicely line up with the curve $L/a(\beta)$ at even values of $N$. $a(\beta)$ is as defined in \eqref{eq:avBeta_interpolated}}\label{fig:choosingBetasAndLambdas}
@@ -1996,7 +1993,7 @@ We want to sample the configuration space at roughly evenly spaced values of the
 For thermalization one has a choice of whether to start with all links set to the trivial link (known as a cold start), or whether to start with every link set to a random element of SU(3) (known as a hot start). Performing both, then seeing when the two initial conditions produce the same outcome on the Monte Carlo chain is one way of estimating the required thermalization. Because the topological charge requires the Wilson flow before it can be analyzed, this would be far too costly. Instead, the number of thermalization steps is chosen to be higher than the estimated integrated autocorrelation time.\\\\Choosing cold starts for our analysis would essentially amount to preferentially sample configurations with a topological charge of zero. This is obviously not an option, so every ensemble uses hot starts.
 \paragraph{$N_{OR}/N_{HB}$}
 In the combined HB-OR method, an obvious hyper-parameter one could tweak to improve decorrelation would be the number of OR steps used per HB step. This optimization is lattice constant- dependent and would also be specific to the topological charge. Rather than performing an expensive analysis of this relationship with potentially dubious improvement, we choose a ratio of $\frac{N_{OR}}{N_{HB}}=4 $ which has already been used successfully in \cite{PhysRevD.92.094518}.\\\\Finally, we're ready to state our chosen simulation parameters. Using the estimates for the integrated autocorrelation time obtained in section \ref{sec:autoCorr_analysis} we settle at the values in table \ref{tab:SimulationParameters}
-\begin{table}[H]
+\begin{table}[h]
 \caption{Simulation parameters for every analysed ensemble}
 \label{tab:SimulationParameters}
 \begin{tabular}{lcccccccc}
@@ -2015,9 +2012,9 @@ In the combined HB-OR method, an obvious hyper-parameter one could tweak to impr
 
 
 
-\subsection{Observables}
+\section{Observables}
 Every definition that follows from here, can be read as being defined from the gauge fields at flow times $t>0$. The extra notation has simply been omitted to make the equations easier to read. The distinction is important, as crucially, the gradient flow produces fields which are free from ultraviolet divergences, making the operators renormalized at all non-vanishing flow times. 
-\subsubsection{Improved Lattice Field-Strength tensor}\label{sec:improvedLatticeFieldStrengthTensor}
+\subsection{Improved Lattice Field-Strength tensor}\label{sec:improvedLatticeFieldStrengthTensor}
 For the lattice definition of the field- strength tensor, we look at the $\mathcal{O}\left(a^{4}\right)$ improved implementation demonstrated in \cite{BILSONTHOMPSON20031}. A general $m\times n$ Wilson loop operator is defined by the path- ordered exponential of the closed loop integral around the loop:
 \begin{equation}
 W_{\mu \nu}^{(m \times n)}=\mathscr{P} \mathrm{e}^{\mathrm{ig} \oint A \mathrm{~d} x}
@@ -2145,7 +2142,7 @@ The terms $C^{(m,n)}$ are so called clover terms which can be calculated on the 
         inner sep=0,
     },
 }
-\begin{figure}[H]\label{figure:Clovers}
+\begin{figure}[h]\label{figure:Clovers}
 \centering
 \begin{subfigure}[b]{0.4\textwidth}
 \centering
@@ -2434,10 +2431,10 @@ The terms $C^{(m,n)}$ are so called clover terms which can be calculated on the 
 \end{tikzpicture}
 }
 \end{subfigure}
-\caption{$C^{(1,1)}$ and $C^{(2,2)}$ contain a factor of $\frac{1}{4}$ since the two terms are symmetric under $n\leftrightarrow m$. $C^{(1,2)}$ and $C^{(1,3)}$ each need to be evaluated for two different orientations and their results added and multiplied by a factor of $\frac{1}{8}$. Thanks to Martin Ueding for providing Tikz templates on \href{https://github.com/HISKP-LQCD/lqcd-tikz-graphics}{\textbf{their github}}.}\label{figure:Clovers}
+\caption{$C^{(1,1)}$ and $C^{(2,2)}$ contain a factor of $\frac{1}{4}$ since the two terms are symmetric under $n\leftrightarrow m$. $C^{(1,2)}$ and $C^{(1,3)}$ each need to be evaluated for two different orientations and their results added and multiplied by a factor of $\frac{1}{8}$. Thanks to Martin Ueding for providing Tikz templates on \href{https://github.com/HISKP-LQCD/lqcd-tikz-graphics}{\textbf{their github}}.}
 \end{figure}
 equation \eqref{eq:cloverToFST} can then be applied to each clover term to get the improved field strength tensor from equation \eqref{eq:Improved_lattice_field_strength_tensor_FINAL}.
-\subsubsection{Energy Density}
+\subsection{Energy Density}
 The definition for the energy of the gauge fields can be defined directly from the continuum in terms of the lattice field strength tensor as
 \begin{equation}
 E=\frac{a^4}{4} F_{\mu \nu}^{a} F_{\mu \nu}^{a} = \frac{a^4}{2}\operatorname{Tr}\left[ F_{\mu \nu} F_{\mu \nu}\right].
@@ -2449,7 +2446,7 @@ E = \frac{1}{2\left| \Lambda \right|}\sum\limits_{x\in\Lambda}\operatorname{Tr}\
 
 Every analysis of the energy density in this thesis uses the unimproved clover definition with the exception of a small comparative study.\\The reason for this is simply that the evaluation of the improved lattice field strength tensor is much more expensive, and the analysis of the energy density is only considered as a minor addendum.  
 
-\subsubsection{Topological Charge}
+\subsection{Topological Charge}
 The lattice definition of the topological charge is given by the sum of the topological charge density 
 \begin{equation}
 q(x)=\frac{g^{2}}{32 \pi^{2}} \epsilon_{\mu v \rho \sigma} \operatorname{Tr}\left\{F_{\mu \nu}(x) F_{\rho \sigma}(x)\right\}
@@ -2486,15 +2483,15 @@ q(x)=\frac{g^{2}}{4 \pi^{2}} \left( \operatorname{Tr}\left\{F_{01}(x) F_{23}(x)\
 \end{equation}
 We can see from equation \eqref{eq:cloverToFST}, that our lattice implementation of the field strength tensor includes a factor of $g$ and so, no such factor is required in the implementation.
 
-\subsubsection{Topological susceptibility}
+\subsection{Topological susceptibility}
 In the large volume limit, we can define the topological susceptibility on the lattice from the continuum definition as 
 \begin{equation}
 \chi_{\mathrm{t}}=\frac{1}{V} \int d^{4} x d^{4} y\langle q(x) q(y)\rangle = \lim\limits_{V\rightarrow \infty}\frac{1}{V}\left( \langle Q^2 \rangle - \langle Q\rangle^2 \right) =\lim\limits_{V\rightarrow \infty} \frac{\langle Q^2 \rangle}{V}
 \end{equation}
 where we have used the fact that the expectation value of the topological charge is 0.
-\subsection{Wilson Flow}
+\section{Wilson Flow}
 
-\subsubsection{Numerical integration of the Wilson flow}
+\subsection{Numerical integration of the Wilson flow}
 A differential equation of the form 
 \begin{equation}\label{eq:WF_diffeq}
 \dot{V}_{t}(x, \mu)=-g_{0}^{2}\left\{\partial_{x, \mu} S_{\mathrm{w}}\left(V_{t}\right)\right\} V_{t}(x, \mu),\left.\quad V_{t}(x, \mu)\right|_{t=0}=U(x, \mu)
@@ -2564,8 +2561,9 @@ where we introduced the variable $\Omega = V_\mu(n)A - \left( V_\mu(n)A \right)^
 M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a^i = 2\operatorname{Tr}\left( T^iM \right)  
 \end{equation}
 \cite{borodulin1995core}.
-\subsubsection{Algorithm}
-\begin{algorithm}[H]
+\subsection{Algorithm}
+The complete algorithm for the numerical integrator of the flow equations used in LGF is found in listing \ref{alg:Wilson_flow}
+\begin{algorithm}[h]
 \caption{Wilson flow w/ third order Runge-Kutta}\label{alg:Wilson_flow}
 \begin{algorithmic}
 \Ensure
@@ -2596,15 +2594,15 @@ M = a_0\mathbb{1}+a^iT^i\,\,for\,\,a_0=\frac{1}{3}\operatorname{Tr}M\,\,and\,\,a
 \end{algorithmic}
 \end{algorithm}
 The implementation of the Cayley-Hamilton exponentiation follows exactly from the procedure described in section \ref{HMC}, with the exception of a  very handy addition which is included in the 'CHROMA' library \cite{Edwards_2005} implementation of the same algorithm. Essentially, if $\operatorname{ReTr}\left( Q^2 \right)$ satisfies a certain bound, where $Q=-iP$ for $\exp(iP)$, one can truncate the procedure without compromise beyond machine precision. A quick analysis of the CPU expenditure however, reveals that for the bound imposed in the LGF implementation, essentially no time is spent executing this branch of the code, meaning it might be better to leave it out or make the bound larger.
-\subsubsection{Choice of flow parameters}
+\subsection{Choice of flow parameters}
 There are only a few parameters to decide on for the Wilson flow- and measurement- scheme. These are the step size $\epsilon$, the final flow time $t_{stop}$ and the frequency with which we measure the gauge configuration along the flow. Ideally, we would measure the configurations between every flow update, however the use of the improved lattice field strength tensor makes the evaluation of the topological charge take considerable time.\\\\The choice of $\epsilon$ is based on the empirical observation by Lüscher \cite{Luscher2010} that the third order Runge-Kutta integrator produces integration errors in the link variables which are of the order of $10^{-6}$ if $\epsilon=0.01$. Ideally, such a choice would be made after conducting a proper analysis on the step size dependence of the systematic error in the observable. This would however require us to flow the same configurations several times, varying the step size each time which would reduce the time spent building up statistics.\\\\The choice of $t_{stop}$ was made after several attempts, by determining the flow time at which all contributions to the $t_0$ estimate had vanished. This is important to ensure, as the final analysis of the topological susceptibility depends on conducting the continuum limit at the same physical flow time. In particular the continuum limit in this analysis was performed at $t_0$.\\\\The measurement interval was decided somewhat arbitrarily by enforcing a physical flow time resolution of $\mathcal{O}(10^{-4})[fm^2]$ while also ensuring that the measurement interval was divisible by $\frac{t_{stop}}{\epsilon}$ i.e. no wasted  flow steps.
-\subsection{Lattice Representation}
+\section{Lattice Representation}
 Choosing a proper representation of the lattice on the computer is important for ease of implementation, use and efficiency. Using a four- dimensional coordinate system to address locations in memory would work, but would also incur very large performance penalties in caching, memory speed etc. Instead, at the beginning of the program, every site is assigned an index, identifying its location along a one-dimensional array in memory.\\The addition of parallellization will also require the introduction of two separate index systems. One global, shared by every process, and one local, unique to every process. It will also require a mapping between the two to facilitate unambiguous communication between processes. The choice of local and global index systems are from a paper by Massimo Di Pierro describing the workings of a MPI based lattice simulation library known as MDP \cite{MDP}.\\\\Each point on the $M$- dimensional lattice is assigned a global index based on its global coordinate, given by 
 \begin{equation}
 i_{global} = \sum\limits_{i\neq M}\left[ \left( \prod\limits_{j> i}N_j \right)n_i \right] + n_M
 \end{equation}
 where $N_j$ is the extent of the lattice in the direction $j \in \{1,2,\ldots M \}$ and $n_i$ is the i'th component of the coordinate of the lattice point $\textbf{n} = (n_1,n_2,\ldots,n_M)$. On a 4- dimensional lattice, this would give $i_{global} = N_4(N_3(N_2n_1+n_2)+n_3)+n_4$ but here we simply illustrate the general concept in two dimensions.
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \begin{tikzpicture}[scale = 0.7]
 
@@ -2661,12 +2659,12 @@ where $N_j$ is the extent of the lattice in the direction $j \in \{1,2,\ldots M 
 
 
 
-\subsection{Parallelization}\label{sec:parallelization}
+\section{Parallelization}\label{sec:parallelization}
 LQCD is inherently very costly to simulate, and the cost increases rapidly for the larger lattices required to maintain the simulation volume at small lattice spacings. Therefore it is a necessity that the program includes some form of parallel computing, specifically the type known as "Single instruction, multiple data" or SIMD. To do this, the simulation volume is split into a number of non-overlapping areas of responsibility, each assigned to a different process. A popular protocol for handling cross- process communications, timing, I/O and many other features, is known as MPI (Message-Passing-Interface), and it's the protocol this program is based on.\\\\Every process will have two sets of sites in its memory which we may call "sites of responsibility" and "boundary sites". The former are all the sites which that process will have the sole responsibility for updating. The latter are all the sites which the process needs in order to complete its calculations, but which are within another process' sites of responsibility. The scope of boundary sites required by a process is dependent on the type of operations it's required to do. For example, calculating the plaquette term in the Wilson action requires only the first layer of boundary sites. More complicated terms, such as the clover terms in our definition for the lattice field strength tensor  illustrated in figure \ref{figure:Clovers}, requires three layers of boundary sites.\\\\We'll want a set of indices unique to each process, this is mainly for two reasons: data locality and keeping indices going from zero and up.
 We can imagine trying to use the set of global indices to index a list of field values. When the program is updating a point on the lattice, it will need to fetch the field values of the surrounding points from memory. If the data of those points are stored sequentially in memory, there is a chance that that data can be found in the cache, which is much greater if they are stored physically close in memory.\\With the global indices, this is very unlikely to happen as neighbouring points will be separated by many numbers corresponding to points outside the process domain. The local index is only assigned to points which are needed by the process, which keeps the separation in indices between neighbouring points low, and therefore the chance of cache hits high, improving performance.\\\\With this point in mind, another consideration is the fact that Monte Carlo updates with the local Wilson action only uses field values from points of opposite parity, which gives another point of improvement for the local index system. By first assigning indices to points of one parity, then the other, relevant field values are even more closely located in memory, improving caching even further. This local index system is illustrated in figure \ref{figure:Local_lattice_parameterization}.
 
 
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \begin{tikzpicture}[scale = 0.7]
 
@@ -2797,15 +2795,19 @@ We can imagine trying to use the set of global indices to index a list of field 
   \caption{The lattice is partitioned into 3 processes whose sites of responsibility are enclosed within their respective coloured rectangle. Each process reserves memory for every site contained within its domain of responsibility in addition to the sites encircled with the color belonging to that process.\\Every process maintains its own internal parametrization of the lattice given by indices assigned from zero, to the total number of sites stored by that process, with the following precedence: sites of lowest process rank $\rightarrow$ sites of even parity $\rightarrow$ sites of odd parity.}
   \label{figure:Local_lattice_parameterization}
 \end{figure}
-\subsubsection{Lattice Partitioning}
+\subsection{Lattice Partitioning}
 The lattice can be subdivided among processes in many different ways. The two methods that have been implemented are working within a few constraints: limiting the size of communications and the number of different processes neighbouring each process, packing as many processes onto the lattice as possible and partitioning equally many points to every process. This is to reduce communication overhead, improve parallellization scaling and reduce thread downtime respectively.\\\\We can roughly approximate the communication overhead as being proportional to the amount of data being shared between processes (within some hardware imposed threshold) and as scaling with some function of the number of different processes each process needs to establish communication with. The size of transferred data packets can be reduced by e.g. using a checkerboard update and only communicating sites of a given parity. We can also improve efficiency through how we partition the lattice among processes.\\\\Working in four dimensions and using only boxes which evenly divide the lattice into $N_{procs}$ domains. Naively, we might think the problem of improving efficiency comes down to something like the following:
 \begin{equation*}
 \operatorname{min}\left\{  2(xyz + xyt + xtz + ytz) \,\Big|\,xyzt = \frac{|\Lambda|}{N_{procs}}\right\}
 \end{equation*}
 where we attempt to minimize the $(4-1)$-volume of the boundary between process domains and conclude that $x=y=z=t$. But this neglects a crucial detail of the lattice we actually want to implement: it has periodic boundary conditions. We see that the topology imposed on the lattice by the periodic boundary conditions alters the problem statement, because when a process' domains' extent in a dimension is the size of the lattice in that dimension, it will boarder itself in that dimension. This means that those boundary sites would no longer have to be communicated between processes. We get the following optimization problem:
 \begin{equation*}
-\operatorname{min}\left\{  2(xyz\delta(t-|\Lambda_t|) + xyt\delta(z-|\Lambda_z|) + xtz\delta(y-|\Lambda_y|) + ytz\delta(x-|\Lambda_x|)) \,\Big|\,xyzt = \frac{|\Lambda|}{N_{procs}}\right\}
+\begin{aligned}
+\operatorname{min}\Big\{  &2(xyz\delta(t-|\Lambda_t|) + xyt\delta(z-|\Lambda_z|) + \\
+ & xtz\delta(y-|\Lambda_y|) + ytz\delta(x-|\Lambda_x|)) \,\Big|\,xyzt = \frac{|\Lambda|}{N_{procs}} \Big\}
+\end{aligned}
 \end{equation*}
+
 for 
 \begin{equation*}
 \delta(x) = \begin{cases}0 & \text { if }x=0 \\ 1 & \text { otherwise }\end{cases}.
@@ -2820,7 +2822,7 @@ Which choice of $x,\,y,\,z$ and $t$ minimize this expression turns out to be hig
 (n^0_c+1)(n^1_c+1)(n^2_c+1)(n^3_c+1)= N_{procs}.
 \end{equation}
 Where $N_{procs}$ is the number of processors available to you. It can be solved by an algorithm like this
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 \caption{Create Partition}\label{alg:Create_partition}
 \hspace*{\algorithmicindent} \textbf{Input: $N_{procs}$, $\Lambda_x$} \\
 \hspace*{\algorithmicindent} \textbf{Output: $n^0_c$, $n^1_c$, $n^2_c$, $n^3_c$, $N^{usable}_{procs}$}
@@ -2836,7 +2838,7 @@ Where $N_{procs}$ is the number of processors available to you. It can be solved
 \end{algorithm}
 
 
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 \caption{Partition lattice}\label{alg:Partition_Lattice}
 \hspace*{\algorithmicindent} \textbf{Input: $n^0_c$, $n^1_c$, $n^2_c$, $n^3_c$}
 \begin{algorithmic}
@@ -2858,14 +2860,14 @@ x\State $temp \gets \vec{n}_i/(\Lambda_i/n^i_c+1)$
 \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{Checkerboard Update}\label{sec:Checkerboard_Update}
+\subsection{Checkerboard Update}\label{sec:Checkerboard_Update}
 Applying parallelization to the updating of link variables presents an issue. When a link is being updated it is necessary to ensure that none of the links required for its calculation are changed until the calculation is concluded.\\For the Wilson action, the set of links required to update a link are the links contained in the staples connected to it. One way to ensure that this requirement is met, is to assign to each lattice point either an even or odd parity according to its coordinate
 such that 
 \begin{equation}
 parity(\mathbf{x}) = \left( \sum\limits_i x_i \right) \mod 2.
 \end{equation}
 Then by choosing either parity $0$ or $1$ and a direction $\mu$, every such link variable can be simultaneously updated without impacting each other. This ends up looking, for a two- dimensional slice of the four- dimensional lattice, as illustrated in figure \ref{figure:Even-Odd}
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \begin{tikzpicture}[scale = 0.7]
 
@@ -2930,7 +2932,7 @@ Then by choosing either parity $0$ or $1$ and a direction $\mu$, every such link
 
 We see that the lattice must necessarily contain an even number of sites in every direction in order for the lattice to be correctly partitioned into even and odd sites for periodic boundary conditions.
 
-\subsubsection{Field communication}
+\subsection{Field communication}
 All communication between processes is done using MPI. MPI provides a few different standards for doing this, which influences its behaviour. There are many such standards but most simply, there are so-called 'blocking' and 'non-blocking' variants. A blocking send command is called using $MPI_Send()$. This will transfer a buffer to the specified process, then wait for confirmation from the receiving process before moving on. This is quite bad for performance, because the receiving process might be farther behind in its computations, halting the sending process until it is ready to receive.\\Rather than doing this, we use the non-blocking variant which is called using $MPI_ISend()$. This command will send the buffer, then immediately move on to the next lines of code. This allows the sending process to execute code until it's halted by a $MPI_Wait()$ command at which point, it waits for confirmation from the receiving process before moving on.\\This distinction is quite important, because it allows the process to spend that extra time receiving data from yet another process. The ids' of the process which is sent to and received from is determined by
 \begin{equation}
 Id_{send\,to} = \operatorname{mod}(id + i,N_{procs}),\,\,i \in \{ 1,\ldots,N_{procs}-1 \}
@@ -2939,37 +2941,38 @@ Id_{send\,to} = \operatorname{mod}(id + i,N_{procs}),\,\,i \in \{ 1,\ldots,N_{pr
 Id_{rec\,from} = \operatorname{mod}(id + N_{procs} - i,N_{procs}),\,\,i \in \{ 1,\ldots,N_{procs}-1 \}
 \end{equation}
 
-\section{Results}
+\chapter{Results}
 
-\subsection{Improved v. clover- Field strength tensor}
+\section{Improved v. clover- Field strength tensor}
 We had different choices for which lattice field strength tensor definition to use, so it's obviously interesting to see what effect it had. Because the analysis only included one of the definitions, this is a rather limited analysis, performed at the very last point along the flow, where the whole gauge configurations had been saved, rather than just the observables. Still, we can try to glean some information from this.\\\\We see from figure \ref{fig:Q_FST_defs_diff} that the clover definition of the topological charge produces results which differ substantially from the improved definition. The clover definition of the lattice field strength tensor produces a topological charge definition with $\mathcal{O}(a^2)$ errors compared to the $\mathcal{O}(a^4)$ errors arising from the improved definition. What implications this has for the computation of the topological susceptibility in the two definitions is not clear. The two definitions are in the same universality class, and so the result is expected to be the same in the continuum limit.
-\begin{figure}[H]
+\begin{figure}[h][h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/Q_def_diff.pdf}
 \caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:Q_FST_defs_diff}
 \end{figure}
 For the energy density we see that the relative difference between the two definitions follow a similar relationship. It's noticeable that the coarsest lattice produces considerably larger differences than the finer lattices. This observation will inform our analysis of $\Lambda_{YM}$.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/E_def_diff.pdf}
 \caption[]{Expectation value of the difference between the two Energy density definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:E_FST_defs_diff}
 \end{figure}
-\subsection{Energy density}
+\FloatBarrier
+\section{Energy density}
 The Wilson flow drives the action towards its stationary points. We therefore expect the energy density of the gauge field to go to zero in the large flow time limit. This is exactly what we find, as can be seen in figure \ref{fig:EvFlow}. 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/E_v_flowtime.pdf}
 \caption[]{Expectation value of the energy density as a function of the physical flow time over the square of the Sommer parameter. The error bars are smaller than the symbols. }\label{fig:EvFlow}
 \end{figure}
-\subsubsection{Scale setting with $t^2\langle E\rangle$}
+\subsection{Scale setting with $t^2\langle E\rangle$}
 As we saw, to leading order in perturbation theory, $t^2\langle E\rangle$ is proportional to the gauge coupling. We expect that this perturbative expansion should match our lattice results within some range of flow times. This is between the range in which perturbation theory is expected to break down and where the discretization effects of the lattice causes scaling violations in $\langle E\rangle$.\\In figure \ref{fig:tsquaredE_v_flowtime}, which has been replicated from Lüscher's paper\cite{Luscher2010}, we see that the finest lattice produces near perfect agreement with perturbation theory within the range of roughly $\frac{t}{r_0^2}=0.01$ to $\frac{t}{r_0^2}=0.035$. This region corresponds to a smearing radius $\sqrt{8t}$ which is $3-5.6$ times the lattice spacing.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
 \caption[]{The dimensionless combination $t^2\langle E\rangle$ as a function of the physical flow time over the squared Sommer radius. The errorband in the perturbative expansion is dominated by the uncertainty in $\Lambda\big|_{N_f=0}$ which is sited in \cite{CapitaniStefano1999Nqmr}. The errorbars are not visible on the scale of the figure.}\label{fig:tsquaredE_v_flowtime}
 \end{figure}
 In the same paper, Lüscher proposed the introduction of a reference scale $t_0$ defined by the implicit equation \eqref{eq:t0RefImplicitEq}. We can identify $\frac{t_0}{r_0^2}$ by the point in figure \ref{fig:tsquaredE_v_flowtime} at which the graph crosses $t^2\left\langle E\right\rangle = 0.3$. We have a limited flow-time resolution, and so in order to get an estimate we have to interpolate between the points in its vicinity. We see the result of this extrapolation in figure \ref{fig:t0-extrapolation}. The error in $\frac{t_0}{r_0^2}$ comes from the uncertainty in $\frac{a}{r_0}$ as well as the statistical error in $t^2\left\langle E\right\rangle$. The systematic error arising from the interpolation is negligible. The estimate for every lattice spacing is consistent within errors.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/t0_extrapolate_with_errors.pdf}
 \caption[]{Interpolation of the flow time dependence of $t^2\left\langle E\right\rangle $ in the vicinity of $\frac{t_0}{r_0^2}$. The interpolation includes the two points closest to the final answer. The vertical uncertainty derives from the uncertainty in $\frac{a}{r_0}$, while the horizontal uncertainty is the statistical error in $t^2\left\langle E\right\rangle $.}\label{fig:t0-extrapolation}
@@ -2979,7 +2982,7 @@ We can see from figure \ref{fig:SmearRad_v_latticeConstant} that the discretizat
 \frac{\sqrt{8t_0}}{r_0} = 0.943(6)
 \end{equation}
 which is in near perfect agreement with the result stated in \cite{non_gaussianities2015} of $\frac{\sqrt{8t_0}}{r_0} = 0.941(7)$. This result is from a very high statistics study using the same definition for the energy density, but at larger lattice spacings of $a = 0.102,\,0.087,\,0.077$ and $0.068fm$. The smaller extrapolation error incurred by having smaller lattice spacings, may be enough to explain the roughly equal magnitudes of the errors. As stated in their paper, the error in $\frac{\sqrt{8t_0}}{r_0}$ is dominated by the uncertainty in $\frac{a}{r_0}$ which is also the case here, meaning the higher statistics eventually saturates below the uncertainty of $\frac{a}{r_0}$, leaving the error roughly unchanged.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/smearRad_cont_limit.pdf}
 \caption[]{Linear extrapolation in $a^2/t_0$ of $\frac{\sqrt{8t_0}}{r_0}$ to the continuum. The horizontal error is not visible on the scale of the figure.}\label{fig:SmearRad_v_latticeConstant}
@@ -2987,7 +2990,7 @@ which is in near perfect agreement with the result stated in \cite{non_gaussiani
 
 \subsection{Estimating $\Lambda_{YM}$}
 Because the lattice results and the perturbative expansion match over a range of flow times, we can actually get an estimate for the YM-scale $\Lambda_{YM}$ through their relation in equations \eqref{eq:leadingOrder_pt_E} and \eqref{eq:runningCouplingApprox}. To do this, we have to exercise a fair bit of caution, as the range over which these results can be said to match, has no objective boundaries. If we were to base this analysis on the entirely subjective matching region discussed earlier, we might conclude that the results should match from approximately $q = 750-1400MeV$ where $q=\frac{1}{\sqrt{8t}}$ is the momentum scale as defined through equation \eqref{eq:runningCouplingApprox}\footnote{The gradient flow averages the gauge field in a spherical range with mean-square radius $\sqrt{8t}$, making the characteristic wavelength of the lattice $\frac{1}{\sqrt{8t}}$. This is quite reminiscent of how the RG-flow integrates out degrees of freedom.}. To make the analysis less biased, we'll instead consider a larger matching region of $q = 527-2358MeV$.\\\\Firstly, we need to extrapolate $t^2\left\langle E\right\rangle $ to the continuum over the range of flow times considered. As with the extrapolation of $t_0$, we now need to extrapolate a value of $t^2\left\langle E\right\rangle $ for several flow times between measurements. Again, this was done by interpolating between two subsequent datapoints. Then we perform the extrapolation to the continuum linearly in $\frac{a^2}{r_0^2}$.  At this point, the ensemble with the coarsest lattice spacing was excluded from the analysis. As we saw in figure \ref{fig:E_FST_defs_diff}, the difference from the improved definition becomes quite large which has big implications for the quality of the fit. The result of this continuum extrapolation is found in figure \ref{fig:Coupling_cont_extrapolation}.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_q_contLimit.pdf}
 \caption[]{$t^2\left\langle E\right\rangle $ dependence on the momentum scale $q = \frac{1}{\sqrt{8t}}[MeV]$ with the extrapolation to the continuum based on the three finest lattice spacings.}\label{fig:Coupling_cont_extrapolation}
@@ -2996,52 +2999,52 @@ The continuum extrapolation contains a total of 100 points evenly spaced in $\fr
 This result is a very strong signal that we don't have our systematic errors under control.\\This being said, there are genuine reasons for why we might want to weight lower energies more than higher energies, such as the fact that the low flow time extrapolations don't have a well defined continuum limit. 
 
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution_HIST.pdf}
 \caption[]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. The three vertical lines denote the weighted median and its $68\%$ confidence interval which are $224.96MeV$, $234.59MeV$ and $240.15MeV$ from left to right. The peak corresponds to a value of $237.74MeV$.}\label{fig:YM-Scale_chiSquaredFit}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution-altSpacing.pdf}
 \caption[]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. Fitting done on values separated evenly in $\frac{1}{\sqrt{8t}}$}\label{fig:YM-Scale_chiSquaredFit-altspac}
 \end{figure}
-
-\subsection{Topological charge}
+\FloatBarrier
+\section{Topological charge}
 Recalling our discussion of the separation of topological sectors in section \ref{sec:sepofTopSec} and the set of gauge fields which satisfy the smoothness bound encoded by equation \eqref{eq:actionDensityExpVal}; we can now finally see the implications of these facts manifest themselves in the flow time behaviour of the topological charge on lattices of different lattice spacings. What we expect to see at this point, is that as the set of gauge configurations satisfying the smoothness bound goes to one, i.e. by decreasing the lattice spacing, more and more gauge configurations should settle into integer values of the topological charge, earlier in the gradient flow. This fact is also clear from the functional integral in \eqref{eq:flowTimeFunctionalIntegral}, where the $t-$ and $a-$ dependence of the transformed action weights configurations with a well defined topological charge (near integer values) more than configurations with a poorly defined topological charge (deviations from integer values). This behaviour is clearly evident in figure \ref{fig:QvFlowTime}, where gauge configurations of smaller lattice spacings can be seen to saturate at near- integer values, earlier in the flow time.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/Q_v_flowtime.pdf}
 \caption[]{Flow time dependence of the topological charge going from coarsest to finest lattice spacing from top to bottom. $\frac{t_0}{a^2}$ corresponds to the computer- flow time at which the topological susceptibility is measured. 21 samples of each ensemble are illustrated.}\label{fig:QvFlowTime}
 \end{figure}
 A very interesting behaviour can be seen to occur in the flow time dependence of the topological charge in the $\beta = 6.26$ ensemble\footnote{This behaviour has been seen in all three of the coarsest lattice spacings, but are not illustrated here.}. One of the gauge configurations which had seemingly settled into a near-integer value, proceeds to deviate from that integer value. Continuing the flow on one of these configuration eventually leads to the topological charge settling into a new integer value. I have no firm explanation for this phenomenon other than to conjecture that the flow equations briefly trap the gauge field in a region of small gradient. The deviation seems to appear when the smearing radius $\sqrt{8t}$ is close to $\frac{1}{3}L$ indicating that the averaging procedure eventually pushes the gauge configuration out of the local minimum. To test this, we could examine many such configurations to see whether the frequency of such occurrences go to zero as $\sqrt{8t}\rightarrow L$.\\\\Next we make a qualitative analysis of the flow time dependence of the distribution of topological charge density on the lattice. We can look at the gradient flow as cooling the short range fluctuations in the field configurations, revealing the underlying topological structure.
 Figures \ref{fig:Qdensdist1} through \ref{fig:Qdensdist4} illustrates this procedure for a 3D euclidean time slice of the full space-time lattice on a gauge configuration with the finest lattice spacing and a topological charge of $4$ in the large flow time limit. This was simply chosen because a configuration with $Q=4$ would presumably have more stuff going on. Indeed, of the configurations with $Q=0$ tested, all had a topological charge density of zero everywhere, as we might expect.\\\\At flow times close to zero, we find exactly what we expect, large short range fluctuations which obscure any real structure. It's only in figure \ref{fig:Qdensdist3} that we begin to see some structure in the local fluctuations. Curiously, at this stage the topological charge has nearly settled into its final value. Seeing just how little resemblance this distribution has to the final distribution at $\frac{t}{a^2}=13$ with only a slightly higher topological charge was very surprising. 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[trim=30cm 0.0cm 28cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime0.010000.pdf}
 \caption[]{Topological charge distribution at euclidean time slice $t_{euc}=0$ and flow time $\frac{t}{a^2} = 0.01$. $Q \approx -8.7 $. Generated using the Mayavi python plotting utility \cite{ramachandran2011mayavi}}\label{fig:Qdensdist1}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[trim=30cm 0.0cm 27cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime0.410000.pdf}
 \caption[]{Topological charge distribution at euclidean time slice $t_{euc}=0$ and flow time $\frac{t}{a^2} = 0.41$. $Q \approx 3.52 $. Generated using the Mayavi python plotting utility \cite{ramachandran2011mayavi}}\label{fig:Qdensdist2}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[trim=30cm 0.0cm 27cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime1.210000.pdf}
 \caption[]{Topological charge distribution at euclidean time slice $t_{euc}=0$ and flow time $\frac{t}{a^2} = 1.21$. $Q \approx 3.99 $. Generated using the Mayavi python plotting utility \cite{ramachandran2011mayavi}. The star shape is only an artefact of the 2D projection.}\label{fig:Qdensdist3}
 \end{figure}
 At large flow times, we see the topological charge density settle into 'lumps' which are exclusively positive or negative, separated by regions of zero topological charge density.
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[trim=30cm 1.0cm 27cm 2.0cm, clip=true,width=\textwidth]{FINALPLOTS/QdensityPlots/3D/vFlowTime/torus_extdof1_44_Flowtime13.000000.pdf}
 \caption[]{Topological charge distribution at euclidean time slice $t_{euc}=0$ and flow time $\frac{t}{a^2} = 13.0$. $Q = 3.99996$. Generated using the Mayavi python plotting utility \cite{ramachandran2011mayavi}. The star shape is only an artefact of the 2D projection.}\label{fig:Qdensdist4}
 \end{figure}
-
-\subsection{Topological susceptibility}
+\FloatBarrier
+\section{Topological susceptibility}
 We begin the study of the topological susceptibility by examining its flow time dependence. In figure \ref{fig:FlowTime_v_smearRad}, we plot the fourth root of the topological susceptibility in physical units as a function of the dimensionless ratio $\frac{\sqrt{8t}}{r_0}$. We can see that the topological susceptibility at $\frac{\sqrt{8t}}{r_0}=0$ is dominated by ultraviolet fluctuations. Because the lattice constant acts as a ultraviolet cut-off, when the lattice spacing is decreased i.e. the cut-off is removed, the ultraviolet divergences become more severe. We can attempt to model this behaviour by fitting a polynomial to it, the result of which can be seen in figure \ref{fig:ZeroFlowTime_chifourthroot}. Because we're using the $\mathcal{O}(a^4)$- improved topological charge definition we should expect the $a$-dependence of the zero flow time topological susceptibility to begin at $\frac{a^4}{r_0^4}$ which is almost what we find. The polynomial which is plotted is quadratic in $\frac{a^2}{r_0^2}$ and the fit parameter for the $\left( \frac{a^2}{r_0^2} \right)^2$- term is an order of magnitude larger than the fit parameter for the $\left( \frac{a^2}{r_0^2} \right)$- term.\\In the infinite volume limit, we would expect the topological susceptibility at zero flow time to diverge in the continuum limit. On a finite lattice, this clearly wouldn't be possible.\\\\Moving on from $\frac{\sqrt{8t}}{r_0}=0$, we can observe discretization effects upto close to $\frac{1}{2}\frac{\sqrt{8t_0}}{r_0}$ for the coarsest lattice, and $\frac{1}{4}\frac{\sqrt{8t_0}}{r_0}$ for the finest lattice. As expected, the topological susceptibility is flow time invariant for all sufficiently large flow times. Because the topological susceptibility is proportional to the second cumulant of the topological charge, we can also think of it as representing the width of the distribution of topological charge. In figures \ref{fig:Qhistt0Over12} and \ref{fig:Qhistt0} we can see that even though almost none of the coarse grained lattices have settled into integer values, the width of the distribution at $\frac{1}{2\sqrt{3}}\frac{\sqrt{8t_0}}{r_0}$ remains almost the same until $\frac{\sqrt{8t_0}}{r_0}$.
 \begin{figure}[H]
 \centering
@@ -3067,7 +3070,7 @@ We begin the study of the topological susceptibility by examining its flow time 
 \caption[]{Normalized histogram of the topological charge distribution for each of the four ensembles. Measured at $\frac{\sqrt{8t_0}}{r_0}$.}\label{fig:Qhistt0}
 \end{figure}
 
-\subsubsection{Continuum limit}
+\subsection{Continuum limit}
 The continuum limit of the topological susceptibility is taken at $\frac{t_0}{r_0^2}$ as extrapolated in figure \ref{fig:t0-extrapolation}. Again, the extrapolation is done in $\frac{a^2}{r_0^2}$, as the discretization errors of the Wilson action are expected to start at $\mathcal{O}(a^2)$. The extrapolation is done in physical units and is found in figure \ref{fig:chiOneOver4-ContExtrap}
 \begin{figure}[H]
 \centering
@@ -3079,7 +3082,7 @@ The data which gave the estimate with the smallest error was a constant extrapol
 \chi^{1/4}_t = 196.4(1.6)MeV
 \end{equation}
 which is certainly compatible with the values found in \cite{PhysRevLett.94.032003}, which uses the index theorem with a chiral lattice Dirac operator, and in \cite{L_scher_2010} which uses the spectral projector method. It is in agreement with the result obtained in \cite{PhysRevD.92.094518}, which uses the Wilson flow and the same definition of the lattice field strength tensor.
-\begin{table}[H]
+\begin{table}[h]
 \centering
 \caption{Numerical results for the topological susceptibility of every ensemble measured at $t_0^c$ where $c$ denotes 'computer' or non-physical flow time. The uncertainty in the estimate for $t_0^c$ is larger than the difference between it and the closest data point, therefore no extrapolation has been carried out. Results are also shown for the extrapolated quantity, using a linear and a constant fit of the data from every lattice spacing (const fit/lin fit) and from the three finest lattice spacings (const fit-fin/lin fit-fin)}
 \label{tab:ChiOneOverFour-Results}
@@ -3097,14 +3100,14 @@ which is certainly compatible with the values found in \cite{PhysRevLett.94.0320
 \end{table}
 
 
-\subsubsection{Flow time independence in the continuum limit}
+\subsection{Flow time independence in the continuum limit}
 We expect the topological susceptibility to be flow time independent for all $t>0$ in the continuum limit. We can test this assertion by conducting a universality test of the topological susceptibility at several flow times, comparing the results to the one obtained at flow time $t_0$. If the assertion is correct, we would expect the ratio of the topological susceptibility defined at a flow time $t$ over the topological susceptibility at flow time $t_0$ to go to $1$ in the continuum limit. When we perform this analysis, extrapolating with a polynomial which is quadratic in $\frac{a^2}{t_0}$ we get the results shown in figure \ref{fig:UniversalityTest}. The result for the continuum limit is very much compatible with $1$.\\If we compare this result with the results of the same analysis performed in \cite{non_gaussianities2015}, but with the clover definition for the lattice field strength tensor,  we can infer some of the effects of using the improved lattice field strength tensor. Looking for example at the trajectories drawn by their $\frac{t_0}{4}$ and our $\frac{t_0}{4}$ extrapolation, we can see that the ratio saturates at much larger lattice spacings.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/chi_flowTime_independence.pdf}
 \caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:UniversalityTest}
 \end{figure}
-\subsubsection{Non-Gaussianities}
+\subsection{Non-Gaussianities}
 Next we can attempt to determine the the non-Gaussianity of the topological charge distribution by taking the continuum limit on the ratio of the fourth cumulant to the second. These are defined as  
 \begin{equation}
 R = \frac{\left\langle Q^4 \right\rangle_c}{\left\langle Q^2 \right\rangle}
@@ -3122,36 +3125,36 @@ The result is shown in figure \ref{fig:R-contLim}.
 \includegraphics[width=\textwidth]{FINALPLOTS/R_continuum_extrapolation.pdf}
 \caption[]{Linear (red) and constant (black) continuum extrapolation of $R$ using data from every lattice spacing. Both predictions by the dilute instanton gas model ($R=1$) and the large $N_c$- expansion ($\mathcal{O}(R) = \mathcal{O}(\frac{1}{N^2})$) are easily within the errorbars.}\label{fig:R-contLim}
 \end{figure}
-Clearly, this result isn't good for anything. It cannot discriminate between the dilute instanton gas model and the large $N_c$- expansion. The problem here is that the estimation of $R$ requires extraordinarily high statistics to be feasible.\\The statistical error of each data point is extremely large. In essence this means that if the sole purpose of this thesis was to determine $R$, the choice of a simulation volume of $L\approx 1.5fm$ would have been a bad one. Because the computational cost incurred by having more lattice points is so high, it would have been better to conduct the study at a smaller simulation volume. This would make finite size effects larger, but allow for much higher statistics. At present, the statistical errors are orders of magnitude larger than any finite size effects  are predicted to be \cite{non_gaussianities2015} so clearly a happy middle ground is to be found between $L = 1.5fm$ and $L =  1.1fm$. 
-
+Clearly, this result isn't good for anything. It cannot discriminate between the dilute instanton gas model and the large $N_c$- expansion. The problem here is that the estimation of $R$ requires extraordinarily high statistics to be feasible.\\The statistical error of each data point is extremely large. In essence this means that if the sole purpose of this thesis was to determine $R$, the choice of a simulation volume of $L\approx 1.5fm$ would have been a bad one. Because the computational cost incurred by having more lattice points is so high, it would have been better to conduct the study at a smaller simulation volume. This would make finite size effects larger, but allow for much higher statistics. At present, the statistical errors are orders of magnitude larger than any finite size effects  are predicted to be \cite{non_gaussianities2015} so clearly a happy middle ground is to be found between $L = 1.5fm$ and $L =  1.0fm$. 
+\FloatBarrier
 \section{Error Analysis}
 The results won't mean anything without an analysis of the inherent measurement errors.\\The ethos for this analysis was to avoid any autocorrelation, so that all statistical errors could be evaluated solely with the use of bootstrapping. 
 \subsection{Autocorrelation}\label{sec:autoCorr_analysis}
 In order to estimate the autocorrelation of the observables, a separate set of gauge configurations were generated using the same lattice spacings, but a much smaller simulation volume of approximately $1fm$. This is of course, working under the assumption that the estimate will be applicable to the larger lattices.\\Each configuration was separated by a single sweep of the 1HB/4OR- update used to generate the complete data. The Monte Carlo history of the flowed topological charge (see table \ref{tab:IntAutocorrs} for the flow times) is shown in figure \ref{fig:MC-historyQ}
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/Q_v_mcTime.pdf}
 \caption[]{Monte Carlo history of the flowed topological charge.}\label{fig:MC-historyQ}
 \end{figure}
 The large $\tau_{int}$ which we associate with the finer lattice spacings is immediately evident from the Monte Carlo history. for the finest lattice, we can spend multiple thousands of MC-updates sampling essentially the same part of the configuration space before moving on.\\\\In order to estimate the autocorrelation time we use the estimation algorithm described in \cite{WOLFF2004143}. 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
 \caption[]{Integrated Auto correlation time -- Q}\label{fig:PLACEHOLDER}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q_squared.pdf}
 \caption[]{Integrated Auto correlation time -- Q squared}\label{fig:PLACEHOLDER}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_E.pdf}
 \caption[]{Integrated Auto correlation time -- E}\label{fig:PLACEHOLDER}
 \end{figure}
 
-\begin{table}[H]
+\begin{table}[h]
 \centering
 \caption{Estimated autocorrelation time of observables from ensembles with MC-time separation of one listed in table \ref{tab:SimulationParameters}. The autocorrelation is measured at lower flow times than those used in the analysis, because the autocorrelation for the topological observables saturate much earlier.}
 \label{tab:IntAutocorrs}
@@ -3164,29 +3167,29 @@ The large $\tau_{int}$ which we associate with the finer lattice spacings is imm
 \end{tabular}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{FINALPLOTS/ProofOfStatisticalIndependence.pdf}
 \caption[]{Integrated Auto correlation time of the data used}\label{fig:PLACEHOLDER}
 \end{figure}
 \subsection{Bootstrapping}
-\section{Future analysis and improvements}
-\subsection{Optimizing OR-HB ratio for autocorrelation of topological observables}
-\subsection{Topological susceptibility dependence on topological charge definition}
+\chapter{Future analysis and improvements}
+\section{Optimizing OR-HB ratio for autocorrelation of topological observables}
+\section{Topological susceptibility dependence on topological charge definition}
 It's quite suspect that the difference between the Non-Gaussianities results for the topological susceptibility and the ones obtained here are so different.
 everything is implemented to do this analysis, it just hasn't been done. 
-\subsection{$\tau_{int}$ of topological observables using Local Hybrid Monte Carlo algorithms}
-\subsection{Re-analysing the energy density results with the improved lattice field strength tensor}
-\subsection{Do all configurations with $Q=0$ have $q=0$ everywhere}
+\section{$\tau_{int}$ of topological observables using Local Hybrid Monte Carlo algorithms}
+\section{Re-analysing the energy density results with the improved lattice field strength tensor}
+\section{Do all configurations with $Q=0$ have $q=0$ everywhere}
 Potentially exposing my own ignorance here, but I genuinely don't know the answer to this. This would not be a difficult analysis to do.\\\\All configurations with a topological charge of zero are continuously deformable to the trivial field which is a minimum of the action. Knowing the effect of the Wilson flow on the gauge configurations, it's difficult to see how this could result in anything other than $q=0$ everywhere.
-\subsection{Dynamical fermions}
+\section{Dynamical fermions}
 The HMC algorithm has already been implemented for the gauge fields and little additional work would be required in order to include fermionic fields.\\The boundary conditions of the lattice are encoded in a single function, so the introduction of open boundary conditions in the time direction would be relatively easy, barring complications arising from computations near the open boundary region.
-\subsection{Thermal QCD}
+\section{Thermal QCD}
 If the topological susceptibility is studied in thermal QCD, it can be directly related to the axion mass.
-\subsection{Implementation improvements}
-\paragraph{Only communicating links of a given parity}
-\paragraph{SU(3) Overrelaxation}
-\paragraph{Greater flow time resolution at smaller flow times}
+\section{Implementation improvements}
+\subsection{Only communicating links of a given parity}
+\subsection{SU(3) Overrelaxation}
+\subsection{Greater flow time resolution at smaller flow times}
 \newpage
 \bibliographystyle{unsrt}
 \bibliography{references}
