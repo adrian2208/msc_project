@@ -3126,10 +3126,10 @@ In order to estimate the autocorrelation of the observables, a separate set of g
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{FINALPLOTS/Q_v_mcTime.pdf}
-\caption[]{Monte Carlo history of the flowed topological charge.}\label{fig:MC-historyQ}
+\caption[Monte Carlo history of the flowed topological charge]{Monte Carlo history of the flowed topological charge.}\label{fig:MC-historyQ}
 \end{figure}
-The large $\tau_{int}$ which we associate with the finer lattice spacings is immediately evident from the Monte Carlo history. For the finest lattice, we can spend multiple thousands of MC-updates sampling essentially the same topological sector of the configuration space before moving on.\\\\In order to estimate the autocorrelation time we use the estimation algorithm described in \cite{WOLFF2004143}, which uses an automated procedure for deciding the window size $W$ (see notation from section \ref{sec:PostAnalysis}) at which the infinite sum in equation \eqref{eq:integrated_autocorrTime} is terminated. \\Doing this for all flow times upto the cut-off, we see in figures \ref{fig:intAutocorr_Q} and \ref{fig:intAutocorr_Q_squared} that $Q$ and $Q^2$ have negligible $\tau_{int}$ at $t = 0$. This is as expected since the topological charge density is dominated by ultra-violet fluctuations  at this point. $\tau_{int}$ then very quickly rises before it eventually plateaus. This behaviour has been exploited in order to reduce the time spent flowing the gauge configurations, with the two finest lattice spacings being terminated before reaching $t_0$. This can be considered a worthwhile compromise because whatever small fluctuations arise along the flow time will be minor in comparison to the large safety margins we impose on the analysed ensembles.\\On that point, the number of decorrelation steps used between measurements was based on the estimated $\tau_{int}$ as well as the uncertainty in that estimate. 
-
+The large $\tau_{int}$ which we associate with the finer lattice spacings is immediately evident from the Monte Carlo history. For the finest lattice, we can spend multiple thousands of MC-updates sampling essentially the same topological sector of the configuration space before moving on.\\\\In order to estimate the autocorrelation time we use the estimation algorithm described in \cite{WOLFF2004143}, which uses an automated procedure for deciding the window size $W$ (see notation from section \ref{sec:PostAnalysis}) at which the infinite sum in equation \eqref{eq:integrated_autocorrTime} is terminated. \\Doing this for all flow times upto the cut-off, we see in figures \ref{fig:intAutocorr_Q} and \ref{fig:intAutocorr_Q_squared} that $Q$ and $Q^2$ have negligible $\tau_{int}$ at $t = 0$. This is as expected since the topological charge density is dominated by ultra-violet fluctuations  at this point. $\tau_{int}$ then very quickly rises before it eventually plateaus. This behaviour has been exploited in order to reduce the time spent flowing the gauge configurations, with the two finest lattice spacings being terminated before reaching $t_0$. This can be considered a worthwhile compromise because whatever small fluctuations arise along the flow time will be minor in comparison to the large safety margins we impose on the analysed ensembles.\\On that point, the number of decorrelation steps used between measurements was based on the estimated $\tau_{int}$ at the latest flow times as well as the uncertainty in that estimate. Those estimates can be found in table \ref{tab:IntAutocorrs}. The topological charge exhibits much higher degrees of autocorrelation than every other observable, meaning we can safely examine its cumulants as long as the topological charge itself has negligible autocorrelation. The two coarsest ensembles have small errors attached to their estimates and the number of decorrelation sweeps $N_{decorr}^Q$ used for each of them was 200. The $\beta=6.26$ and $\beta=6.46$ got 800 and 4050 updates respectively. The comparatively large separation used for the finest lattice spacing reflects the large uncertainty in the estimated $\tau_{int}^Q$.\\\\In order to improve the estimate of $t_0$, several more gauge configurations were analysed for this purpose than in the topological charge analysis. Because $\tau_{int}^E$ grows so much slower with the lattice spacing than the topological observables, it was possible to get many more gauge configurations for the two finest lattices with $N_{decorr}^E=400$ and $N_{decorr}^E=1350$ respectively. For the two coarsest lattices, there was little appreciable difference between the autocorrelation time for the topological charge and the energy density, so the same number of gauge configurations were analysed. From figure \ref{fig:intAutocorr_E} it's clear that 
+$\tau_{int}^E$ has not reached its maximum by the final flow time analysed. However, based on the results found in \cite{non_gaussianities2015} and the flow time behaviour of $\tau_{int}^E$ for the two coarsest lattices, it's clear that neither will rise above $\tau_{int}^E=100$ which makes the choices for $N_{decorr}^E$ more than adequate.
 
 \begin{figure}
 \centering
@@ -3150,14 +3150,14 @@ The large $\tau_{int}$ which we associate with the finer lattice spacings is imm
 
 \begin{table}
 \centering
-\caption[Integrated Autocorrelation time of observables]{Estimated autocorrelation time of observables from ensembles with MC-time separation of one listed in table \ref{tab:SimulationParameters}. The autocorrelation is measured at lower flow times than those used in the analysis, because the autocorrelation for the topological observables saturate much earlier.}
+\caption[Integrated Autocorrelation time of observables]{Estimated autocorrelation time of observables from ensembles with MC-time separation of one listed in table \ref{tab:SimulationParameters}. The autocorrelation is measured at lower flow times than those used in the analysis, because the autocorrelation for the topological observables saturate much earlier. The last column denotes the ratio of the number of decorrelation steps used for the topological charge in the final analysis to the estimated $\tau_{int}^Q$.}
 \label{tab:IntAutocorrs}
 \begin{tabular}{lcccccccc}
-\hline \hline  $\beta$ 	& $t/a^2$ 	&$\tau_{int}^Q$	& $\tau_{int}^{Q^2}$ 	& $\tau_{int}^{Q^4}$	& $\tau_{int}^E$	\\
-\hline		   $6.0$ 	& $3.5$ 	& $19(5)$		& $6(1)$			& $4.3(0.7)$   		& $10(2)$ 		\\	  
-	  		   $6.13$	& $5.5$ 	& $50(18)$		& $18(5)$		   	& $11(2)$			& $16(4)$ 		\\
-	  		   $6.26$	& $4$ 		& $157(61)$		& $78(26)$		   	& $64(20)$			& $32(8)$ 		\\
-	  		   $6.46$	& $4$ 		& $280(111)$	& $176(65)$		   	& $78(23)$		 	& $25(5)$ 		\\
+\hline \hline  $\beta$ 	& $t/a^2$ 	&$\tau_{int}^Q$	& $\tau_{int}^{Q^2}$ 	& $\tau_{int}^{Q^4}$	& $\tau_{int}^E$	& $\frac{N_{decorr}^Q}{\tau_{int}^{Q}}$		\\
+\hline		   $6.0$ 	& $3.5$ 	& $19(5)$		& $6(1)$			& $4.3(0.7)$   		& $10(2)$					&  $10.5(2.8)$ 			\\	  
+	  		   $6.13$	& $5.5$ 	& $50(18)$		& $18(5)$		   	& $11(2)$			& $16(4)$ 					&  $4.0(1.4)$			\\
+	  		   $6.26$	& $4$ 		& $157(61)$		& $78(26)$		   	& $64(20)$			& $32(8)$ 					&  $5.1(2.0)$			\\
+	  		   $6.46$	& $4$ 		& $280(111)$	& $176(65)$		   	& $78(23)$		 	& $25(5)$ 					&  $14(6)$			\\
 \end{tabular}
 \end{table}
 
@@ -3168,7 +3168,10 @@ The large $\tau_{int}$ which we associate with the finer lattice spacings is imm
 \end{figure}
 \subsection{Bootstrapping}
 \chapter{Conclusions}
+\section{Discussion}
+-Note from table \ref{tab:IntAutocorrs} that the two ensembles with the lowest $\frac{N_{decorr}^Q}{\tau_{int}^{Q}}$ ratios are also the ones that deviate from the constant extrapolation in figure \ref{fig:chiOneOver4-ContExtrap}. This could easily be statistical fluctuations, but it's still suspect.
 \section{Future analysis and improvements}
+
 \subsection{Optimizing OR-HB ratio for autocorrelation of topological observables}
 \subsection{Topological susceptibility dependence on topological charge definition}
 It's quite suspect that the difference between the Non-Gaussianities results for the topological susceptibility and the ones obtained here are so different.
