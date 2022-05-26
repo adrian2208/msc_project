@@ -76,8 +76,7 @@ for j in range(len(directory_list)):
     directory = directory_list[j]
     t_comp = extrapolate_at_t_comp[j]
     frames = []
-    extra = (j==1 or j==2)
-    for i in range(fileStart,fileEnd+1,1+extra*2):
+    for i in range(fileStart,fileEnd+1,1):
         try:
             file = 'torus_extdof4_'+str(i)+'.csv'
             df1 = pd.read_csv(directory+file,index_col='t',names = ['t','Q'], sep=",", header=None)

@@ -138,7 +138,7 @@ plt.plot(a_axis,fit_a.nominal_value*a_axis+fit_b.nominal_value,color=red)
 #plt.plot(a_axis,(fit_a.nominal_value-fit_a.std_dev)*a_axis+(fit_b.nominal_value+fit_b.std_dev))
 #plt.plot(a_axis,(fit_a.nominal_value+fit_a.std_dev)*a_axis+(fit_b.nominal_value-fit_b.std_dev))
 
-plt.xlim(-0.001,0.35)
+plt.xlim(-0.0045,0.35)
 plt.ylim(0.0006,0.001)
 plt.errorbar([item.nominal_value for item in aSquaredOvert0],mean_list,std_list,xerr=[item.std_dev for item in aSquaredOvert0],markersize = 2.0,
                 fmt='o',ecolor = purple,color = purple,capsize=2,elinewidth=1,
@@ -162,13 +162,13 @@ print("datapoint x-coor:")
 [print(item) for item in aOverR0_list**2]
 a_axis = np.linspace(-0.0005,0.35,100)
 #plt.plot(a_axis,np.full_like(a_axis,fit_b[0].nominal_value),color="black")
-#plt.errorbar(-0.0005,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
+#plt.errorbar(-0.0025,fit_b[0].nominal_value,fit_b[0].std_dev,markersize = 2.0,
 #                fmt='o',ecolor = "black",color = "black",capsize=2,elinewidth=1,
 #            markeredgewidth=1)
 plt.xlabel(r'$a^2/t_0$')
 plt.ylabel(r'$t_0^2\chi_t$')
 #plt.legend()
-plt.savefig('chi_fourthRoot_cont_NotPhysUnits.pdf', bbox_inches="tight")
+plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\chi_fourthRoot_cont_NotPhysUnits.pdf', bbox_inches="tight")
 #C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\
 
 #--------------\/\/\/\/\/\/   FIT USING ONLY THREE FINEST LATTICE SPACINGS     \/\/\/\/\/--------------------------------------------------------------------------------------------------------------------------------------

@@ -2925,7 +2925,7 @@ Then by choosing either parity $0$ or $1$ and a direction $\mu$, every such link
 We see that the lattice must necessarily contain an even number of sites in every direction in order for the lattice to be correctly partitioned into even and odd sites for periodic boundary conditions.
 
 \subsection{Field communication}
-All communication between processes is done using MPI. MPI provides a few different standards for doing this, which influences its behaviour. There are many such standards but most simply, there are so-called 'blocking' and 'non-blocking' variants. A blocking send command is called using $MPI_Send()$. This will transfer a buffer to the specified process, then wait for confirmation from the receiving process before moving on. This is quite bad for performance, because the receiving process might be farther behind in its computations, halting the sending process until it is ready to receive.\\Rather than doing this, we use the non-blocking variant which is called using $MPI_ISend()$. This command will send the buffer, then immediately move on to the next lines of code. This allows the sending process to execute code until it's halted by a $MPI_Wait()$ command at which point, it waits for confirmation from the receiving process before moving on.\\This distinction is quite important, because it allows the process to spend that extra time receiving data from yet another process. The ids' of the process which is sent to and received from is determined by
+All communication between processes is done using MPI. MPI provides a few different standards for doing this, which influences its behaviour. There are many such standards but most simply, there are so-called 'blocking' and 'non-blocking' variants. A blocking send command is called using $MPI\_Send()$. This will transfer a buffer to the specified process, then wait for confirmation from the receiving process before moving on. This is quite bad for performance, because the receiving process might be farther behind in its computations, halting the sending process until it is ready to receive.\\Rather than doing this, we use the non-blocking variant which is called using $MPI\_ISend()$. This command will send the buffer, then immediately move on to the next lines of code. This allows the sending process to execute code until it's halted by a $MPI\_Wait()$ command at which point, it waits for confirmation from the receiving process before moving on.\\This distinction is quite important, because it allows the process to spend that extra time receiving data from yet another process. The ids' of the process which is sent to and received from is determined by
 \begin{equation}
 Id_{send\,to} = \operatorname{mod}(id + i,N_{procs}),\,\,i \in \{ 1,\ldots,N_{procs}-1 \}
 \end{equation}
@@ -3037,7 +3037,7 @@ At large flow times, we see the topological charge density settle into 'lumps' w
 \end{figure}
 \FloatBarrier
 \section{Topological susceptibility}
-We begin the study of the topological susceptibility by examining its flow time dependence. In figure \ref{fig:FlowTime_v_smearRad}, we plot the fourth root of the topological susceptibility in physical units as a function of the dimensionless ratio $\frac{\sqrt{8t}}{r_0}$. We can see that the topological susceptibility at $\frac{\sqrt{8t}}{r_0}=0$ is dominated by ultraviolet fluctuations. Because the lattice constant acts as a ultraviolet cut-off, when the lattice spacing is decreased i.e. the cut-off is removed, the ultraviolet divergences become more severe. We can attempt to model this behaviour by fitting a polynomial to it, the result of which can be seen in figure \ref{fig:ZeroFlowTime_chifourthroot}. Because we're using the $\mathcal{O}(a^4)$- improved topological charge definition we should expect the $a$-dependence of the zero flow time topological susceptibility to begin at $\frac{a^4}{r_0^4}$ which is almost what we find. The polynomial which is plotted is quadratic in $\frac{a^2}{r_0^2}$ and the fit parameter for the $\left( \frac{a^2}{r_0^2} \right)^2$- term is an order of magnitude larger than the fit parameter for the $\left( \frac{a^2}{r_0^2} \right)$- term.\\In the infinite volume limit, we would expect the topological susceptibility at zero flow time to diverge in the continuum limit. On a finite lattice, this clearly wouldn't be possible.\\\\Moving on from $\frac{\sqrt{8t}}{r_0}=0$, we can observe discretization effects upto close to $\frac{1}{2}\frac{\sqrt{8t_0}}{r_0}$ for the coarsest lattice, and $\frac{1}{4}\frac{\sqrt{8t_0}}{r_0}$ for the finest lattice. As expected, the topological susceptibility is flow time invariant for all sufficiently large flow times. Because the topological susceptibility is proportional to the second cumulant of the topological charge, we can also think of it as representing the width of the distribution of topological charge. In figures \ref{fig:Qhistt0Over12} and \ref{fig:Qhistt0} we can see that even though almost none of the coarse grained lattices have settled into integer values, the width of the distribution at $\frac{1}{2\sqrt{3}}\frac{\sqrt{8t_0}}{r_0}$ remains almost the same until $\frac{\sqrt{8t_0}}{r_0}$.
+We begin the study of the topological susceptibility by examining its flow time dependence. In figure \ref{fig:FlowTime_v_smearRad}, we plot the fourth root of the topological susceptibility in physical units as a function of the dimensionless ratio $\frac{\sqrt{8t}}{r_0}$. We can see that the topological susceptibility at $\frac{\sqrt{8t}}{r_0}=0$ is dominated by ultraviolet fluctuations. Because the lattice constant acts as a ultraviolet cut-off, when the lattice spacing is decreased i.e. the cut-off is removed, the ultraviolet divergences become more severe. In figure \ref{fig:ZeroFlowTime_chifourthroot} we can see the power divergence of the topological susceptibility at $t=0$ as a function of $\frac{a^2}{r_0^2}$. \\In the infinite volume limit, we would expect the topological susceptibility at zero flow time to diverge in the continuum limit. On a finite lattice, this clearly wouldn't be possible.\\\\Moving on from $\frac{\sqrt{8t}}{r_0}=0$, we can observe discretization effects upto close to $\frac{1}{2}\frac{\sqrt{8t_0}}{r_0}$ for the coarsest lattice, and $\frac{1}{4}\frac{\sqrt{8t_0}}{r_0}$ for the finest lattice. As expected, the topological susceptibility is flow time invariant for all sufficiently large flow times. Because the topological susceptibility is proportional to the second cumulant of the topological charge, we can also think of it as representing the width of the distribution of topological charge. In figures \ref{fig:Qhistt0Over12} and \ref{fig:Qhistt0} we can see that even though almost none of the coarse grained lattices have settled into integer values, the width of the distribution at $\frac{1}{2\sqrt{3}}\frac{\sqrt{8t_0}}{r_0}$ remains almost the same until $\frac{\sqrt{8t_0}}{r_0}$.
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_fourthRoot_v_smearRad.pdf}
@@ -3046,8 +3046,8 @@ We begin the study of the topological susceptibility by examining its flow time 
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_fourthRootAtZeroFlowTime-ContExtrap.pdf}
-\caption[Divergence at zero flow time of $\chi_t^{1/4}$]{Fourth root of the topological susceptibility in physical units, measured at $\frac{\sqrt{8t}}{r_0}=0$. Extrapolated to the continuum using a polynomial quadratic in $\frac{a^2}{r_0^2}$.}\label{fig:ZeroFlowTime_chifourthroot}
+\includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_fourthRootAtZeroFlowTime.pdf}
+\caption[Divergence at zero flow time of $\chi_t^{1/4}$]{Fourth root of the topological susceptibility in physical units, measured at $t=0$ compared to the measurement at $t=t_0$}\label{fig:ZeroFlowTime_chifourthroot}
 \end{figure}
 
 \begin{figure}
@@ -3064,7 +3064,7 @@ We begin the study of the topological susceptibility by examining its flow time 
 
 \subsection{Continuum limit}
 The continuum limit of the topological susceptibility is taken at $\frac{t_0}{r_0^2}$ as extrapolated in figure \ref{fig:t0-extrapolation}. Again, the extrapolation is done in $\frac{a^2}{r_0^2}$, as the discretization errors of the Wilson action are expected to start at $\mathcal{O}(a^2)$. The extrapolation is done in physical units and is found in figure \ref{fig:chiOneOver4-ContExtrap}
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_fourthRoot_continuum_extrapolation.pdf}
 \caption[$\chi_t^{1/4}$ continuum extrapolation]{Continuum extrapolation of the topological susceptibility in physical units using a constant (black) and linear (red) fit in $\frac{a^2}{r_0^2}$ of every ensemble. The relevant data can be found in table \ref{tab:ChiOneOverFour-Results}.}\label{fig:chiOneOver4-ContExtrap}
@@ -3074,7 +3074,7 @@ The data which gave the estimate with the smallest error was a constant extrapol
 \chi^{1/4}_t = 196.4(1.6)MeV
 \end{equation}
 which is certainly compatible with the values found in \cite{PhysRevLett.94.032003}, which uses the index theorem with a chiral lattice Dirac operator, and in \cite{L_scher_2010} which uses the spectral projector method. It is in agreement with the result obtained in \cite{PhysRevD.92.094518}, which uses the Wilson flow and the same definition of the lattice field strength tensor.
-\begin{table}
+\begin{table}[h]
 \centering
 \caption[Topological susceptibility results]{Numerical results for the topological susceptibility of every ensemble measured at $t_0^c$ where $c$ denotes 'computer' or non-physical flow time. The uncertainty in the estimate for $t_0^c$ is larger than the difference between it and the closest data point, therefore no extrapolation has been carried out. Results are also shown for the extrapolated quantity, using a linear and a constant fit of the data from every lattice spacing (const fit/lin fit) and from the three finest lattice spacings (const fit-fin/lin fit-fin)}
 \label{tab:ChiOneOverFour-Results}
@@ -3093,11 +3093,30 @@ which is certainly compatible with the values found in \cite{PhysRevLett.94.0320
 
 
 \subsection{Flow time independence in the continuum limit}
-We expect the topological susceptibility to be flow time independent for all $t>0$ in the continuum limit. We can test this assertion by conducting a universality test of the topological susceptibility at several flow times, comparing the results to the one obtained at flow time $t_0$. If the assertion is correct, we would expect the ratio of the topological susceptibility defined at a flow time $t$ over the topological susceptibility at flow time $t_0$ to go to $1$ in the continuum limit. When we perform this analysis, extrapolating with a polynomial which is quadratic in $\frac{a^2}{t_0}$ we get the results shown in figure \ref{fig:UniversalityTest}. The result for the continuum limit is very much compatible with $1$.\\If we compare this result with the results of the same analysis performed in \cite{non_gaussianities2015}, but with the clover definition for the lattice field strength tensor,  we can infer some of the effects of using the improved lattice field strength tensor. Looking for example at the trajectories drawn by their $\frac{t_0}{4}$ and our $\frac{t_0}{4}$ extrapolation, we can see that the ratio saturates at much larger lattice spacings.
+We expect the topological susceptibility to be flow time independent for all $t>0$ in the continuum limit. We can test this assertion by conducting a universality test of the topological susceptibility at several flow times, comparing the results to the one obtained at flow time $t_0$. If the assertion is correct, we would expect the ratio of the topological susceptibility defined at a flow time $t$ over the topological susceptibility at flow time $t_0$ to go to $1$ in the continuum limit. When we perform this analysis, extrapolating with a polynomial which is quadratic in $\frac{a^2}{t_0}$ we get the results shown in figure \ref{fig:UniversalityTest}. The result for the continuum limit is very much compatible with $1$.\\If we compare this result with the results of the same analysis performed in \cite{non_gaussianities2015}, but with the clover definition for the lattice field strength tensor,  we can infer some of the effects of using the improved lattice field strength tensor. Looking for example at the trajectories drawn by their $\frac{t_0}{4}$ and our $\frac{t_0}{4}$ extrapolation, we can see that the ratio saturates at much larger lattice spacings.\\\\It is notable that this result, which was extrapolated using physical units set by the Sommer scale, is not in good agreement with the results of \cite{non_gaussianities2015} which used $t_0$ to set the scale. Performing the continuum limit again, now using the dimensionless combination $t_0^2\chi_t$ and extrapolating in the dimensionless ratio $\frac{a^2}{t_0}$ as was done in their study, we get the results in figure \ref{fig:chi1over4-non-physical-units}. $t_0^2\chi_t$ extrapolates to the continuum to give a value of 
+\begin{equation}
+t_0^2\chi_t = 7.7(8)\times 10^{-4}
+\end{equation}
+which is more compatible with their $t_0^2\chi_t = 6.67(7)\times 10^{-4}$.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_fourthRoot_cont_NotPhysUnits.pdf}
+\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:chi1over4-non-physical-units}
+\end{figure}
+
+
+
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_flowTime_independence.pdf}
 \caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:UniversalityTest}
+\end{figure}
+\subsection{Universality of the topological charge definition }
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{FINALPLOTS/chi_diffDeff_universalityTest.pdf}
+\caption[]{Continuum extrapolation of the ratio of $\chi^{\frac{1}{4}}_t$ evaluated using the improved lattice field strength tensor over $\chi^{\frac{1}{4}}_t$ evaluated using the clover lattice field strength tensor using a quadratic function in $a^2/r_0^2$. A result of $1.0$ in the continuum would indicate that the two definitions are in the same universality class. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:DefinitionUniversalityTest}
 \end{figure}
 \subsection{Non-Gaussianities}
 Next we can attempt to determine the the non-Gaussianity of the topological charge distribution by taking the continuum limit on the ratio of the fourth cumulant to the second. These are defined as  
