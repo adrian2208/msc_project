@@ -111,9 +111,9 @@ for j in range(len(dirs)):
     #diff = np.mean(abs(df2-df2_unimproved))
     #meanList.append(TopSusc(df2_unimproved,aoverR0[j]*0.5,V[j]))
     #meanList.append(TopSusc(df2_unimproved,aoverR0[j]*0.5,V[j])/TopSusc(df2,aoverR0[j]*0.5,V[j]))
-    mean,std = RatioCovariance(df2**2,df2_unimproved**2,5000,(fileEnd_list[j]-fileStart_list[j])-20)
+    mean,std = RatioCovariance(df2**2,df2_unimproved**2,15000,(fileEnd_list[j]-fileStart_list[j])-5)
     meanList.append(mean)
-    std_list.append(std)
+    std_list.append(np.sqrt(std))
     #difflist.append(diff/np.mean(df2))
 print(meanList)
 
@@ -132,7 +132,7 @@ print("fit_a:")
 print(fit_a)
 
 #a_axis = np.linspace(0,0.035,100)
-a_axis = np.linspace(0,0.037,100)
+a_axis = np.linspace(0,0.035,100)
 plt.plot(a_axis,fit_a.nominal_value*a_axis**2+fit_b.nominal_value*a_axis +fit_c.nominal_value,color = plot_color)
 
 plt.errorbar([item.nominal_value for item in aoverR0**2],meanList,std_list,xerr=[item.std_dev for item in aoverR0**2],markersize = 2.0,
@@ -145,8 +145,8 @@ plt.errorbar(0.0,fit_c.nominal_value,fit_c.std_dev,markersize = 4.0,
             markeredgewidth=1)
 #plt.scatter(np.array(aoverR0),np.array(difflist))
 #plt.xlim(-0.01,0.035)
-plt.xlim(-0.0025,0.037)
-plt.ylim(0.98)
+plt.xlim(-0.0025,0.036)
+plt.ylim(0.94)
 plt.xlabel(r'$a^2/r_0^2$')
 plt.ylabel(r'$\frac{\chi_t^{\frac{1}{4} } (Q_I)}{\chi_t^{\frac{1}{4} } (Q_C)}$',rotation = 0,labelpad=14)
 plt.savefig('E_def_diff.pdf', bbox_inches="tight")

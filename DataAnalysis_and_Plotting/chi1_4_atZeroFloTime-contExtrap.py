@@ -73,7 +73,10 @@ extrapolate_at_t_comp_list = [[0,0,0,0],[3.2,4.9,7.2,12.2]]
 a = [calc_a(entry) for entry in beta]
 aOverR0_list = np.array([calc_aOverr0W_errors(entry) for entry in beta])
 index = 0
+
+listlist=[]
 for extrapolate_at_t_comp in extrapolate_at_t_comp_list:
+    list=[]
     mean_list = []
     std_list = []
     for j in range(len(directory_list)):
@@ -114,12 +117,15 @@ for extrapolate_at_t_comp in extrapolate_at_t_comp_list:
         mean, std = TopSusc_for_regplot(df2,aOverR0_list[j]*0.5,V[j])
         mean_list.append(mean)
         std_list.append(std)
-
+        list.append(ufloat(mean,std))
+    listlist.append(np.array(list))
     plt.errorbar([item.nominal_value for item in aOverR0_list**2],mean_list,std_list,xerr=[item.std_dev for item in aOverR0_list**2],markersize = 2.0,
                     fmt = marker_list[index],ecolor = color_list[index],color = color_list[index],capsize=2,elinewidth=1,
                 markeredgewidth=1,label = label_list[index])
     index +=1
 
+plotx = np.array([item.nominal_value for item in aOverR0_list])
+plt.plot(plotx**2,1/(plotx**4)*(0.05)+255)
 #coeffs,cov = np.polyfit(np.array(a)**2,mean_list,1,w=1/np.array(std_list)**2,cov=True)
 #print(cov)
 #x = np.linspace(0,0.02,100)
@@ -166,5 +172,5 @@ plt.xlim(-0.001,0.035)
 plt.xlabel(r'$a^2/r_0^2$')
 plt.ylabel(r'$\chi_t^{1/4}[MeV]$')
 #plt.legend()
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\chi_fourthRootAtZeroFlowTime.pdf', bbox_inches="tight")
+plt.savefig('chi_fourthRootAtZeroFlowTime.pdf', bbox_inches="tight")
 #C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\
