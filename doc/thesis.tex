@@ -752,7 +752,7 @@ where the co-kernel of $D$ is the quotient space of the co- domain of $D$ by its
 \begin{equation}\label{eq:topCharge_DiracOperator_index}
 Q_{\mathrm{top}}=a^{4} \sum_{n \in \Lambda} \frac{1}{2 a^{3}} \operatorname{tr}_{C D}\left[\gamma_{5} D(n\mkern-5mu\mid\mkern-5mu n)\right]=\operatorname{Idx_A}(D)=n_{-}-n_{+}
 \end{equation}
-Where the trace is over the color- and Dirac- indices, and $n_-$ and $n_+$ denote the number of left- and right-handed zero modes of the Dirac operator.\\\\In the continuum, the existence of a non-vanishing topological charge
+Where the trace is over the color- and Dirac- indices, and $n_-$ and $n_+$ denote the number of left- and right-handed zero modes of the massless Dirac operator.\\\\In the continuum, the existence of a non-vanishing topological charge
 \begin{equation}\label{eq:topological_charge_continuum}
 Q_{\mathrm{top}}^{\mathrm{cont}}=\int \mathrm{d}^{4} x q(x)^{\mathrm{cont}}, \quad q(x)^{\mathrm{cont}}=\frac{1}{32 \pi^{2}} \epsilon_{\mu \nu \rho \sigma} \operatorname{tr}_{C}\left[F_{\mu \nu}(x) F_{\rho \sigma}(x)\right]
 \end{equation}
@@ -2940,13 +2940,13 @@ We had different choices for which lattice field strength tensor definition to u
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/Q_def_diff.pdf}
-\caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:Q_FST_defs_diff}
+\caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right.}\label{fig:Q_FST_defs_diff}
 \end{figure}
-For the energy density we see that the relative difference between the two definitions follow a similar relationship. It's noticeable that the coarsest lattice produces considerably larger differences than the finer lattices. This observation will inform our analysis of $\Lambda_{YM}$.
+For the energy density we see that the ratios of the improved- and clover- definitions produce a roughly linear relationship in $\frac{a^2}{r_0^2}$.  It's noticeable that the coarsest lattice produces considerably larger differences than the finer lattices. This observation will inform our analysis of $\Lambda_{YM}$- scale.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/E_def_diff.pdf}
-\caption[]{Expectation value of the difference between the two Energy density definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right. Errorbars are excluded from the plot because systematic errors in the analysis are unaccounted for due to the physical flow times at measurement being different.}\label{fig:E_FST_defs_diff}
+\caption[]{Ratios of the expectation values of the two Energy density definitions ((I)mproved \& (C)lover) when measuring the same configurations. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right.}\label{fig:E_FST_defs_diff}
 \end{figure}
 \FloatBarrier
 \section{Energy density}
@@ -3088,7 +3088,11 @@ The data which gave the estimate with the smallest error was a constant extrapol
 \begin{equation}\label{eq:chiOneOverFour_result}
 \chi^{1/4}_t = 196.4(1.6)MeV
 \end{equation}
-which is certainly compatible with the values found in \cite{PhysRevLett.94.032003}, which uses the index theorem with a chiral lattice Dirac operator, and in \cite{L_scher_2010} which uses the spectral projector method. It is in agreement with the result obtained in \cite{PhysRevD.92.094518}, which uses the Wilson flow and the same definition of the lattice field strength tensor.\\Notably, the linear and constant extrapolations lie nearly on top of each other, which is an indication of very small discretization effects.\\\\
+which is certainly compatible with the values found in \cite{PhysRevLett.94.032003}, which uses the index theorem with a chiral lattice Dirac operator, and in \cite{L_scher_2010} which uses the spectral projector method. It is in agreement with the result obtained in \cite{PhysRevD.92.094518}, which uses the Wilson flow and the same definition of the lattice field strength tensor.\\Notably, the linear and constant extrapolations lie nearly on top of each other, which is an indication of very small discretization effects.\\\\Converting results in quenched QCD to physical units, carries with it certain ambiguities which can be avoided by carrying out a dimensionless extrapolation in which the final result is given as some dimensionless combination of a reference scale and $\chi_t$. Doing this using $\frac{a}{r_0}$ and a constant extrapolation using every ensemble, we get a value of 
+\begin{equation}\label{eq:r_04Chi_t}
+r_0^4\chi_t = 0.0613(20).
+\end{equation}
+
 \begin{table}[htbp]
 \centering
 \caption[Topological susceptibility results]{Numerical results for the topological susceptibility of every ensemble measured at $t_0^c$ where $c$ denotes 'computer' or non-physical flow time. The uncertainty in the estimate for $t_0^c$ is larger than the difference between it and the closest data point, therefore no extrapolation has been carried out. Results are also shown for the extrapolated quantity, using a linear and a constant fit of the data from every lattice spacing (const fit/lin fit) and from the three finest lattice spacings (const fit-fin/lin fit-fin).}
@@ -3105,22 +3109,23 @@ which is certainly compatible with the values found in \cite{PhysRevLett.94.0320
 	  		   $[lin\,fit-fin]$ & & &     										&	$196.4(2.1)$
 \end{tabular}
 \end{table}
+It is notable that this result, which was extrapolated using physical units set by the Sommer scale, is not in good agreement with the results of \cite{non_gaussianities2015} which used $t_0$ to set the scale. Performing the continuum limit again, now using the dimensionless combination $t_0^2\chi_t$ and extrapolating in the dimensionless ratio $\frac{a^2}{t_0}$ as was done in their study, we get the results in figure \ref{fig:chi1over4-non-physical-units}. $t_0^2\chi_t$ extrapolates to the continuum to give a value of 
+\begin{equation}
+t_0^2\chi_t = 7.7(8)\times 10^{-4}
+\end{equation}
+which is more compatible with their $t_0^2\chi_t = 6.67(7)\times 10^{-4}$ but still considerably higher.\\\\
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{FINALPLOTS/chi_fourthRoot_cont_NotPhysUnits.pdf}
+\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:chi1over4-non-physical-units}
+\end{figure}
 Using the result in \eqref{eq:chiOneOverFour_result}, the Witten-Veneziano formula and the pion decay constant determined in \cite{https://doi.org/10.48550/arxiv.0802.1043} we get
 \begin{equation}
 m_{\eta^{\prime}}=1025(17)MeV.
 \end{equation}
 As the result in \eqref{eq:chiOneOverFour_result} only holds to leading order in $\frac{N_f}{N_c}$, this result supports the Witten–Veneziano mechanism as the explanation for the large $\eta'$-mass.
 \subsection{Flow time independence in the continuum limit}
-We expect the topological susceptibility to be flow time independent for all $t>0$ in the continuum limit. We can test this assertion by conducting a universality test of the topological susceptibility at several flow times, comparing the results to the one obtained at flow time $t_0$. If the assertion is correct, we would expect the ratio of the topological susceptibility defined at a flow time $t$ over the topological susceptibility at flow time $t_0$ to go to $1$ in the continuum limit. When we perform this analysis, extrapolating with a polynomial which is quadratic in $\frac{a^2}{t_0}$ we get the results shown in figure \ref{fig:UniversalityTest}. The result for the continuum limit is very much compatible with $1$.\\If we compare this result with the results of the same analysis performed in \cite{non_gaussianities2015}, but with the clover definition for the lattice field strength tensor,  we can infer some of the effects of using the improved lattice field strength tensor. Looking for example at the trajectories drawn by their $\frac{t_0}{4}$ and our $\frac{t_0}{4}$ extrapolation, we can see that the ratio saturates at much larger lattice spacings.\\\\It is notable that this result, which was extrapolated using physical units set by the Sommer scale, is not in good agreement with the results of \cite{non_gaussianities2015} which used $t_0$ to set the scale. Performing the continuum limit again, now using the dimensionless combination $t_0^2\chi_t$ and extrapolating in the dimensionless ratio $\frac{a^2}{t_0}$ as was done in their study, we get the results in figure \ref{fig:chi1over4-non-physical-units}. $t_0^2\chi_t$ extrapolates to the continuum to give a value of 
-\begin{equation}
-t_0^2\chi_t = 7.7(8)\times 10^{-4}
-\end{equation}
-which is more compatible with their $t_0^2\chi_t = 6.67(7)\times 10^{-4}$ but still considerably higher.
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.7\textwidth]{FINALPLOTS/chi_fourthRoot_cont_NotPhysUnits.pdf}
-\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:chi1over4-non-physical-units}
-\end{figure}
+We expect the topological susceptibility to be flow time independent for all $t>0$ in the continuum limit. We can test this assertion by conducting a universality test of the topological susceptibility at several flow times, comparing the results to the one obtained at flow time $t_0$. If the assertion is correct, we would expect the ratio of the topological susceptibility defined at a flow time $t$ over the topological susceptibility at flow time $t_0$ to go to $1$ in the continuum limit. When we perform this analysis, extrapolating with a polynomial which is quadratic in $\frac{a^2}{t_0}$ we get the results shown in figure \ref{fig:UniversalityTest}. The result for the continuum limit is very much compatible with $1$.\\If we compare this result with the results of the same analysis performed in \cite{non_gaussianities2015}, but with the clover definition for the lattice field strength tensor,  we can infer some of the effects of using the improved lattice field strength tensor. Looking for example at the trajectories drawn by their $\frac{t_0}{4}$ and our $\frac{t_0}{4}$ extrapolation, we can see that the ratio saturates at much larger lattice spacings.\\\\
 
 
 
@@ -3134,7 +3139,7 @@ Recall from section \ref{sec:universalityOfQdefs} that any finite lattice discre
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/chi_diffDeff_universalityTest.pdf}
-\caption[]{Continuum extrapolation of the ratio of $\chi^{\frac{1}{4}}_t$ evaluated using the improved lattice field strength tensor over $\chi^{\frac{1}{4}}_t$ evaluated using the clover lattice field strength tensor using a quadratic function in $a^2/r_0^2$. From left to right, these were measured at physical flow times $t=0.03,\,0.031,\,0.033$ and $0.029fm^2$. A result of $1.0$ in the continuum would indicate that the two definitions are of the same universality class. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:DefinitionUniversalityTest}
+\caption[]{Continuum extrapolation of the ratio of $\chi^{\frac{1}{4}}_t$ evaluated using the improved lattice field strength tensor over $\chi^{\frac{1}{4}}_t$ evaluated using the clover lattice field strength tensor using a polynomial quadratic in $a^2/r_0^2$. From left to right, these were measured at physical flow times $t=0.03,\,0.031,\,0.033$ and $0.029fm^2$. A result of $1.0$ in the continuum would indicate that the two definitions are of the same universality class. The error bars are small due to the correlation between the numerator and denominator.}\label{fig:DefinitionUniversalityTest}
 \end{figure}
 \subsection{Non-Gaussianities}
 Next we can attempt to determine the the non-Gaussianity of the topological charge distribution by taking the continuum limit on the ratio of the fourth cumulant to the second. These are defined as  
@@ -3148,7 +3153,7 @@ where
 \left\langle Q^4 \right\rangle_c &=\frac{1}{N} \sum_{i=1}^{N} q_{i}^{4}-3\left\langle Q^2 \right\rangle^{2}.
 \end{aligned}
 \end{equation}
-The result is shown in figure \ref{fig:R-contLim}.
+The result is shown in figure \ref{fig:R-contLim}.\\\\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/R_continuum_extrapolation.pdf}
@@ -3216,12 +3221,21 @@ In order to take into account the correlation of the enumerator and denominator 
 -Note the difficoulty in estimating the integrated autocorrelation time. Needs longer and more runs.\\
 -
 \section{Future analysis and improvements}
-HIGHER STATISTICS, LONGER RUNS. this is an essentially trivial improvement, it just requires more time.
+In this section, we look at some of the analyses which are immediately investigable using the capabilities LGF as well as the analyses which require some small degree of additional implementation to be functional. We look at what those implementations would be and certain additional performance improvements related to the functional aspects of the LGF program.
+\subsection{Improving and validating current estimates}
+The estimates for the topological susceptibility which are calculated here, both in \eqref{eq:chiOneOverFour_result} and in \eqref{eq:r_04Chi_t} already have very small relative errors of roughly $1\%$ and $3\%$ respectively. If the results are validated through a very thorough estimate of the autocorrelation conducted at the same lattice volume, they would represent some of the smallest errors associated with this measurement.\\The foremost priority and most trivial addition to these result would therefore be a full scale estimation of $\tau_{int}^Q$ with the same lattice volume, much longer runs and more replica. In addition to this, improving the estimate further with higher statistics would be essentially trivial, simply requiring more simulation time.\\\\Unlike the case of the topological susceptibility, the estimation of the non-Gaussianity encoded in $R$ was very much inadequate. Whereas a simple doubling or tripling of the statistics may improve the estimate in $\chi_t$ by a significant amount, what is evident from the errors in figure \ref{fig:R-contLim} is that this would not be sufficient. From finest to coarsest lattice spacing, the statistics roughly improve like this: $\beta=6.26$ has roughly three times the statistics of $\beta=6.46$ and $\beta=6.13$ has roughly two times the statistics of $\beta=6.26$. Yet, the errors decrease very slowly. The proper strategy here is likely to reduce the simulation volume or even to do the extrapolation at larger values of the lattice spacing. Seeing as a study of larger lattice separations has already been conducted in \cite{non_gaussianities2015}, albeit with a simpler topological charge definition, this latter option is clearly undesirable. The important result in this case would be the discrimination of the different predictions made by the large $N_c$- expansion and the dilute instanton gas model.
 \subsection{Optimizing OR-HB ratio for autocorrelation of topological observables}
+One of few hyper-parameters which are available for us to tweak in the generation of gauge configurations, is the $OR-HB$ ratio used in the Overrelaxation-Heatbath method. There is potential for this ratio to be optimized for the decorrelation of topological observables which has not been explored thoroughly for the range of lattice spacings used in the analysis.\\Doing such an analysis would require no additional implementations to LGF, but would need considerable computational effort to be viable. 
 \subsection{$\tau_{int}$ of topological observables using Local Hybrid Monte Carlo algorithms}
-\subsection{Re-analysing the energy density results with the improved lattice field strength tensor}
-\subsection{Do all configurations with $Q=0$ have $q=0$ everywhere}
-Potentially exposing my own ignorance here, but I genuinely don't know the answer to this. This would not be a difficult analysis to do.\\\\All configurations with a topological charge of zero are continuously deformable to the trivial field which is a minimum of the action. Knowing the effect of the Wilson flow on the gauge configurations, it's difficult to see how this could result in anything other than $q=0$ everywhere.
+LGF has an implementation of a local HMC(LHMC)- algorithm which is based on \cite{Kennedy_1994}. Preliminary testing indicates that for simple observables, such as the energy density or Wilson loops, it very quickly decorrelates the measurements. Both in the number of updates required and the time spent per update. This is a very promising result and it corroborates the findings in \cite{LHMC_autocorr}. It has not however, been tested on topological observables. Intuitively we expect a similar behaviour to that of global HMC- algorithms which perform notoriously badly at decorrelating topological observables. Especially at small lattice spacings.\\\\The LHMC algorithm may still be viable for the determination of topological observables within some range of lattice spacings. Especially if it is combined with other methods such as Overrelaxation and open boundary conditions. For instance, $\tau_{int}^Q$ for such an algorithm may be larger than that of the HB-OR algorithm, but if every update takes less cpu time, the overall effect could be an improvement. \\Everything needed to do such an analysis is already implemented in LGF with the exception of open boundary conditions. More on this in a bit.
+\subsection{Analysing the energy density with the improved lattice field strength tensor}
+As we saw in figure \ref{fig:E_FST_defs_diff}, there are considerable differences between the energy density measured using the clover definition v. the improved definition of the lattice field strength tensor. Changing to using the improved definition could have important impacts on several of the analyses presented in this thesis, including $t_0^2\chi_t$.\\\\Firstly, this would allow a more accurate estimate of $t_0$, this is crucial as the errors in \eqref{eq:r_04Chi_t} can be seen to arise to a large extent from the $0.3\%$ to $0.6\%$ relative error in the quoted value of $\frac{a}{r_0}$. Making more accurate estimates of $t_0$ would enable even smaller errors when $t_0^2\chi_t$ is extrapolated in $\frac{a^2}{t_0}$.\\\\Secondly, when estimating $\Lambda_{YM}$ there would be several compound improvements from changing definitions. In the large energy region of the coupling, the perturbative and lattice results should in principle match. However, due to difficulties extrapolating $t^2\langle E \rangle$ to the continuum at small flow times, the extrapolation has to be cut short. It also creates a problem in the perturbative matching at high energies as was evident from figures \ref{fig:YM-Scale_chiSquaredFit} and  \ref{fig:YM-Scale_chiSquaredFit-altspac}. With the improved definition, these problems which arise from the discretization effects of the lattice should be much smaller, allowing for better continuum extrapolations and perturbative matching with the lattice results at higher energies.
+
+\subsection{Open boundary conditions}
+
+\subsection{Do all configurations with $Q=0$ have have an absence of topological 'lumps'?}
+As discussed, the topological charge measured in this thesis is related to the number of left- and right- handed zero modes of the massless Dirac operator in the continuum limit through equation \eqref{eq:topCharge_DiracOperator_index}. In order for a gauge configuration to have zero topological charge, the number of left- and right- handed modes $n_-$ and $n_+$ would necessarily be related by $n_- = n_+$.\\In lattice calculations, we never expect configurations where $n_- \neq 0$ and $n_+ \neq 0$, i.e. where the solution to the above equation is not $n_- = n_+=0$. The reason we don't expect this is because arguably, any such configuration would require a very precise tuning of the gauge field to occur. Still, this is not a rigorously held fact and performing such an analysis on already flowed and analysed gauge fields would require very little in terms of additional computation.\\\\As any such configuration would have a tiny probability weight in the functional integral, seeing one of these configurations would be exceedingly unlikely, which makes this analysis technically feasible but not practical.
+
 \subsection{Dynamical fermions}
 The HMC algorithm has already been implemented for the gauge fields and little additional work would be required in order to include fermionic fields.\\The boundary conditions of the lattice are encoded in a single function, so the introduction of open boundary conditions in the time direction would be relatively easy, barring complications arising from computations near the open boundary region.
 \subsection{Thermal QCD}
