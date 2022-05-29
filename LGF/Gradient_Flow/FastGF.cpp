@@ -1,5 +1,11 @@
 #include "FastGF.h"
 
+/// 
+/// IN DEVELOPMENT!!!
+/// DO NOT USE!
+/// 
+
+
 FastGF::FastGF(Action& GaugeAction, SU3_field& U, double epsilon) {
 	m_updateMethod = "GF";
 	m_flowTime = 0.0;
@@ -14,8 +20,6 @@ FastGF::FastGF(Action& GaugeAction, SU3_field& U, double epsilon) {
 }
 
 void FastGF::flow() {
-
-	
 
 	su3_mat temp;
 	for (int mu = 0; mu < (*m_U).getNrExtDOF(); mu++) {
