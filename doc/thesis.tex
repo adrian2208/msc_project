@@ -106,25 +106,27 @@
 \title{Title}
 \author{A.\ M.\ Kleven}
 \begin{document}
-\uiomasterfp[nosp, program={Computational science: physics},supervisors={Prof. A. Shindler\and Prof. M. Hjort-Jensen},title={Title},dept={Department of physics},color=grey]
+\uiomasterfp[nosp, program={Computational science: physics},supervisors={Prof. A. Shindler\and Prof. M. Hjort-Jensen},title={Applications of the Yang-Mills gradient flow to topological observables},dept={Department of physics},color=grey]
 
 
 \tableofcontents{}
 \listoffigures{}
 \listoftables{}
-\chapter*{Abstract} 
+\chapter*{Abstract}
+We study the topological charge and its distribution in $SU(3)$ Yang-Mills theory using the highly improved lattice field strength tensor and the Wilson flow. The topological susceptibility is estimated to high accuracy by considering a large range of lattice spacings and by keeping finite size effects negligible, with a continuum result of $r_0^4\chi_t = 0.0613(20).$ This result is consistent with results obtained using chiral lattice Dirac operators and the spectral projector method, supporting the conjecture that the moments of the flowed topological charge coincide with those in the chiral Ward identities.\\\\A universality test is conducted on the dependence of the topological susceptibility on topological charge definitions, testing the highly improved v. the clover definition of the topological charge. The results are consistent with universality.\\Another such study on the universality of the topological susceptibility defined at different flow times was conducted with results compatible with universality.\\An attempt is made to determine the non-gaussianity of the topological charge distribution, but large statistical errors make the analysis inconclusive as to the predictions made by the large $N_c$-expansion and the dilute instanton gas model.\\\\A preliminary study as to the feasibility of estimating the $\Lambda_{YM}$-scale is carried out with promising results. One set of results are seen to be consistent with estimates made using different methods, producing estimates in the $68$th- percentile confidence interval between $224.96MeV$ and $240.15MeV$. However these results are undermined with a hereto unmanaged systematic error related to the choice of fit domain.
 \chapter*{Acknowledgements}
 I would like to thank Morten Hjorth-Jensen who has been an incredible help at every opportunity. Despite the absence of any Lattice QCD experts at the University of Oslo, Morten managed to put me in touch with Andrea Shindler at very short notice, allowing me the incredible opportunity of studying such a fascinating topic. For the unwavering help in finding more opportunities for future studies in lattice QCD, thank you!\\\\I would like to thank Andrea Shindler for taking the time to share his expertise and for providing valuable feedback in the course of this project. Additional thanks are due to Andrea for procuring an account at the Michigan State University High performance computing cluster, which made the goals of this thesis attainable.\\\\I would like to thank Giovanni Pederiva for educating me in the use of the computing resources at ICER and for a very pleasant meeting. Without Giovanni's thesis on the topic of lattice QCD and the gradient flow, the scope of this thesis may well have been diminished.\\\\Most of all, I have to thank my wife for her ceaseless love, support and patience without which this undertaking would have been impossible. For pushing me to write e-mails, to send applications and to attend conferences when her husband would rather stay a programming, paper reading, solitary desk goblin, thank you!
 \chapter{Introduction}
+\section{Motivation}
 Quantum chromo dynamics (QCD) is the non- Abelian gauge theory governing the strong interaction of quarks and gluons. The theory has a running coupling that decreases with increasing energy, meaning that at high energy scales,
 it’s solvable using perturbation theory. At low energies however, the coupling
 expansion converges extremely slowly or not at all. This is where non- perturbative methods become necessary. Lattice QCD has been used for this purpose
 with astounding success, placing high precision constraints on standard model
 parameters and demonstrating crucial low- energy QCD phenomenology such as
 color confinement and spontaneous chiral symmetry breaking.\\\\Placing the theory of QCD on a lattice introduces an ultraviolet cutoff at the scale of the inverse lattice spacing, acting as a regulator to the theory. In order to relate lattice quantities to their physical counterparts, they need to be renormalized. The gradient flow on Yang-Mills gauge fields has been shown \cite{Luscher2010} to produce smooth, renormalized fields for all positive flow times $t$. The flow time is a fifth dimension added onto the 4-dimensional euclidean space-time lattice of standard lattice QCD and the dynamics of the gauge fields along this dimension is described by a differential equation which depends on that gauge field. Normally, a local operator calculated at some finite flow time $t$ would have to be related to the ones at $t=0$, however this is not the case for the topological charge and its cumulants. These can be defined directly at non-vanishing flow times, requiring no renormalization. This is an incredibly powerful result because the topological charge and its cumulants are directly related to several important predictions. Some of these include the chiral anomaly and the anomalous mass of the $\eta\prime$-meson as well as predictions about the vacuum structure of QCD.
-\section{Motivation}
+
 \section{Contribution}
-LGF\footnote{The LGF program can be found at the Github address \url{https://github.com/adrian2208/msc_project}}
+This thesis has been formed on the basis of many pre-existing analyses. The determination of the topological susceptibility has been done in many instances. The particular result obtained here using the improved lattice field strength is as far as we can tell, the most accurate result of it's type if it can be verified. The near absence of any scaling effects is particularly promising.\\That said, there are some results here which have not been found in other papers\footnote{Note that these results may well exist, but have not been found in the course of researching this thesis}. Two universality tests have been conducted which demonstrate the universality of the topological susceptibility defined from the improved lattice field strength tensor at different flow times as well as the universality of the topological susceptibility defined from the clover- and Improved- definitions of the lattice field strength tensor.\\\\Besides a results point of view, we hope that this thesis provides a coherent and relatively self contained guide to understanding the gradient flow as applied to topological observables, both theoretically and practically.\\\\This text is of course only part of the substantial undertaking that was this project. This is after all a thesis in computational physics and with that comes the computational part. 'Lattice Gradient Flow' or LGF\footnote{The LGF program can be found at the Github address \url{https://github.com/adrian2208/msc_project}} is a suite of tools created in the $C++$ programming language with the intention of providing a framework for doing high performance computing of lattice QCD and the gradient flow. 
 \section{Structure}
 This thesis is divided into five main chapters.\\ Chapter \ref{chap:theory} first intends to educate the reader on QCD in the continuum and how the theory is discretized onto the lattice. Starting with the simple case of pure gauge fields before moving onto the more difficult case of the fermionic fields. In the final section on lattice fermions, on the phenomenology of chiral fermions (see section \ref{sec:chiral_fermions_topCharge}), we first meet the topological charge in the context of the Index theorem. Then, in order to understand the wider context in which lattice QCD makes predictions, some examples of measurable observables are covered. From there, we cover the theory which is most relevant to the results of this thesis. These are the gradient flow and its application to the study of the topological charge.\\\\Chapter \ref{chap:comp} is still a theoretical chapter, but now tackles the issues related to the computation of lattice QCD. This includes the numerical solutions to the functional integral and quark dynamics as well as the methodology which controls for non-physical effects in our measurements.\\\\From chapter \ref{chap:Imp} and onwards, the thesis is entirely dedicated to covering the topics which are directly relevant to the study of the gradient flow and its applications to topological observables as well as the estimation of the $\Lambda_{YM}$- scale.\\These are topics pertaining to this specific implementation of the analysis as well as the functioning of the LGF code suite.\\\\Finally, chapters \ref{chap:results} and \ref{chap:conc} cover the results of this analysis, providing comments and discussing how the results could be improved upon. A range of potential future analyses are covered, ranging from the trivial to the highly demanding.
 
@@ -2951,13 +2953,13 @@ We had different choices for which lattice field strength tensor definition to u
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/Q_def_diff.pdf}
-\caption[]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right.}\label{fig:Q_FST_defs_diff}
+\caption[Difference between topological charge definitions]{Expectation value of the difference between the two topological charge definitions when measuring the same configuration. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right.}\label{fig:Q_FST_defs_diff}
 \end{figure}
 For the energy density we see that the ratios of the improved- and clover- definitions produce a roughly linear relationship in $\frac{a^2}{r_0^2}$.  It's noticeable that the coarsest lattice produces considerably larger differences than the finer lattices. This observation will inform our analysis of $\Lambda_{YM}$- scale.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/E_def_diff.pdf}
-\caption[]{Ratios of the expectation values of the two Energy density definitions ((I)mproved \& (C)lover) when measuring the same configurations. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right.}\label{fig:E_FST_defs_diff}
+\caption[Ratio of differently defined energy densities]{Ratios of the expectation values of the two Energy density definitions ((I)mproved \& (C)lover) when measuring the same configurations. The measurements are taken at $t/a^2 = \{13,\,8.5,\,5.5,\,3.5 \}$ from left to right.}\label{fig:E_FST_defs_diff}
 \end{figure}
 \FloatBarrier
 \section{Energy density}
@@ -2965,20 +2967,20 @@ The Wilson flow drives the action towards its stationary points. We therefore ex
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/E_v_flowtime.pdf}
-\caption[]{Expectation value of the energy density as a function of the physical flow time over the square of the Sommer parameter. The error bars are smaller than the symbols. }\label{fig:EvFlow}
+\caption[Flow time dependence of the energy density]{Expectation value of the energy density as a function of the physical flow time over the square of the Sommer parameter. The error bars are smaller than the symbols. }\label{fig:EvFlow}
 \end{figure}
 \subsection{Scale setting with $t^2\langle E\rangle$}
 As we saw, to leading order in perturbation theory, $t^2\langle E\rangle$ is proportional to the gauge coupling. We expect that this perturbative expansion should match our lattice results within some range of flow times. This is between the range in which perturbation theory is expected to break down and where the discretization effects of the lattice causes scaling violations in $\langle E\rangle$.\\In figure \ref{fig:tsquaredE_v_flowtime}, which has been replicated from Lüscher's paper\cite{Luscher2010}, we see that the finest lattice produces near perfect agreement with perturbation theory within the range of roughly $\frac{t}{r_0^2}=0.01$ to $\frac{t}{r_0^2}=0.035$. This region corresponds to a smearing radius $\sqrt{8t}$ which is $3-5.6$ times the lattice spacing.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/t_squared_v_tOverR_0_squared.pdf}
-\caption[]{The dimensionless combination $t^2\langle E\rangle$ as a function of the physical flow time over the squared Sommer radius. The errorband in the perturbative expansion is dominated by the uncertainty in $\Lambda\big|_{N_f=0}$ which is sited in \cite{CapitaniStefano1999Nqmr}. The errorbars are not visible on the scale of the figure.}\label{fig:tsquaredE_v_flowtime}
+\caption[Flow time dependence of $t^2\langle E\rangle$]{The dimensionless combination $t^2\langle E\rangle$ as a function of the physical flow time over the squared Sommer radius. The errorband in the perturbative expansion is dominated by the uncertainty in $\Lambda\big|_{N_f=0}$ which is sited in \cite{CapitaniStefano1999Nqmr}. The errorbars are not visible on the scale of the figure.}\label{fig:tsquaredE_v_flowtime}
 \end{figure}
 In the same paper, Lüscher proposed the introduction of a reference scale $t_0$ defined by the implicit equation \eqref{eq:t0RefImplicitEq}. We can identify $\frac{t_0}{r_0^2}$ by the point in figure \ref{fig:tsquaredE_v_flowtime} at which the graph crosses $t^2\left\langle E\right\rangle = 0.3$. We have a limited flow-time resolution, and so in order to get an estimate we have to interpolate between the points in its vicinity. We see the result of this extrapolation in figure \ref{fig:t0-extrapolation}. The error in $\frac{t_0}{r_0^2}$ comes from the uncertainty in $\frac{a}{r_0}$ as well as the statistical error in $t^2\left\langle E\right\rangle$. The systematic error arising from the interpolation is negligible. The estimate for every lattice spacing is consistent within errors.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/t0_extrapolate_with_errors.pdf}
-\caption[]{Interpolation of the flow time dependence of $t^2\left\langle E\right\rangle $ in the vicinity of $\frac{t_0}{r_0^2}$. The interpolation includes the two points closest to the final answer. The vertical uncertainty derives from the uncertainty in $\frac{a}{r_0}$, while the horizontal uncertainty is the statistical error in $t^2\left\langle E\right\rangle $.}\label{fig:t0-extrapolation}
+\caption[Estimating $t_0$]{Interpolation of the flow time dependence of $t^2\left\langle E\right\rangle $ in the vicinity of $\frac{t_0}{r_0^2}$. The interpolation includes the two points closest to the final answer. The vertical uncertainty derives from the uncertainty in $\frac{a}{r_0}$, while the horizontal uncertainty is the statistical error in $t^2\left\langle E\right\rangle $.}\label{fig:t0-extrapolation}
 \end{figure}
 We can see from figure \ref{fig:SmearRad_v_latticeConstant} that the discretization effects are much smaller than the errors. The discretization effect in this case, would manifest itself as a slope in the linear extrapolation in $\frac{a^2}{t_0}$, as the effective field theory using the Wilson action predicts dicretization effects of $\mathcal{O}(a^2)$. The continuum extrapolation of $\frac{\sqrt{8t_0}}{r_0}$ indicates very strongly that the dimensionless ratio $\frac{t_0}{r_0^2}$ is independent of the lattice spacing. The continuum value of $\frac{\sqrt{8t_0}}{r_0}$ is seen to extrapolate to
 \begin{equation}
@@ -2988,7 +2990,7 @@ which is in near perfect agreement with the result stated in \cite{non_gaussiani
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/smearRad_cont_limit.pdf}
-\caption[]{Linear extrapolation in $a^2/t_0$ of $\frac{\sqrt{8t_0}}{r_0}$ to the continuum. The horizontal error is not visible on the scale of the figure.}\label{fig:SmearRad_v_latticeConstant}
+\caption[Continuum extrapolation of the reference scale $t_0$]{Linear extrapolation in $a^2/t_0$ of $\frac{\sqrt{8t_0}}{r_0}$ to the continuum. The horizontal error is not visible on the scale of the figure.}\label{fig:SmearRad_v_latticeConstant}
 \end{figure}
 
 \subsection{Estimating $\Lambda_{YM}$}
@@ -2996,7 +2998,7 @@ Because the lattice results and the perturbative expansion match over a range of
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/t_squared_v_q_contLimit.pdf}
-\caption[]{$t^2\left\langle E\right\rangle $ dependence on the momentum scale $q = \frac{1}{\sqrt{8t}}[MeV]$ with the extrapolation to the continuum based on the three finest lattice spacings.}\label{fig:Coupling_cont_extrapolation}
+\caption[$t^2\left\langle E\right\rangle $ dependence on the momentum scale]{$t^2\left\langle E\right\rangle $ dependence on the momentum scale $q = \frac{1}{\sqrt{8t}}[MeV]$ with the extrapolation to the continuum based on the three finest lattice spacings.}\label{fig:Coupling_cont_extrapolation}
 \end{figure}
 The continuum extrapolation contains a total of 100 points evenly spaced in $\frac{t}{r_0^2}$. To estimate $\Lambda_{YM}$, we proceed by resampling the set of 100 points by performing a $\chi^2$ fit of the function \eqref{eq:leadingOrder_pt_E} to every set of subsequent points with a length greater than or equal to 5. This is done until the list of possible resamples is exhausted and every examined value of $\Lambda_{YM}$ is assigned a score based on how well it fitted the data in every resample. When this is done, the results are as seen in figure \ref{fig:YM-Scale_chiSquaredFit}. This result is compatible with the result of $\Lambda^{(0)}_{MS} = 238(19)MeV$ from \cite{CapitaniStefano1999Nqmr}. I cannot de-emphasize the results of this analysis enough though. In order to sample the $400$ different values of $\Lambda_{YM}$, I've had to compromise away any analysis of the statistical error in the estimate, as any bootstrap sampling would take far to long execute. Sampling more values of $\Lambda_{YM}$ was seen to have a very large impact on the final result as lowering the sample rate had a tendency to exclude highly weighted values, deforming the result. I should also make a note of a very important detail which was glossed over in the introduction to this analysis. This detail is immediately apparent, looking at figure \ref{fig:Coupling_cont_extrapolation}: we chose to space the values evenly in $\frac{t}{r_0^2}$, not in $\frac{1}{\sqrt{8t}}$. This has the effect of weighting the points in the lower energy region much higher than those in the high energy region. Doing the exact same analysis, now with the samples being evenly spaced in $\frac{1}{\sqrt{8t}}$, we get the result in figure \ref{fig:YM-Scale_chiSquaredFit-altspac} .
 This result is a very strong signal that we don't have our systematic errors under control.\\This being said, there are genuine reasons for why we might want to weight lower energies more than higher energies, such as the fact that the low flow time extrapolations don't have a well defined continuum limit. 
@@ -3005,13 +3007,13 @@ This result is a very strong signal that we don't have our systematic errors und
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution_HIST.pdf}
-\caption[]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. The three vertical lines denote the weighted median and its $68\%$ confidence interval which are $224.96MeV$, $234.59MeV$ and $240.15MeV$ from left to right. The peak corresponds to a value of $237.74MeV$.}\label{fig:YM-Scale_chiSquaredFit}
+\caption[$\Lambda_{YM}$ estimate]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. The three vertical lines denote the weighted median and its $68\%$ confidence interval which are $224.96MeV$, $234.59MeV$ and $240.15MeV$ from left to right. The peak corresponds to a value of $237.74MeV$.}\label{fig:YM-Scale_chiSquaredFit}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/t_squared_v_q_ChiSquared_fitDistribution-altSpacing.pdf}
-\caption[]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. Fitting done on values separated evenly in $\frac{1}{\sqrt{8t}}$}\label{fig:YM-Scale_chiSquaredFit-altspac}
+\caption[$\Lambda_{YM}$ estimate with alternative fit spacing]{Weighted distribution of $\Lambda_{YM}$ fitting equation \eqref{eq:leadingOrder_pt_E} to the resamples of the continuum extrapolation of $t^2\left\langle E\right\rangle $ using the 4-loop approximation of the running coupling found in equation \eqref{eq:runningCouplingApprox}. Fitting done on values separated evenly in $\frac{1}{\sqrt{8t}}$}\label{fig:YM-Scale_chiSquaredFit-altspac}
 \end{figure}
 \FloatBarrier
 \section{Topological charge}
@@ -3019,7 +3021,7 @@ Recalling our discussion of the separation of topological sectors in section \re
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/Q_v_flowtime.pdf}
-\caption[]{Flow time dependence of the topological charge going from coarsest to finest lattice spacing from top to bottom. $\frac{t_0}{a^2}$ corresponds to the computer- flow time at which the topological susceptibility is measured. 21 samples of each ensemble are illustrated.}\label{fig:QvFlowTime}
+\caption[Flow time dependence of the topological charge]{Flow time dependence of the topological charge going from coarsest to finest lattice spacing from top to bottom. $\frac{t_0}{a^2}$ corresponds to the computer- flow time at which the topological susceptibility is measured. 21 samples of each ensemble are illustrated.}\label{fig:QvFlowTime}
 \end{figure}
 A very interesting behaviour can be seen to occur in the flow time dependence of the topological charge in the $\beta = 6.26$ ensemble\footnote{This behaviour has been seen in all three of the coarsest lattice spacings, but are not illustrated here.}. One of the gauge configurations which had seemingly settled into a near-integer value, proceeds to deviate from that integer value. Continuing the flow on one of these configuration eventually leads to the topological charge settling into a new integer value. I have no firm explanation for this phenomenon other than to conjecture that the flow equations briefly trap the gauge field in a region of small gradient. The deviation seems to appear when the smearing radius $\sqrt{8t}$ is close to $\frac{1}{3}L$ indicating that the averaging procedure eventually pushes the gauge configuration out of the local minimum. To test this, we could examine many such configurations to see whether the frequency of such occurrences go to zero as $\sqrt{8t}\rightarrow L$.\\\\Next we make a qualitative analysis of the flow time dependence of the distribution of topological charge density on the lattice. We can look at the gradient flow as cooling the short range fluctuations in the field configurations, revealing the underlying topological structure.
 Figure \ref{fig:Qdensdist_all} illustrates this procedure for a 3D euclidean time slice of the full space-time lattice on a gauge configuration with the finest lattice spacing and a topological charge of $4$ in the large flow time limit.\\\\At flow times close to zero, we find exactly what we expect, large short range fluctuations which obscure any real structure. It's only at $\frac{t}{a^2}\approx 1.21$ that we begin to see some structure in the local fluctuations. Curiously, at this stage the topological charge has nearly settled into its final value. Seeing just how little resemblance this distribution has to the final distribution at $\frac{t}{a^2}=13$ with only a slightly higher topological charge is noteworthy. At large flow times, we see the topological charge density settle into 'lumps' which are exclusively positive or negative, separated by regions of zero topological charge density. These are the localised instanton solutions to the Wilson action each with an associated 'winding'-number.
@@ -3049,7 +3051,7 @@ Figure \ref{fig:Qdensdist_all} illustrates this procedure for a 3D euclidean tim
 \label{fig:Qdensdist4}
 \caption{$\frac{t}{a^2} = 13.0$. $Q = 3.99996$}
 \end{subfigure}
-\caption[]{Topological charge distribution at euclidean time slice $t_{euc}=0$ measured at different flow times. Generated using the Mayavi python plotting utility \cite{ramachandran2011mayavi}. The star shape is only an artefact of the 2D projection.}
+\caption[Spatial distribution of the topological charge density at different flow times]{Topological charge distribution at euclidean time slice $t_{euc}=0$ measured at different flow times. Generated using the Mayavi python plotting utility \cite{ramachandran2011mayavi}. The star shape is only an artefact of the 2D projection.}
 \label{fig:Qdensdist_all}
 \end{figure}
 
@@ -3064,7 +3066,7 @@ where the contact term (moderated by the minimally allowed lattice distance $a$)
 \begin{figure}[htbp]
 \centering
 \includegraphics[trim=0cm 0.1cm 0cm 0.1cm,clip=true,width=0.7\textwidth]{FINALPLOTS/chi_fourthRoot_v_smearRad.pdf}
-\caption[]{Fourth root of the topological susceptibility in physical units as a function of $\frac{\sqrt{8t}}{r_0}$}\label{fig:FlowTime_v_smearRad}
+\caption[flow time dependence of the topological susceptibility]{Fourth root of the topological susceptibility in physical units as a function of $\frac{\sqrt{8t}}{r_0}$}\label{fig:FlowTime_v_smearRad}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -3128,7 +3130,7 @@ which is more compatible with their $t_0^2\chi_t = 6.67(7)\times 10^{-4}$ but st
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/chi_fourthRoot_cont_NotPhysUnits.pdf}
-\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:chi1over4-non-physical-units}
+\caption[$t_0^2\chi_t$ continuum extrapolation]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:chi1over4-non-physical-units}
 \end{figure}
 Using the result in \eqref{eq:chiOneOverFour_result}, the Witten-Veneziano formula and the pion decay constant determined in \cite{https://doi.org/10.48550/arxiv.0802.1043} we get
 \begin{equation}
@@ -3143,14 +3145,14 @@ We expect the topological susceptibility to be flow time independent for all $t>
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/chi_flowTime_independence.pdf}
-\caption[]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:UniversalityTest}
+\caption[Flow time universality test of the topological susceptibility]{Continuum extrapolation of the ratios of $\chi_t$ at various flow times to $\chi_t$ at $t_0$ using a quadratic function in $a^2/t_0$. A result of $1.0$ in the continuum would indicate the absence of flow-time dependence in the continuum limit. The error bars are very small due to the correlation between the numerator and denominator.}\label{fig:UniversalityTest}
 \end{figure}
 \subsection{Universality of the topological charge definition}\label{sec:universalityOfDef}
 Recall from section \ref{sec:universalityOfQdefs} that any finite lattice discretizations of the topological charge share the same universality class i.e. they produce the same outcomes in the continuum limit for all flow times $t>0$. In order to investigate this fact one would ideally conduct a continuum limit using the topological charge measured at the same physical flow time. The following analysis is limited in this respect as the topological charge measured for each definition has not been conducted at the exact same flow time. However, because the measurements were taken at large values of the flow time, and because of the aforementioned flow time behaviour of the topological susceptibility at large flow times, the deviations from the exact result are expected to be minimal.\\\\In order to do this analysis, we calculate the ratios of $\chi^{\frac{1}{4}}_t$ evaluated using the improved lattice field strength tensor over $\chi^{\frac{1}{4}}_t$ evaluated using the clover lattice field strength tensor. This ratio can then be extrapolated to the continuum using a polynomial which is quadratic in $a^2/r_0^2$ to get the result in figure \ref{fig:DefinitionUniversalityTest}.\\This result is compatible with $1.0$ within the error bars, indicating universality as expected.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/chi_diffDeff_universalityTest.pdf}
-\caption[]{Continuum extrapolation of the ratio of $\chi^{\frac{1}{4}}_t$ evaluated using the improved lattice field strength tensor over $\chi^{\frac{1}{4}}_t$ evaluated using the clover lattice field strength tensor using a polynomial quadratic in $a^2/r_0^2$. From left to right, these were measured at physical flow times $t=0.03,\,0.031,\,0.033$ and $0.029fm^2$. A result of $1.0$ in the continuum would indicate that the two definitions are of the same universality class. The error bars are small due to the correlation between the numerator and denominator.}\label{fig:DefinitionUniversalityTest}
+\caption[Topological susceptibility universality from topological charge definition]{Continuum extrapolation of the ratio of $\chi^{\frac{1}{4}}_t$ evaluated using the improved lattice field strength tensor over $\chi^{\frac{1}{4}}_t$ evaluated using the clover lattice field strength tensor using a polynomial quadratic in $a^2/r_0^2$. From left to right, these were measured at physical flow times $t=0.03,\,0.031,\,0.033$ and $0.029fm^2$. A result of $1.0$ in the continuum would indicate that the two definitions are of the same universality class. The error bars are small due to the correlation between the numerator and denominator.}\label{fig:DefinitionUniversalityTest}
 \end{figure}
 \subsection{Non-Gaussianities}
 Next we can attempt to determine the the non-Gaussianity of the topological charge distribution by taking the continuum limit on the ratio of the fourth cumulant to the second. These are defined as  
@@ -3168,7 +3170,7 @@ The result is shown in figure \ref{fig:R-contLim}.\\\\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/R_continuum_extrapolation.pdf}
-\caption[]{Linear (red) and constant (black) continuum extrapolation of $R$ using data from every lattice spacing. Both predictions by the dilute instanton gas model ($R=1$) and the large $N_c$- expansion ($\mathcal{O}(R) = \mathcal{O}(\frac{1}{N^2})$) are easily within the errorbars.}\label{fig:R-contLim}
+\caption[$R$ continuum limit]{Linear (red) and constant (black) continuum extrapolation of $R$ using data from every lattice spacing. Both predictions by the dilute instanton gas model ($R=1$) and the large $N_c$- expansion ($\mathcal{O}(R) = \mathcal{O}(\frac{1}{N^2})$) are easily within the errorbars.}\label{fig:R-contLim}
 \end{figure}
 Clearly, this result isn't good for anything. It cannot discriminate between the dilute instanton gas model and the large $N_c$- expansion. The problem here is that the estimation of $R$ requires extraordinarily high statistics to be feasible.\\The statistical error of each data point is extremely large. In essence this means that if the sole purpose of this thesis was to determine $R$, the choice of a simulation volume of $L\approx 1.5fm$ would have been a bad one. Because the computational cost incurred by having more lattice points is so high, it would have been better to conduct the study at a smaller simulation volume. This would make finite size effects larger, but allow for much higher statistics. At present, the statistical errors are orders of magnitude larger than any finite size effects  are predicted to be \cite{non_gaussianities2015} so clearly a happy middle ground is to be found between $L = 1.5fm$ and $L =  1.0fm$. 
 \FloatBarrier
@@ -3187,23 +3189,23 @@ $\tau_{int}^E$ has not reached its maximum by the final flow time analysed. Howe
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q.pdf}
-\caption[]{Integrated Auto correlation time -- Q}\label{fig:intAutocorr_Q}
+\caption[Integrated Auto correlation time of Q]{Integrated Auto correlation time of Q}\label{fig:intAutocorr_Q}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_Q_squared.pdf}
-\caption[]{Integrated Auto correlation time -- Q squared}\label{fig:intAutocorr_Q_squared}
+\caption[Integrated Auto correlation time of $Q^2$]{Integrated Auto correlation time of $Q^2$}\label{fig:intAutocorr_Q_squared}
 \end{figure}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{FINALPLOTS/IntegratedAutoCorrTime_E.pdf}
-\caption[]{Integrated Auto correlation time -- E}\label{fig:intAutocorr_E}
+\caption[Integrated Auto correlation time of $\langle E \rangle $]{Integrated Auto correlation time of $\langle E \rangle $}\label{fig:intAutocorr_E}
 \end{figure}
 
 \begin{table}[htbp]
 \centering
-\caption[Integrated Autocorrelation time of observables]{Estimated autocorrelation time of observables from ensembles with MC-time separation of one listed in table \ref{tab:SimulationParameters}. The autocorrelation is measured at lower flow times than those used in the analysis, because the autocorrelation for the topological observables saturate much earlier. The last column denotes the ratio of the number of decorrelation steps used for the topological charge in the final analysis to the estimated $\tau_{int}^Q$.}
+\caption[Integrated Autocorrelation time of measured observables]{Estimated autocorrelation time of observables from ensembles with MC-time separation of one listed in table \ref{tab:SimulationParameters}. The autocorrelation is measured at lower flow times than those used in the analysis, because the autocorrelation for the topological observables saturate much earlier. The last column denotes the ratio of the number of decorrelation steps used for the topological charge in the final analysis to the estimated $\tau_{int}^Q$.}
 \label{tab:IntAutocorrs}
 \begin{tabular}{lcccccccc}
 \hline \hline  $\beta$ 	& $t/a^2$ 	&$\tau_{int}^Q$	& $\tau_{int}^{Q^2}$ 	& $\tau_{int}^{Q^4}$	& $\tau_{int}^E$	& $\frac{N_{decorr}^Q}{\tau_{int}^{Q}}$		\\
