@@ -8,6 +8,15 @@ namespace n_fs = ::std::experimental::filesystem;
 namespace n_fs = ::std::filesystem;
 #endif
 
+
+//TEMP
+#include <chrono>
+#include <thread>
+
+using namespace std::this_thread;     // sleep_for, sleep_until
+using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+using std::chrono::system_clock;
+
 /*
  RUN EXAMPLE:
 	*edit main scope to include either
@@ -19,7 +28,7 @@ namespace n_fs = ::std::filesystem;
 	*compile
 
 	*WITH COMMAND LINE ARGS:
-	mpiexec.exe -n Nprocs LGF.exe  NrDims  extdofs  beta  shape  cuts  configStart  configStop  flowSteps/ThermSteps  epsilon/OR_perHB  MeasureInterval/configSep  dataFolder
+	mpiexec.exe -n Nprocs LGF.exe NrDims extdofs beta shape cuts configStart configStop flowSteps/ThermSteps epsilon/OR_perHB MeasureInterval/configSep dataFolder
 	
 	*WITHOUT COMMAND LINE ARGS:
 	mpiexec.exe -n Nprocs LGF.exe
@@ -66,17 +75,17 @@ int main(int argc, char** argv) {
 				//Physical Parameters
 		NrDims = 4;
 		extdofs = 4;
-		beta = 6.00;
-		shape = { 8,8,8,8 };
+		beta = 6.13;
+		shape = { 12,12,12,12 };
 		//Partition Parameter
-		cuts = { 1,1,1,0 }; // shape_x must be divisible by (cut_x + 1)
+		cuts = { 3,0,0,0 }; // shape_x must be divisible by (cut_x + 1)
 		//File Parameters
-		ConfigStart = 1;
-		ConfigStop = 1;
+		ConfigStart = 0;
+		ConfigStop = 100;
 		//Flow Parameters
 		flowSteps = 40;
-		epsilon = 0.01;
-		measureInterval = 10;
+		epsilon = 0.33;
+		measureInterval = 1;
 		//Heatbath Parameters
 		ThermSteps = 1000;
 		OR_per_HB = 4;
@@ -84,20 +93,18 @@ int main(int argc, char** argv) {
 		//output folder for observables and configurations
 		dataFolder = "C:/Users/adria/Documents/msc_project/data/";
 	}
-	SimulationParameters params(NrDims, extdofs, shape, beta, cuts);
+	SimulationParameters params(NrDims, extdofs, shape, beta, cuts,"torus");//_OpenT
 	FlowParameters flowParams(ConfigStart, ConfigStop, flowSteps, epsilon, measureInterval, dataFolder);
 	HBParameters HBparams(ConfigStart, ConfigStop, ThermSteps, OR_per_HB, configSep, dataFolder);
-
+	LHMCParameters LHMCparams(ConfigStart, ConfigStop, ThermSteps, epsilon, configSep, dataFolder);
 	//FlowSavedGaugeConfigurations(params, flowParams);
 
 	double flowTime_pickup = 20;
 	//ResumeFlowedConfiguration(params, flowParams, flowTime_pickup);
-	MeasureFlowedGaugeConfigurations(params, flowParams);
-	MeasureQdensityDistribution(params, flowParams);
+	//MeasureFlowedGaugeConfigurations(params, flowParams);
+	//MeasureQdensityDistribution(params, flowParams);
 	//GenerateHeatBathGaugeConfigurations(params, HBparams);
-
-
-
+	GenerateLHMCGaugeConfigurations(params, LHMCparams);
 
 	mpiWrapper::end_parallelSession();
 
@@ -151,7 +158,10 @@ void GenerateHeatBathGaugeConfigurations(SimulationParameters& params, HBParamet
 		U.saveSU3ToFile(params.getbeta(), heatbath.getupdateMethod(), HBparams.getdataFolder(), std::to_string(i));
 	}
 }
+
+
 void FlowSavedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams) {
+	std::string UpdateMethod = "LHMC_3_of_0_330000";
 	//instantiate the lattice and action
 	Lattice lattice(params,true);
 	Wilson action(params.getbeta());
@@ -160,7 +170,7 @@ void FlowSavedGaugeConfigurations(SimulationParameters& params, FlowParameters& 
 		//load the gauge configuration into U
 		SU3_field U(lattice, params.getextdofs());
 		std::string ensembleNum = std::to_string(i);
-		U.loadSU3FromFile(params.getbeta(), "Heatbath_4_ORperHB", flowParams.getdataFolder(), ensembleNum);
+		U.loadSU3FromFile(params.getbeta(), UpdateMethod, flowParams.getdataFolder(), ensembleNum);
 		//instantiate the Gradient flow object
 		GradientFlow flowing(action, U, flowParams.getepsilon(), flowParams.getMeasuringInterval());
 		
@@ -244,38 +254,59 @@ void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParamete
 	}
 }
 
-//void GenerateLHMCGaugeConfigurations(SimulationParameters& params, int ConfigurationStart, int ConfigurationStop, int NrUpdates) {
-//	
-//	double LHMCepsilon = 0.33;
-//	int NrLeaps = 3;
-//
-//	Lattice lattice(params, false);
-//	Wilson action(params.getbeta());
-//
-//	for (int i = ConfigurationStart; i <= ConfigurationStop; i++) {
-//		std::string ensembleNum = "ensemble_"+ std::to_string(i);
-//		SU3_field U(lattice, params.getextdofs());
-//		U.InitializeHotStart();
-//		LHMC updater(U, action, LHMCepsilon,NrLeaps);
-//
-//		TopologicalCharge topCharge(U);
-//		EnergyDensity Edensity(U);
-//		for (int i = 0; i < NrUpdates; i++) {
-//			updater.sweep();
-//			U.transfer_FieldValues();
-//			topCharge.calculate(0);
-//			Edensity.calculate(0);
-//		}
-//		std::cout << "acceptance rate1: " << updater.acceptanceRate() << "\n";
-//		MPI_Barrier(mpiWrapper::comm());
-//		U.saveSU3ToFile(params.getbeta(), ensembleNum);
-//		topCharge.saveTopologicalChargeToFile(params.getbeta(), ensembleNum +"LHMC");
-//		Edensity.saveEnergyDensityToFile(params.getbeta(), ensembleNum+"LHMC");
-//	}
-//}
+void GenerateLHMCGaugeConfigurations(SimulationParameters& params, LHMCParameters LHMCparams) {
+	double LHMCepsilon = LHMCparams.getEpsilon();
+	int NrLeaps = LHMCparams.getLeapfrogSteps();
+	//sleep_for(30s);
+	mpi_debug_breakpoint
+	Lattice lattice(params, false);
+	Wilson action(params.getbeta());
+	SU3_field U(lattice, params.getextdofs());
+	//initialize the update program
+	LHMC updater(U, action, LHMCepsilon, NrLeaps);
+
+
+	std::cout << "ProcID: " << mpiWrapper::id() << "		proc Volume: " << lattice.getthisProc_Volume() << "		resp Volume: " << lattice.getthisProc_RespVolume() << std::endl;
+	lattice.Print_Partitioning();
+
+
+	//Check whether this is the start of a new ensemble, which needs thermalization
+	bool NewEnsemble = LHMCparams.getThermSteps() != 0 && LHMCparams.getConfigurationStart() == 0;
+
+	//If so, initialize from a random configuration
+	if (NewEnsemble) {
+		U.InitializeHotStart();
+	}
+	//otherwise, load the previously generated configuration to continue 
+	else {
+		U.loadSU3FromFile(params.getbeta(), updater.getupdateMethod(), LHMCparams.getdataFolder(), std::to_string(LHMCparams.getConfigurationStart()));
+	}
+
+	//update the field either for thermalization or configuration separation depending on what the user is doing
+	if (NewEnsemble) {
+		for (int i = 0; i < LHMCparams.getThermSteps(); i++) {
+			if (mpiWrapper::id() == 0) {
+				std::cout << "step: " << i << std::endl;
+			}
+			
+			updater.sweep();
+		}
+		U.saveSU3ToFile(params.getbeta(), updater.getupdateMethod(), LHMCparams.getdataFolder(), std::to_string(LHMCparams.getConfigurationStart()));
+	}
+	for (int i = LHMCparams.getConfigurationStart() + 1; i <= LHMCparams.getConfigurationStop(); i++) {
+		for (int j = 0; j < LHMCparams.getconfigSep(); j++) {
+			if (mpiWrapper::id() == 0) {
+				std::cout << "step: " << i << std::endl;
+			}
+			updater.sweep();
+		}
+		U.saveSU3ToFile(params.getbeta(), updater.getupdateMethod(), LHMCparams.getdataFolder(), std::to_string(i));
+	}
+}
 
 
 void ParseCLargs(int argc, char** argv, int& NrDims, int& extdofs, double& beta, std::vector<int>& shape, std::vector<int>& cuts, int& ConfigStart, int& ConfigStop, int& flowSteps, double& epsilon, int& measureInterval, int& ThermSteps, int& OR_per_HB, int& configSep, std::string& dataFolder) {
+	double Flow_v_LHMC_eps_Cutoff = 0.1;
 	NrDims = std::stoi(argv[1]);
 	extdofs = std::stoi(argv[2]);
 	beta = std::stod(argv[3]);
@@ -329,7 +360,13 @@ void ParseCLargs(int argc, char** argv, int& NrDims, int& extdofs, double& beta,
 			std::cout << "Thermalization: " + ThermStatus + "	OR-steps per HB_step: " << std::to_string(OR_per_HB) << "	Config Separation: " << std::to_string(configSep) << "\n";
 		}
 		else {
-			std::cout << "Epsilon: " << std::to_string(epsilon) << "	Measuring interval: " << std::to_string(measureInterval) << "	flowSteps: " << std::to_string(flowSteps) << "\n";
+			if (epsilon < Flow_v_LHMC_eps_Cutoff) {
+				std::cout << "Epsilon: " << std::to_string(epsilon) << "	Measuring interval: " << std::to_string(measureInterval) << "	flowSteps: " << std::to_string(flowSteps) << "\n";
+			}
+			else {
+				std::cout << "Thermalization: " + ThermStatus + "LHMC_Epsilon: " << std::to_string(epsilon) << "	Config Separation: " << std::to_string(configSep) << "\n";
+			}
+			
 		}
 		std::cout << "Data Directory: " + dataFolder << std::endl;
 	}

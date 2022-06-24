@@ -15,7 +15,13 @@ public:
 	Field(Lattice& lattice, int NrExtDOF) {
 		m_lattice = &lattice;
 		m_NrExtDOF = NrExtDOF;
-		int NrTs = NrExtDOF * lattice.m_thisProc_Volume;
+		int NrTs;
+		if (m_lattice->getType() == "torus_OpenT") {
+			NrTs = NrExtDOF * (lattice.m_thisProc_Volume+1);
+		}
+		else {
+			NrTs = NrExtDOF* lattice.m_thisProc_Volume;
+		}
 		FieldArray = new T[NrTs];
 		m_FieldArray_NrBytes = sizeof(T)* NrExtDOF * lattice.m_thisProc_Volume;
 
@@ -41,6 +47,7 @@ public:
 	/// <param name="mu"> external dof you wish to access on the neighbour site</param>
 	/// <returns>Field value T of neighbour at dof mu by reference</returns>
 	T& fwd_fieldVal(int internal_index, int spaceTime_direction,int mu) {
+		//std::cout << "internal idx: " << internal_index << "	At proc id " << mpiWrapper::id() << std::endl;
 		return FieldArray[m_lattice->m_fwd[internal_index][spaceTime_direction] * m_NrExtDOF + mu];
 	}
 	/// <summary>

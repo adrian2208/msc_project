@@ -1,6 +1,7 @@
 # Prerequisites
 *.d
 data/
+data_LHMC/
 out/
 *.pdf
 *.png

@@ -5,7 +5,7 @@ Lattice::Lattice(SimulationParameters& params,bool cloversRequired) {
 	
 	//Storing local variables
 	m_cloversRequired = cloversRequired;
-	type = "torus";
+	type = params.getLatticeType();
 	m_Ndims = params.getNrDims();
 	m_shape = new int[m_Ndims];
 	m_cuts = new int[m_Ndims];
@@ -98,6 +98,9 @@ void Lattice::partition_lattice(){
 		else if(is_SharedMemory(m_coordinate, m_coorFwd, m_coorBack)) {	//	|-- If the process is not responsible,
 			m_thisProc_TotalIndex[m_thisProc_Volume] = totalIdx;		//	|	but that coordinate is within the
 			m_thisProc_Volume++;										//	|	neighbouring process' shared memory
+			//if (mpiWrapper::id() == 0) {
+			//	std::cout << "coor :" << m_coordinate[0] << " " << m_coordinate[1] << " " << m_coordinate[2] << " " << m_coordinate[3] << std::endl;
+			//}
 		}																//__|	region, increment the proc volume anyway.
 		//returns new m_coordinate by reference eventually traversing the lattice															
 		traverse_lattice(m_coordinate, m_Ndims, m_shape); 												
@@ -176,24 +179,59 @@ void Lattice::partition_lattice(){
 	}
 
 	//Initializing arrays for storing nearest neighbour information
+	//m_cntr = new int* [m_thisProc_Volume+1];
+	//m_fwd = new int* [m_thisProc_Volume+1];
+	//m_back = new int* [m_thisProc_Volume+1];
+	//for (i = 0; i < m_thisProc_Volume+1; i++) {
+	//	m_cntr[i] = new int[m_Ndims];
+	//	m_fwd[i] = new int[m_Ndims];
+	//	m_back[i] = new int[m_Ndims];
+	//}
 	m_cntr = new int* [m_thisProc_Volume];
 	m_fwd = new int* [m_thisProc_Volume];
 	m_back = new int* [m_thisProc_Volume];
+
 	for (i = 0; i < m_thisProc_Volume; i++) {
 		m_cntr[i] = new int[m_Ndims];
 		m_fwd[i] = new int[m_Ndims];
 		m_back[i] = new int[m_Ndims];
 	}
+	std::cout << "total Volume: " << m_totalVolume << std::endl;
 	for (i = 0; i < m_thisProc_Volume; i++) {
 		IndexToCoordinate(m_InternalToTotal_idx[i], m_coordinate);
 		for (int j = 0; j < m_Ndims; j++) {
 			m_cntr[i][j] = m_coordinate[j];
 			NearestNeighbour(m_coordinate, j, m_coorFwd, m_coorBack);
-			m_fwd[i][j] = m_TotalToInternal_idx[totalIndex(m_coorFwd)];
-			m_back[i][j] = m_TotalToInternal_idx[totalIndex(m_coorBack)];
+			int idxfwd, idxbck;
+			idxfwd = totalIndex(m_coorFwd);
+			idxbck = totalIndex(m_coorBack);
+
+			//std::cout << "coor :" << m_coordinate[0] << " " << m_coordinate[1] << " " << m_coordinate[2] << " " << m_coordinate[3] << std::endl;
+			//std::cout << "back_coor :" << m_coorBack[0] << " " << m_coorBack[1] << " " << m_coorBack[2] << " " << m_coorBack[3] << std::endl;
+			//std::cout << "idxbck: " << idxbck << std::endl;
+			//std::cout << "coor :" << m_coordinate[0] << " " << m_coordinate[1] << " " << m_coordinate[2] << " " << m_coordinate[3] << std::endl;
+			//std::cout << "fws_coor :" << m_coorFwd[0] << " " << m_coorFwd[1] << " " << m_coorFwd[2] << " " << m_coorFwd[3] << std::endl;
+			//std::cout << "idxfwd: " << idxfwd << std::endl;
+
+
+			if (idxfwd < m_totalVolume) {
+				m_fwd[i][j] = m_TotalToInternal_idx[idxfwd];
+			}
+			else {
+				m_fwd[i][j] = m_thisProc_Volume;
+			}
+			if (idxbck < m_totalVolume) {
+				m_back[i][j] = m_TotalToInternal_idx[idxbck];
+			}
+			else {
+				m_back[i][j] = m_thisProc_Volume;
+			}
 		}
 	}
-
+	//for (int j = 0; j < m_Ndims; j++) {
+	//	m_fwd[m_thisProc_Volume][j] = m_thisProc_Volume;
+	//	m_back[m_thisProc_Volume][j] = m_thisProc_Volume;
+	//}
 	DistributeBuffers();
 	
 
@@ -361,9 +399,9 @@ int Lattice::Coordinate_ProcID(int* coordinate){
 	//}
 	//return 0;
 
-
-
-
+	//if (totalIndex(coordinate) == m_totalVolume) {
+	//	return mpiWrapper::nProcs();
+	//}
 
 	int out = 0;
 	int temp;
@@ -374,7 +412,10 @@ int Lattice::Coordinate_ProcID(int* coordinate){
 		}
 		out += temp;
 	}
-
+	//if (mpiWrapper::id() == 0) {
+	//	std::cout << coordinate[0] << " " << coordinate[1] << " " << coordinate[2] << " " << coordinate[3] << "		:		" << out << std::endl;
+	//}
+	
 	return out;
 }
 
@@ -404,37 +445,122 @@ void Lattice::IndexToCoordinate(int index, int* coordinate) {
 
 // This virtual method encodes periodic boundary conditions for all directions on the lattice
 void Lattice::NearestNeighbour(int* coordinate, int direction, int* fwd_coor, int* back_coor){
-	for (int i = 0; i < m_Ndims; i++) {
-		if (i == direction) {
-			fwd_coor[i] = (coordinate[i] + 1) % m_shape[i];
-			back_coor[i] = (coordinate[i] - 1 + m_shape[i]) % m_shape[i];
-		}
-		else {
-			fwd_coor[i] = coordinate[i];
-			back_coor[i] = coordinate[i];
+	if (type == "torus") {
+		for (int i = 0; i < m_Ndims; i++) {
+			if (i == direction) {
+				fwd_coor[i] = (coordinate[i] + 1) % m_shape[i];
+				back_coor[i] = (coordinate[i] - 1 + m_shape[i]) % m_shape[i];
+			}
+			else {
+				fwd_coor[i] = coordinate[i];
+				back_coor[i] = coordinate[i];
+			}
 		}
 	}
+	if (type == "torus_OpenT") {
+		if (totalIndex(coordinate) == m_totalVolume) {
+			fwd_coor[m_Ndims - 1] = m_shape[m_Ndims - 1];
+
+			for (int i = 0; i < m_Ndims - 1; i++) {
+				fwd_coor[i] = m_shape[i] - 1;
+			}
+			back_coor[m_Ndims - 1] = m_shape[m_Ndims - 1];
+			for (int i = 0; i < m_Ndims - 1; i++) {
+				back_coor[i] = m_shape[i] - 1;
+			}
+		}
+		if (0 == direction) {
+			if (coordinate[0]+1 == m_shape[0]) {
+				
+				fwd_coor[m_Ndims-1] = m_shape[m_Ndims-1];
+				
+				for (int i = 0; i < m_Ndims-1; i++) {
+					fwd_coor[i] = m_shape[i]-1;
+				}
+
+				//fwd_coor[0] = m_shape[0];
+				//for (int i = 1; i < m_Ndims; i++) {
+				//	fwd_coor[i] = m_shape[i] - 1;
+				//}
+
+			}
+			else {
+				fwd_coor[0] = coordinate[0] + 1;
+			}
+			if (coordinate[0] == 0) {
+				back_coor[m_Ndims-1] = m_shape[m_Ndims-1];
+				for (int i = 0; i < m_Ndims-1; i++) {
+					back_coor[i] = m_shape[i] - 1;
+				}
+
+				//back_coor[0] = m_shape[0];
+				//for (int i = 1; i < m_Ndims; i++) {
+				//	back_coor[i] = m_shape[i] - 1;
+				//}
+
+
+				//std::cout << "coor :" << coordinate[0] << " " << coordinate[1] << " " << coordinate[2] << " " << coordinate[3] << std::endl;
+				//std::cout << "back_coor :" << back_coor[0] << " " << back_coor[1] << " " << back_coor[2] << " " << back_coor[3] << std::endl;
+				//std::cout << "total Idx of back_coor :	" << totalIndex(back_coor) << std::endl;
+
+
+			}
+			else {
+				back_coor[0] = coordinate[0] - 1;
+			}
+		}
+		else {
+			fwd_coor[0] = coordinate[0];
+			back_coor[0] = coordinate[0];
+			for (int i = 1; i < m_Ndims; i++) {
+				if (i == direction) {
+					fwd_coor[i] = (coordinate[i] + 1) % m_shape[i];
+					back_coor[i] = (coordinate[i] - 1 + m_shape[i]) % m_shape[i];
+				}
+				else {
+					fwd_coor[i] = coordinate[i];
+					back_coor[i] = coordinate[i];
+				}
+			}
+		}
+
+	}
+
 }
 
 bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 	int id_fwd;
 	int id_back;
+	bool out = false;
+	if (totalIndex(coordinate) == m_totalVolume) {
+		return false;
+	}
+
 	for (int i = 0; i < m_Ndims; i++) {
 		NearestNeighbour(coordinate, i, coorFwd, coorBack);
 		id_fwd = Coordinate_ProcID(coorFwd);
 		id_back = Coordinate_ProcID(coorBack);
+		if (totalIndex(coorFwd) == m_totalVolume || totalIndex(coorBack) == m_totalVolume) {
+			out = false;
+		}
 		if (mpiWrapper::id() == id_fwd || mpiWrapper::id() == id_back) {
-			return true;
+			out = true;
 		}
 				for (int j = 0; j < m_Ndims; j++) {
 					if (j != i || m_cloversRequired) {
 					NearestNeighbour(coorFwd, j, m_coorFwdFwd, m_coorFwdBack);
 					NearestNeighbour(coorBack, j, m_coorBackFwd, m_coorBackBack);
+					if (totalIndex(m_coorFwdFwd) == m_totalVolume ||
+						totalIndex(m_coorBackBack) == m_totalVolume ||
+						totalIndex(m_coorFwdBack) == m_totalVolume ||
+						totalIndex(m_coorBackFwd) == m_totalVolume) {
+						out = false;
+					}
 					if (Coordinate_ProcID(m_coorFwdFwd) == mpiWrapper::id() ||
 						Coordinate_ProcID(m_coorBackBack) == mpiWrapper::id() ||
 						Coordinate_ProcID(m_coorFwdBack) == mpiWrapper::id() ||
 						Coordinate_ProcID(m_coorBackFwd) == mpiWrapper::id()) {
-						return true;
+						out = true;
 					}
 				}
 					if (m_cloversRequired) {
@@ -442,26 +568,41 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 						NearestNeighbour(m_coorBackFwd, k, m_coorBackFwdFwd, m_coorBackFwdBack);
 						NearestNeighbour(m_coorFwdFwd, k, m_coorFwdFwdFwd, m_coorFwdFwdBack);
 						NearestNeighbour(m_coorBackBack, k, m_coorBackBackFwd, m_coorBackBackBack);
-						if (Coordinate_ProcID(m_coorFwdFwdFwd) == mpiWrapper::id() ||
-							Coordinate_ProcID(m_coorFwdFwdBack) == mpiWrapper::id() ||
-							Coordinate_ProcID(m_coorBackBackFwd) == mpiWrapper::id() ||
-							Coordinate_ProcID(m_coorBackBackBack) == mpiWrapper::id() ||
-							Coordinate_ProcID(m_coorBackFwdFwd) == mpiWrapper::id() ||
-							Coordinate_ProcID(m_coorBackFwdBack) == mpiWrapper::id() ) {
-							return true;
+						if (totalIndex(m_coorFwdFwdFwd)		== m_totalVolume ||
+							totalIndex(m_coorFwdFwdBack)	== m_totalVolume ||
+							totalIndex(m_coorBackBackFwd)	== m_totalVolume ||
+							totalIndex(m_coorBackBackBack)	== m_totalVolume ||
+							totalIndex(m_coorBackFwdFwd)	== m_totalVolume ||
+							totalIndex(m_coorBackFwdBack)	== m_totalVolume) {
+							out = false;
+						}
+						if (Coordinate_ProcID(m_coorFwdFwdFwd)		== mpiWrapper::id() ||
+							Coordinate_ProcID(m_coorFwdFwdBack)		== mpiWrapper::id() ||
+							Coordinate_ProcID(m_coorBackBackFwd)	== mpiWrapper::id() ||
+							Coordinate_ProcID(m_coorBackBackBack)	== mpiWrapper::id() ||
+							Coordinate_ProcID(m_coorBackFwdFwd)		== mpiWrapper::id() ||
+							Coordinate_ProcID(m_coorBackFwdBack)	== mpiWrapper::id() ) {
+							out = true;
 						}
 							for (int l = 0; l < m_Ndims; l++) {
 								if (l != k) {
 									NearestNeighbour(m_coorFwdFwdFwd, l, m_coorFwdFwdFwdFwd, m_coorFwdFwdFwdBack);
 									NearestNeighbour(m_coorBackBackBack, l, m_coorBackBackBackFwd, m_coorBackBackBackBack);
 									NearestNeighbour(m_coorBackFwdBack, l, m_coorBackFwdBackFwd, m_coorBackFwdBackBack);
-									if (Coordinate_ProcID(m_coorFwdFwdFwdFwd) == mpiWrapper::id() ||
-										/*Coordinate_ProcID(m_coorBackFwdBackBack) == mpiWrapper::id() ||*/
-										Coordinate_ProcID(m_coorBackBackBackBack) == mpiWrapper::id() ||
-										Coordinate_ProcID(m_coorFwdFwdFwdBack) == mpiWrapper::id() ||
-										Coordinate_ProcID(m_coorBackFwdBackFwd) == mpiWrapper::id() ||
-										Coordinate_ProcID(m_coorBackBackBackFwd) == mpiWrapper::id()) {
-										return true;
+									if (totalIndex(m_coorFwdFwdFwdFwd)		== m_totalVolume ||
+										totalIndex(m_coorBackBackBackBack)	== m_totalVolume ||
+										totalIndex(m_coorFwdFwdFwdBack)		== m_totalVolume ||
+										totalIndex(m_coorBackFwdBackFwd)	== m_totalVolume ||
+										totalIndex(m_coorBackBackBackFwd)	== m_totalVolume) {
+										out = false;
+									}
+									if (Coordinate_ProcID(m_coorFwdFwdFwdFwd)		== mpiWrapper::id() ||
+									/*	Coordinate_ProcID(m_coorBackFwdBackBack)	== mpiWrapper::id() ||*/
+										Coordinate_ProcID(m_coorBackBackBackBack)	== mpiWrapper::id() ||
+										Coordinate_ProcID(m_coorFwdFwdFwdBack)		== mpiWrapper::id() ||
+										Coordinate_ProcID(m_coorBackFwdBackFwd)		== mpiWrapper::id() ||
+										Coordinate_ProcID(m_coorBackBackBackFwd)	== mpiWrapper::id()) {
+										out = true;
 									}
 								}
 							}
@@ -469,7 +610,7 @@ bool Lattice::is_SharedMemory(int* coordinate, int* coorFwd, int* coorBack){
 			}
 		}
 	}
-	return false;
+	return out;
 }
 
 

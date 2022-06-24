@@ -27,6 +27,7 @@
 #include "Observables/ImprovedEnergyDensity.h"
 
 void GenerateHeatBathGaugeConfigurations(SimulationParameters& params, HBParameters& HBparams);
+void GenerateLHMCGaugeConfigurations(SimulationParameters& params, LHMCParameters LHMCparams);
 void FlowSavedGaugeConfigurations(SimulationParameters& params, FlowParameters& flowParams);
 void ResumeFlowedConfiguration(SimulationParameters& params, FlowParameters& flowParams, double flowTime_pickup);
 
@@ -34,6 +35,6 @@ void MeasureFlowedGaugeConfigurations(SimulationParameters& params, FlowParamete
 void MeasureQdensityDistribution(SimulationParameters& params, FlowParameters& flowParams);
 
 //void ResumeHeatBathGaugeConfigurations(SimulationParameters& params, int ConfigurationResumeFrom, int ConfigurationStop, int ConfigTimeSeparation);
-//#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
+#define mpi_debug_breakpoint int temp;if (mpiWrapper::id() == 0) {std::cout << "input number to continue application: ";std::cin >> temp;} MPI_Barrier(mpiWrapper::comm());
 
 void ParseCLargs(int argc, char** argv, int& NrDims, int& extdofs, double& beta, std::vector<int>& shape, std::vector<int>& cuts, int& ConfigStart, int& ConfigStop, int& flowSteps, double& epsilon, int& measureInterval, int& ThermSteps, int& OR_per_HB, int& configSep, std::string& dataFolder);

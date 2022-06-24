@@ -38,23 +38,23 @@ r_0 = 0.5
 #                   topE_dir+ "beta6_460000\\32X32X32X32\\GF\\1350Updates_forAutocorr\\temp3\\",
 #                   topE_dir+ "beta6_460000\\32X32X32X32\\GF\\1350Updates_forAutocorr\\temp4\\"]]
 
-#topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\"
-#directory_list = [[topC_dir+ "beta6_000000\\12X12X12X12\\GF\\"],
-#                  [topC_dir+ "beta6_130000\\14X14X14X14\\GF\\"],
-#                  [topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr0\\",
-#                   topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr1\\"],
-#                  [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\",
-#                   topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr1\\"]]
-topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\"
+topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\Topological_Charge\\"
 directory_list = [[topC_dir+ "beta6_000000\\12X12X12X12\\GF\\"],
                   [topC_dir+ "beta6_130000\\14X14X14X14\\GF\\"],
                   [topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr0\\",
                    topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr1\\"],
                   [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\",
                    topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr1\\"]]
+#topC_dir = "C:\\Users\\adria\\Documents\\msc_project\\data\\Observables\\EnergyDensity\\"
+#directory_list = [[topC_dir+ "beta6_000000\\12X12X12X12\\GF\\"],
+#                  [topC_dir+ "beta6_130000\\14X14X14X14\\GF\\"],
+#                  [topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr0\\",
+#                   topC_dir+ "beta6_260000\\16X16X16X16\\GF\\autocorr1\\"],
+#                  [topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\",
+#                   topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr1\\"]]
 
 fileStart_list = [0,0,0,0]#50
-fileEnd_list = [2000,2000,2000,3000]#CHANGE
+fileEnd_list = [2000,2000,2000,5000]#CHANGE
 colorList = [green,orange,blue,purple]
 marker_list = ['^','o','s','p']
 #fileStart_list_E = [0,0,0,0]#50
@@ -119,4 +119,4 @@ plt.xlabel(r'$t/a^2$')
 plt.ylabel(r'$\tau_{int}$')
 plt.legend()
 
-plt.savefig('IntegratedAutoCorrTime_E.pdf', bbox_inches="tight")
+plt.savefig('IntegratedAutoCorrTime_Q.pdf', bbox_inches="tight")

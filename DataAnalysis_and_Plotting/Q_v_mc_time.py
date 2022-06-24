@@ -40,7 +40,7 @@ directory_list = [topC_dir+ "beta6_000000\\12X12X12X12\\GF\\",
                   topC_dir+ "beta6_460000\\22X22X22X22\\GF\\autocorr0\\"]
 
 fileStart_list = [0,0,0,0]#50
-fileEnd_list = [2000,2000,2000,3000]#CHANGE
+fileEnd_list = [2000,2000,2000,5000]#CHANGE
 
 beta = [6.0,6.13,6.26,6.46]
 V = [16**4,20**4,24**4,32**4]
@@ -88,10 +88,11 @@ for j in range(len(directory_list)):
 
 #plt.figure(figsize=(86,13))
 
-plt.xticks(np.arange(0,3200,200),rotation = 90,fontsize = 10)
+plt.xticks(np.arange(0,5200,200),rotation = 90,fontsize = 10)
 
 
 plt.xlabel("MC time")
 plt.ylabel(r'$Q$')
 #plt.legend()
-plt.savefig('C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\Q_v_mcTime.pdf', bbox_inches="tight")
+plt.savefig('Q_v_mcTime.pdf', bbox_inches="tight")
+#C:\\Users\\adria\\Documents\\msc_project\\doc\\FINALPLOTS\\

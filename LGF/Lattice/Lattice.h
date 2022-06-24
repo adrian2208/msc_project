@@ -31,6 +31,9 @@ public:
 	inline int getthisProc_Volume() const{
 	return m_thisProc_Volume;
 	}
+	inline int getthisProc_RespVolume() const {
+		return m_responsible_Volume;
+	}
 	std::string getType() const;
 	
 
